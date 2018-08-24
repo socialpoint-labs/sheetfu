@@ -1,0 +1,12 @@
+.cache/
+.idea/
+.DS_Store
+.pyc
+__pycache__/
+scratch.py
+secret.json
+build/
+dist/
+sheetfu.egg-info/
+.pytest_cache/
+.coverage

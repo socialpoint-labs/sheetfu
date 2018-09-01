@@ -10,3 +10,4 @@ dist/
 sheetfu.egg-info/
 .pytest_cache/
 .coverage
+source/

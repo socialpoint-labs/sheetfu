@@ -6,7 +6,6 @@ Sheetfu is a Python library that easily interacts with Google Sheets. Its API is
 For example, this is how you would get the backgrounds data for a given sheet range.
 
 .. code-block:: python
-    :emphazize-lines: 4
 
     spreadsheet = SpreadsheetApp('path/to/secret.json').open_by_id('a_spreadsheet_id')
     sheet = spreadsheet.get_sheet_by_name('Sheet1')

@@ -279,7 +279,16 @@ class Range:
         Set backgrounds for the Range.
         :param backgrounds: 2D array of backgrounds (size must match range coordinates).
         """
-        self.make_set_request(field='backgroundColor', rows=backgrounds)
+        rows = []
+        for row in backgrounds:
+            row_data = {'values': []}
+            for background in row:
+                if background:
+                    row_data['values'].append({"userEnteredFormat": {'backgroundColor': background}})
+                else:
+                    row_data['values'].append({"userEnteredFormat": {'backgroundColor': ''}})
+            rows.append(row_data)
+        self.make_set_request(field='userEnteredFormat.backgroundColor', rows=rows)
 
     def get_notes(self):
         """
@@ -367,11 +376,12 @@ class Range:
                         "startColumnIndex": self.coordinates.column - 1,
                         "endColumnIndex": self.coordinates.column + self.coordinates.number_of_columns
                     },
-                    'field': field,
+                    'fields': field,
                     'rows': rows
                 }}
             ]
         }
+        print(body)
         response = self.client.sheet_service.spreadsheets().batchUpdate(
             spreadsheetId=self.sheet.spreadsheet_id,
             body=body

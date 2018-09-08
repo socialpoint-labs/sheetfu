@@ -36,7 +36,7 @@ Contributing
 
 For guidance on how to make a contribution to Sheetfu, see the `contributing guidelines`_.
 
-.. _contributing guidelines: https://github.com/socialpoint-labs/flask/blob/master/CONTRIBUTING.rst
+.. _contributing guidelines: https://github.com/socialpoint-labs/sheetfu/blob/master/CONTRIBUTING.rst
 
 
 Links

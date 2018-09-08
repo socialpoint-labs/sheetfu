@@ -3,9 +3,9 @@ Authentication
 
 
 To be able to connect Sheetfu to spreadsheets you need first to create a google cloud project at
-https://console.cloud.google.com with the Spreadsheet and the Drive APIs enabled.
+https://console.cloud.google.com, with the Spreadsheet and the Drive APIs enabled (Read and Write access if you want to edit).
 Then create a service account within that project:
- - to get your service account secret JSON, needed for instantiating your SpreadsheetApp object.
+ - to get your service account secret JSON, needed for instantiating your python SpreadsheetApp object.
  - to get your service email account (email you need to give permission on any spreadsheet you want to interact with).
 
 
@@ -17,8 +17,8 @@ This is how a secret JSON should look like when the file is opened.
       "type": "service_account",
       "project_id": "spreadsheet-api-whatever",
       "private_key_id": "alotofdigits",
-      "private_key": "-----BEGIN RSA PRIVATE KEY-----\nMIICXgIBAAKBgQDcHd0eCmI8S+FbV4U3u/GyzB+g1Oh6tRa/uE5qpM7wurfLBsUR\nHEa+DuYslM7HPiTZnqbQwcvJmzaXDdHrKIALmgK3mHe/Bv0QouJqD3vlXPR9u8nm\nJb1ayw2aBbT1xc6MJeuf1bbxKO74xRpIO7rhP5/V/5smbitXRKH4qmOEIQIDAQAB\nAoGBALEJ1/m8ckx633OfDgfIw1qCcQHjnGRtWDG1ZGTDz6mxE/hYppHfg0qEIz9C\nJJn98peR0ivfYy/xBdQyil8wQOMVJJBGOWc56/EYexsa1arPhIIhgZr5a2ITUSpm\nHHutY8qlGJFm3H/Ma1b/ZxGax+ydixffjB1F5dB+WR7nJ/IdAkEA/mBBjwoUUC6L\nhuoZjQ27dqAaUSFjJcTalwiG5Y41rmfGsuqQ714lHeDT/gjjyCo8qzYJ2W4/WDFV\nFYOfCyUyNwJBAN2FnYNMZEB+FqqfvtHBZOhKScX5g4i0JUXwlLg71swGDO4mG3n6\n/fmaxDzqLLtH6Y1KOiFUGM20PFZI3ToOMGcCQQD3eo5Nq3C30ZDNYVQadxG7B2iT\nJfhf9nT0G8eh7gkr9KrLxonbV6yktOeKbvus8eq0Z46Ni0T1eIletP82yKlhAkBn\nMdF40uN478QbZCN+j3s0gzbu1RejXVhnxnVhhe7ASKlJX9M49eXOm3yDbAu+iveP\n7F48HHMZkLby8yqr2uRNAkEAwq5/TDWUqBNvtUgS876874g51ojQLts5+y4pUH+W\njhMn/2c5VuJnBgLtV3MIWxsQVDwibZLukc9OAdG2Jg0W9Q==\n-----END RSA PRIVATE KEY-----",
-      "client_email": "whatever@whatever.iam.gserviceaccount.com",
+      "private_key": "-----BEGIN PRIVATE KEY-----\nA VERY VERY VERY VERY VERY LONG STRING\n-----END PRIVATE KEY-----",
+      "client_email": "yourserviceclientemail@whatever.iam.gserviceaccount.com",
       "client_id": "someclientid",
       "auth_uri": "https://accounts.google.com/o/oauth2/auth",
       "token_uri": "https://accounts.google.com/o/oauth2/token",
@@ -26,7 +26,9 @@ This is how a secret JSON should look like when the file is opened.
       "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/whatever"
     }
 
-For a more detailed explanation, you can follow the guidelines below.
+Your service email account is the "client_email" attribute from the secret JSON.
+
+For a more detailed explanation on how to get this secret JSON, you can follow the guidelines below.
 
 
 Create a project

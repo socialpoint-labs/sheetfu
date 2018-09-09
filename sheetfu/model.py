@@ -10,7 +10,7 @@
 """
 
 
-from sheetfu.helpers import convert_a1_to_coordinates, convert_coordinates_to_a1
+from sheetfu.helpers import convert_a1_to_coordinates, convert_coordinates_to_a1, rgb_to_hex, hex_to_rgb
 from sheetfu.exceptions import SheetNameNoMatchError, SheetIdNoMatchError, NoDataRangeError, SizeNotMatchingException
 
 
@@ -265,8 +265,13 @@ class Range:
             for column in range(0, self.coordinates.number_of_columns):
                 try:
                     background_value = values[0]["rowData"][row]["values"][column]["effectiveFormat"]["backgroundColor"]
-                    if background_value == {"red": 1, "green": 1, "blue": 1}:
-                        background_value = ""
+                    if background_value:
+                        background_value = rgb_to_hex(**background_value)
+
+                        # we prefer empty string instead of white hex color
+                        if background_value == '#ffffff':
+                            background_value = ''           # todo: clean this horrible double if
+
                     data_row.append(background_value)
                 except (KeyError, IndexError):
                     data_row.append("")
@@ -284,9 +289,9 @@ class Range:
             row_data = {'values': []}
             for background in row:
                 if background:
-                    row_data['values'].append({"userEnteredFormat": {'backgroundColor': background}})
+                    row_data['values'].append({"userEnteredFormat": {'backgroundColor': hex_to_rgb(background)}})
                 else:
-                    row_data['values'].append({"userEnteredFormat": {'backgroundColor': ''}})
+                    row_data['values'].append({"userEnteredFormat": {'backgroundColor': hex_to_rgb('#ffffff')}})
             rows.append(row_data)
         self.make_set_request(field='userEnteredFormat.backgroundColor', rows=rows)
 
@@ -325,6 +330,52 @@ class Range:
                     row_data['values'].append({'note': ''})
             rows.append(row_data)
         return self.make_set_request(field='note', rows=rows)
+
+    def get_font_colors(self):
+        """
+        Get the font colors of the Range.
+        :return: 2D array of the font colors, of size matching the range coordinates.
+        """
+        response = self.make_get_request('font_color')
+        data = []
+        values = response["sheets"][0]["data"]
+        for row in range(0, self.coordinates.number_of_rows):
+            data_row = []
+            for column in range(0, self.coordinates.number_of_columns):
+                try:
+                    cell = values[0]["rowData"][row]["values"][column]
+                    font_color = cell["effectiveFormat"]['textFormat']["foregroundColor"]
+                    if font_color or font_color == {}:
+                        font_color = rgb_to_hex(**font_color)
+                        # we prefer empty string instead of white hex color
+                        if font_color == '#000000':
+                            font_color = ''           # todo: clean this horrible double if
+
+                    data_row.append(font_color)
+                except (KeyError, IndexError):
+                    data_row.append("")
+            data.append(data_row)
+        return data
+
+    @check_size
+    def set_font_colors(self, backgrounds):
+        """
+        Set font colors for the Range.
+        :param backgrounds: 2D array of font colors (size must match range coordinates).
+        """
+        rows = []
+        for row in backgrounds:
+            row_data = {'values': []}
+            for font_color in row:
+                if font_color:
+                    font_color = hex_to_rgb(font_color)
+                else:
+                    font_color = hex_to_rgb('#000000')
+                row_data['values'].append(
+                    {"userEnteredFormat": {'textFormat': {'foregroundColor': font_color}}}
+                )
+            rows.append(row_data)
+        self.make_set_request(field='userEnteredFormat.textFormat.foregroundColor', rows=rows)
 
     def get_formulas(self):
         """
@@ -366,6 +417,7 @@ class Range:
         :param rows: the 2D arrays with size matching range coordinates.
         :return: raw response from the API.
         """
+
         body = {
             'requests': [
                 {'updateCells': {
@@ -381,7 +433,6 @@ class Range:
                 }}
             ]
         }
-        print(body)
         response = self.client.sheet_service.spreadsheets().batchUpdate(
             spreadsheetId=self.sheet.spreadsheet_id,
             body=body
@@ -419,3 +470,67 @@ class Range:
         )
         self.coordinates = convert_a1_to_coordinates(self.a1)
 
+    def make_get_request_v2(self, dimension, cell_parser):
+
+        # first we request data to the API
+        request = self.client.sheet_service.spreadsheets().get(
+            spreadsheetId=self.sheet.spreadsheet_id,
+            includeGridData=True,
+            ranges=[self.a1],
+            fields=self.fields[dimension]
+        )
+        response = request.execute()
+
+        # now we parse the rows from the response using the cell parser
+        data = []
+        values = response["sheets"][0]["data"]
+
+        for row in range(0, self.coordinates.number_of_rows):
+            data_row = []
+            for column in range(0, self.coordinates.number_of_columns):
+                try:
+                    cell = values[0]["rowData"][row]["values"][column]
+                    data_row.append(cell_parser(cell))
+
+                except (KeyError, IndexError):
+                    data_row.append("")
+
+            data.append(data_row)
+        return data
+
+    def make_set_request_v2(self, field, data, set_parser):
+        """
+        Make a set request for the range.
+        :param field: the targeted field.
+        :param rows: the 2D arrays with size matching range coordinates.
+        :return: raw response from the API.
+        """
+
+        # Parsing the rows to be in API format
+        rows = []
+        for row in data:
+            row_data = {'values': []}
+            for cell in row:
+                row_data['values'].append(set_parser(cell))
+            rows.append(row_data)
+
+        body = {
+            'requests': [
+                {'updateCells': {
+                    'range': {
+                        "sheetId": self.sheet.sid,
+                        "startRowIndex": self.coordinates.row - 1,
+                        "endRowIndex": self.coordinates.row + self.coordinates.number_of_rows,
+                        "startColumnIndex": self.coordinates.column - 1,
+                        "endColumnIndex": self.coordinates.column + self.coordinates.number_of_columns
+                    },
+                    'fields': field,
+                    'rows': rows
+                }}
+            ]
+        }
+        response = self.client.sheet_service.spreadsheets().batchUpdate(
+            spreadsheetId=self.sheet.spreadsheet_id,
+            body=body
+        ).execute()
+        return response

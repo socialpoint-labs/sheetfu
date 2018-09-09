@@ -15,21 +15,45 @@ class CellParsers:
 
     @staticmethod
     def set_background(cell):
-        pass
+        if cell:
+            cell_background = hex_to_rgb(cell)
+        else:
+            cell_background = hex_to_rgb('#ffffff')
+        return {"userEnteredFormat": {'backgroundColor': cell_background}}
 
     @staticmethod
     def get_note(cell):
-        pass
+        note = cell["note"]
+        if not note:
+            return ''
+        return note
 
     @staticmethod
     def set_note(cell):
-        pass
+        if cell:
+            note = cell
+        else:
+            note = ''
+        return {'note': note}
 
     @staticmethod
     def get_font_color(cell):
-        pass
+        font_color = cell["effectiveFormat"]['textFormat']["foregroundColor"]
+        if font_color or font_color == {}:
+            font_color = rgb_to_hex(**font_color)
+
+            # we prefer empty string instead of repeating black hex color
+            if font_color == '#000000':
+                font_color = ''
+
+        return font_color
 
     @staticmethod
     def set_font_color(cell):
-        pass
+        if cell:
+            font_color = hex_to_rgb(cell)
+        else:
+            font_color = hex_to_rgb('#000000')
+        return {"userEnteredFormat": {'textFormat': {'foregroundColor': font_color}}}
+
 

@@ -12,6 +12,7 @@
 
 from sheetfu.helpers import convert_a1_to_coordinates, convert_coordinates_to_a1, rgb_to_hex, hex_to_rgb
 from sheetfu.exceptions import SheetNameNoMatchError, SheetIdNoMatchError, NoDataRangeError, SizeNotMatchingException
+from sheetfu.parsers import CellParsers
 
 
 class Spreadsheet:
@@ -534,3 +535,9 @@ class Range:
             body=body
         ).execute()
         return response
+
+    def get_backgrounds_v2(self):
+        return self.make_get_request_v2(
+            dimension='background',
+            cell_parser=CellParsers.get_background
+        )

@@ -55,10 +55,3 @@ class TestGettersFromDataRange:
         assert len(backgrounds) == self.data_range.coordinates.number_of_rows
         for row in backgrounds:
             assert len(row) == self.data_range.coordinates.number_of_columns
-
-
-# class TestGettersFromFullRange:
-#
-#     fixtures = ['get_backgrounds.json', 'get_notes.json', 'get_fonts.json']
-#     http_sheets_mocks = mock_sheets_responses(fixtures)
-#     client = SpreadsheetApp(http=http_sheets_mocks)

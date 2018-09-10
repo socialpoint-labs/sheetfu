@@ -4,6 +4,14 @@ from sheetfu.helpers import rgb_to_hex, hex_to_rgb
 class CellParsers:
 
     @staticmethod
+    def get_value(cell):
+        return
+
+    @staticmethod
+    def set_value(cell):
+        return
+
+    @staticmethod
     def get_background(cell):
         background_value = cell["effectiveFormat"]["backgroundColor"]
         background_value = rgb_to_hex(**background_value)
@@ -55,5 +63,20 @@ class CellParsers:
         else:
             font_color = hex_to_rgb('#000000')
         return {"userEnteredFormat": {'textFormat': {'foregroundColor': font_color}}}
+
+    @staticmethod
+    def get_formula(cell):
+        formula = cell["formula"]
+        if not formula:
+            return ''
+        return formula
+
+    @staticmethod
+    def set_formula(cell):
+        if cell:
+            formula = cell
+        else:
+            formula = ''
+        return {'formula': formula}
 
 

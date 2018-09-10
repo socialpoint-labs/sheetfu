@@ -195,14 +195,6 @@ class Range:
         if self.a1 is None:
             self.values = self.get_values()
 
-        # Field masks registry.
-        self.fields = {
-            "note": "sheets/data/rowData/values/note",
-            "background": "sheets/data/rowData/values/effectiveFormat/backgroundColor",
-            "formula": "sheets/data/rowData/values/userEnteredValue/formulaValue",
-            "font_color": "sheets/data/rowData/values/effectiveFormat/textFormat/foregroundColor",
-        }
-
         # placeholder for putting requests object if we
         # want to send multiple requests in one api call.
         self.batches = list()
@@ -213,10 +205,11 @@ class Range:
             a1 = self.sheet.name
         return '<Range object {}>'.format(a1)
 
-    def make_get_request(self, dimension, cell_parser):
+    def make_get_request(self, field_mask, cell_parser):
         """
         Make a get request for the range.
-        :param dimension: The targeted dimension (node, background, formula, ...).
+        :param field_mask: The targeted dimension (node, background, formula, ...).
+        :param cell_parser: Function to run to parse cell data as expected.
         :return: The raw response of the request.
         """
         # first we request data to the API
@@ -224,7 +217,7 @@ class Range:
             spreadsheetId=self.sheet.spreadsheet_id,
             includeGridData=True,
             ranges=[self.a1],
-            fields=self.fields[dimension]
+            fields=field_mask
         )
         response = request.execute()
 
@@ -282,6 +275,7 @@ class Range:
                 spreadsheetId=self.sheet.spreadsheet_id,
                 body=body
             ).execute()
+
         return self.batches.append(request)
 
     def get_values(self, from_cache=True):
@@ -340,7 +334,7 @@ class Range:
         :return: 2D matrix of the colors in hex format.
         """
         return self.make_get_request(
-            dimension='background',
+            field_mask="sheets/data/rowData/values/effectiveFormat/backgroundColor",
             cell_parser=CellParsers.get_background
         )
 
@@ -363,7 +357,7 @@ class Range:
         :return: 2D array of the notes, of size matching the range coordinates.
         """
         return self.make_get_request(
-            dimension='note',
+            field_mask="sheets/data/rowData/values/note",
             cell_parser=CellParsers.get_note
         )
 
@@ -386,7 +380,7 @@ class Range:
         :return: 2D array of the font colors, of size matching the range coordinates.
         """
         return self.make_get_request(
-            dimension='font_color',
+            field_mask="sheets/data/rowData/values/effectiveFormat/textFormat/foregroundColor",
             cell_parser=CellParsers.get_font_color
         )
 
@@ -408,8 +402,10 @@ class Range:
         Get the formulas of the Range.
         :return: 2D array of the formulas strings, of size matching the range coordinates.
         """
-        data = self.make_get_request('formula')
-        # todo
+        data = self.make_get_request(
+            field_mask="sheets/data/rowData/values/userEnteredValue/formulaValue",
+            cell_parser=CellParsers.get_formula
+        )
         return data
 
     @check_size

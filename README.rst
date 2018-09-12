@@ -25,10 +25,10 @@ A Simple Example
 
     from sheetfu import SpreadsheetApp
 
-    spreadsheet = SpreadsheetApp('path/to/secret.json').open_by_id('a_spreadsheet_id')
+    spreadsheet = SpreadsheetApp('path/to/secret.json').open_by_id('HGjhg45HjHgjJgjHgJhgjhgmnJhkjhKjh')
     sheet = spreadsheet.get_sheet_by_name('Sheet1')
-    data_range = sheet.get_data_range()
-    backgrounds = data_range.get_backgrounds()    # returns a 2D matrix of background colors.
+    data_range = sheet.get_data_range()           # returns the sheet range that contains data.
+    backgrounds = data_range.get_backgrounds()    # returns a 2D matrix of background colors of the range.
 
 
 Contributing
@@ -47,3 +47,5 @@ Links
 * Code: https://github.com/socialpoint-labs/sheetfu
 * Issue tracker: https://github.com/socialpoint-labs/sheetfu/issues
 
+
+.. _pip: https://pip.pypa.io/en/stable/quickstart/

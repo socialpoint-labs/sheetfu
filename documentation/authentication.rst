@@ -2,10 +2,11 @@ Authentication
 ==============
 
 
-To be able to connect Sheetfu to spreadsheets you need first to create a google cloud project at
-https://console.cloud.google.com, with the Spreadsheet and the Drive APIs enabled (Read and Write access if you want to edit).
-Then create a service account within that project:
- - to get your service account secret JSON, needed for instantiating your python SpreadsheetApp object.
+To be able to connect Sheetfu to spreadsheets you need to create a google cloud project at
+https://console.cloud.google.com, with the Spreadsheet and the Drive APIs enabled.
+
+Once your project is created, create a service account within that project:
+ - to get your service account secret JSON, needed for instantiating your Sheetfu SpreadsheetApp object.
  - to get your service email account (email you need to give permission on any spreadsheet you want to interact with).
 
 
@@ -27,6 +28,20 @@ This is how a secret JSON should look like when the file is opened.
     }
 
 Your service email account is the "client_email" attribute from the secret JSON.
+
+Once you have your secret.json file, you can add it to your Python code as follow;
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+    # to read a spreadsheet, you need your service account
+    # to have permission to read it.
+    spreadsheet = client.open_by_id('1VZ8tXVWRn_h0nkvXkjfhdnffj5w68olM8Gz2oE4DAP-BY')
+
+
 
 For a more detailed explanation on how to get this secret JSON, you can follow the guidelines below.
 
@@ -59,6 +74,9 @@ Create a service account
 You now need to create a service account. Click on "Credentials" from the APIs & Services dashboard menu. You should be
 prompted with the kind of account you want to create. You must select "Service account key". After choosing this option,
 then you can create the service account as shown in screenshot below.
+
+After completing this step, your browser should download a secret json file, which is the file that needs to be put in
+your project.
 
 
 

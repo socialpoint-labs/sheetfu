@@ -18,7 +18,7 @@ This is how a secret JSON should look like when the file is opened.
       "type": "service_account",
       "project_id": "spreadsheet-api-whatever",
       "private_key_id": "alotofdigits",
-      "private_key": "-----BEGIN PRIVATE KEY-----\nA VERY VERY VERY VERY VERY LONG STRING\n-----END PRIVATE KEY-----",
+      "private_key": "-----BEGIN PRIVATE KEY-----\nA VERY LONG STRING\n-----END PRIVATE KEY-----",
       "client_email": "yourserviceclientemail@whatever.iam.gserviceaccount.com",
       "client_id": "someclientid",
       "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -39,7 +39,7 @@ Once you have your secret.json file, you can add it to your Python code as follo
 
     # to read a spreadsheet, you need your service account
     # to have permission to read it.
-    spreadsheet = client.open_by_id('1VZ8tXVWRn_h0nkvXkjfhdnffj5w68olM8Gz2oE4DAP-BY')
+    spreadsheet = sa.open_by_id('1VZ8tXVWRn_h0nkvXkjfhdnffj5w68olM8Gz2oE4DAP-BY')
 
 
 
@@ -49,9 +49,9 @@ For a more detailed explanation on how to get this secret JSON, you can follow t
 Create a project
 ----------------
 
-Go to console and find the option to create a new project. You will then be prompted for a project name, as shown below.
+Go to console and find the option to create a new project. You will then be prompted for a project name.
 
-INSERT SCREENSHOT HERE
+.. image:: images/auth_create_project.png
 
 
 
@@ -67,16 +67,27 @@ You should now reach a new interface that covers the APIs the project can access
 First click on the button "Enable APIs and Services". You will reach a new interface from where you should search for
 the Spreadsheet and the Drive APIs to finally enable them.
 
+.. image:: images/auth_enable_apis.png
+
+
 
 Create a service account
 ------------------------
 
 You now need to create a service account. Click on "Credentials" from the APIs & Services dashboard menu. You should be
-prompted with the kind of account you want to create. You must select "Service account key". After choosing this option,
-then you can create the service account as shown in screenshot below.
+prompted with the kind of account you want to create. You must select "Service account key".
+
+.. image:: images/auth_choose_service_key.png
+
+
+After choosing this option, then you can create the service account as shown below.
+
+
+.. image:: images/auth_new_service_account.png
+
 
 After completing this step, your browser should download a secret json file, which is the file that needs to be put in
-your project.
+your project for Sheetfu to work properly.
 
 
 

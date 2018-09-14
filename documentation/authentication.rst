@@ -80,10 +80,15 @@ prompted with the kind of account you want to create. You must select "Service a
 .. image:: images/auth_choose_service_key.png
 
 
+
+
+
 After choosing this option, then you can create the service account as shown below.
 
 
 .. image:: images/auth_new_service_account.png
+
+
 
 
 After completing this step, your browser should download a secret json file, which is the file that needs to be put in

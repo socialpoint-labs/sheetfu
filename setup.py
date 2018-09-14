@@ -20,7 +20,16 @@ setup(
     author_email='phil.oger@gmail.com',
     url='https://github.com/socialpoint-labs/sheetfu',
     keywords=['spreadsheets', 'google-spreadsheets'],
-    install_requires=['google-api-python-client>=1.7.4', 'oauth2client>=4.1.2'],
+    install_requires=[
+        'google-api-python-client>=1.7.4',
+        'oauth2client>=4.1.2'
+    ],
+    extras_require={
+        'dev': [
+            'pytest>=3',
+            'coverage'
+        ]
+    },
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",

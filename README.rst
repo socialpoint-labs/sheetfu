@@ -40,6 +40,10 @@ A Simple Example
     data_range.set_background('#ffffff')          # set every cell font colors to white
 
 
+To obtain your secret json file, you can refer to `the authentication tutorial`_.
+
+.. _the authentication tutorial: https://github.com/socialpoint-labs/sheetfu/blob/master/documentation/authentication.rst
+
 
 Contributing
 ------------

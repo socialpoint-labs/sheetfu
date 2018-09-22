@@ -9,7 +9,8 @@
     :license: MIT, see LICENSE for more details.
 """
 
-__version__ = '0.3'
+__version__ = '0.4'
+
 
 from sheetfu.client import SpreadsheetApp
 from sheetfu.modules.table import Table

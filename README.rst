@@ -1,11 +1,13 @@
 Sheetfu
 =======
 
+.. image:: https://travis-ci.org/socialpoint-labs/sheetfu.svg?branch=master
+    :target: https://travis-ci.org/socialpoint-labs/sheetfu
 
 Sheetfu was built to interacts with Google Sheets with a simple, intuitive, and fast API.
 The primary goal of this library is to adapt the Google App Script API for spreadsheets,
 to Python. With Sheetfu, you can easily get or set cell values, background colors, font
-colors or any other format attributes.
+colors or any other cell attributes.
 
 
 Installing
@@ -27,8 +29,16 @@ A Simple Example
 
     spreadsheet = SpreadsheetApp('path/to/secret.json').open_by_id('HGjhg45HjHgjJgjHgJhgjhgmnJhkjhKjh')
     sheet = spreadsheet.get_sheet_by_name('Sheet1')
-    data_range = sheet.get_data_range()           # returns the sheet range that contains data.
-    backgrounds = data_range.get_backgrounds()    # returns a 2D matrix of background colors of the range.
+    data_range = sheet.get_data_range()           # returns the sheet range that contains data values.
+
+    # this is how you get things
+    values = data_range.get_values()              # returns a 2D matrix of values.
+    backgrounds = data_range.get_backgrounds()    # returns a 2D matrix of background colors in hex format.
+
+    # this is how you set things
+    data_range.set_background('#000000')          # set every cell backgrounds to black
+    data_range.set_background('#ffffff')          # set every cell font colors to white
+
 
 
 Contributing

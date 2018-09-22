@@ -10,8 +10,9 @@
 """
 
 
-from sheetfu.helpers import convert_a1_to_coordinates, convert_coordinates_to_a1
+from sheetfu.helpers import convert_a1_to_coordinates, convert_coordinates_to_a1, rgb_to_hex, hex_to_rgb
 from sheetfu.exceptions import SheetNameNoMatchError, SheetIdNoMatchError, NoDataRangeError, SizeNotMatchingException
+from sheetfu.parsers import CellParsers
 
 
 class Spreadsheet:
@@ -140,36 +141,37 @@ class Sheet:
             sheet=self,
         )
 
-    def clear(self):
-        """
-        Clear everything from the sheet.
-        """
-        sheet_range = self.get_data_range()
-        sheet_range.clear()
-
 
 def check_size(f):
     """
     Decorator to check length of the 2D matrix to be set. Raise an error if lengths are not matching with Range
     object coordinates.
     """
-    def wrapper(range_object, data):
+    def wrapper(range_object, data, batch):
         if len(data) != range_object.coordinates.number_of_rows:
-            raise SizeNotMatchingException("Wrong number of rows. {} instead of {}".format(
-                len(data), range_object.coordinates.number_of_rows
-            ))
+            error_message = "Wrong number of rows. {} instead of {}".format(
+                len(data),
+                range_object.coordinates.number_of_rows
+            )
+            raise SizeNotMatchingException(error_message)
+
         for i, row in enumerate(data):
             if len(row) != range_object.coordinates.number_of_columns:
-                context = {"i": i, "columns": len(row), "expected": range_object.coordinates.number_of_columns}
-                raise SizeNotMatchingException("Wrong number of column in row {i}. {columns} instead of {expected}"
-                                               .format(**context))
+                context = {
+                    "i": i,
+                    "columns": len(row),
+                    "expected": range_object.coordinates.number_of_columns
+                }
+                error_message = "Wrong number of column in row {i}. {columns} instead of {expected}".format(**context)
+                raise SizeNotMatchingException(error_message)
+
         else:
-            return f(range_object, data)
+            return f(range_object, data, batch)
+
     return wrapper
 
 
 class Range:
-
     def __init__(self, client, sheet, a1=None):
         """
         Object to represent a range of cells in a sheet.
@@ -189,13 +191,9 @@ class Range:
         if self.a1 is None:
             self.values = self.get_values()
 
-        # Field masks registry.
-        self.fields = {
-            "note": "sheets/data/rowData/values/note",
-            "background": "sheets/data/rowData/values/effectiveFormat/backgroundColor",
-            "formula": "sheets/data/rowData/values/userEnteredValue/formulaValue",
-            "font_color": "sheets/data/rowData/values/effectiveFormat/textFormat/foregroundColor",
-        }
+        # placeholder for putting requests object if we
+        # want to send multiple requests in one api call.
+        self.batches = list()
 
     def __repr__(self):
         a1 = self.a1
@@ -203,11 +201,84 @@ class Range:
             a1 = self.sheet.name
         return '<Range object {}>'.format(a1)
 
+    def make_get_request(self, field_mask, cell_parser):
+        """
+        Make a get request for the range.
+        :param field_mask: The targeted dimension (node, background, formula, ...).
+        :param cell_parser: Function to run to parse cell data as expected.
+        :return: The raw response of the request.
+        """
+        # first we request data to the API
+        request = self.client.sheet_service.spreadsheets().get(
+            spreadsheetId=self.sheet.spreadsheet_id,
+            includeGridData=True,
+            ranges=[self.a1],
+            fields=field_mask
+        )
+        response = request.execute()
+
+        # now we parse the rows from the response using the cell parser
+        data = []
+        values = response["sheets"][0]["data"]
+
+        for row in range(0, self.coordinates.number_of_rows):
+            data_row = []
+            for column in range(0, self.coordinates.number_of_columns):
+                try:
+                    cell = values[0]["rowData"][row]["values"][column]
+                    data_row.append(cell_parser(cell))
+
+                except (KeyError, IndexError):
+                    data_row.append("")
+
+            data.append(data_row)
+        return data
+
+    def make_set_request(self, field, data, set_parser, batch=False):
+        """
+        Make a set request for the range.
+        :param field: the targeted field.
+        :param data: the 2D arrays with size matching range coordinates.
+        :param set_parser: the function to run as a cell parser.
+        :return: raw response from the API.
+        """
+        # Parsing the rows to be in API format
+        rows = []
+        for row in data:
+            row_data = {'values': []}
+            for cell in row:
+                row_data['values'].append(set_parser(cell))
+            rows.append(row_data)
+
+        # preparing the request
+        request = {
+            'updateCells': {
+                'range': {
+                    "sheetId": self.sheet.sid,
+                    "startRowIndex": self.coordinates.row - 1,
+                    "endRowIndex": self.coordinates.row + self.coordinates.number_of_rows,
+                    "startColumnIndex": self.coordinates.column - 1,
+                    "endColumnIndex": self.coordinates.column + self.coordinates.number_of_columns
+                },
+                'fields': field,
+                'rows': rows
+            }
+        }
+
+        if not batch:
+            body = {'requests': [request]}
+            return self.client.sheet_service.spreadsheets().batchUpdate(
+                spreadsheetId=self.sheet.spreadsheet_id,
+                body=body
+            ).execute()
+
+        return self.batches.append(request)
+
     def get_values(self, from_cache=True):
         """
         Get the values within the range.
         :param from_cache: If True(default) avoid making a request the data an extra time if the values were queried
-        already when instantiating.
+        already when instantiating. False if we want to query regardless.
         :return: 2D array of the values, of size matching the range coordinates.
         """
         if self.values and from_cache:
@@ -255,79 +326,104 @@ class Range:
     def get_backgrounds(self):
         """
         Get the backgrounds of the Range.
-        :return: 2D array of the backgrounds, of size matching the range coordinates.
+        :return: 2D array of the background colors, of size matching the range coordinates.
+        :return: 2D matrix of the colors in hex format.
         """
-        response = self.make_get_request('background')
-        data = []
-        values = response["sheets"][0]["data"]
-        for row in range(0, self.coordinates.number_of_rows):
-            data_row = []
-            for column in range(0, self.coordinates.number_of_columns):
-                try:
-                    background_value = values[0]["rowData"][row]["values"][column]["effectiveFormat"]["backgroundColor"]
-                    if background_value == {"red": 1, "green": 1, "blue": 1}:
-                        background_value = ""
-                    data_row.append(background_value)
-                except (KeyError, IndexError):
-                    data_row.append("")
-            data.append(data_row)
-        return data
+        return self.make_get_request(
+            field_mask="sheets/data/rowData/values/effectiveFormat/backgroundColor",
+            cell_parser=CellParsers.get_background
+        )
 
     @check_size
-    def set_backgrounds(self, backgrounds):
+    def set_backgrounds(self, backgrounds, batch=False):
         """
-        Set backgrounds for the Range.
-        :param backgrounds: 2D array of backgrounds (size must match range coordinates).
+        Set color backgrounds for the Range.
+        :param backgrounds: 2D array of notes (size must match range coordinates).
         """
-        self.make_set_request(field='backgroundColor', rows=backgrounds)
+        return self.make_set_request(
+            field='userEnteredFormat.backgroundColor',
+            data=backgrounds,
+            set_parser=CellParsers.set_background,
+            batch=batch
+        )
+
+    def set_background(self, background_color, batch=False):
+        backgrounds = list()
+        for row in range(0, self.coordinates.number_of_rows):
+            backgrounds.append(list())
+            for column in range(0, self.coordinates.number_of_columns):
+                backgrounds[row].append(background_color)
+
+        return self.set_backgrounds(backgrounds, batch)
 
     def get_notes(self):
         """
         Get the notes of the Range.
         :return: 2D array of the notes, of size matching the range coordinates.
         """
-        response = self.make_get_request('note')
-        data = []
-        values = response["sheets"][0]["data"]
-        for row in range(0, self.coordinates.number_of_rows):
-            data_row = []
-            for column in range(0, self.coordinates.number_of_columns):
-                try:
-                    note = values[0]["rowData"][row]["values"][column]["note"]
-                    data_row.append(note)
-                except (KeyError, IndexError):
-                    data_row.append("")
-            data.append(data_row)
-        return data
+        return self.make_get_request(
+            field_mask="sheets/data/rowData/values/note",
+            cell_parser=CellParsers.get_note
+        )
 
     @check_size
-    def set_notes(self, notes):
+    def set_notes(self, notes, batch=False):
         """
         Set notes for the Range.
         :param notes: 2D array of notes (size must match range coordinates).
         """
-        rows = []
-        for row in notes:
-            row_data = {'values': []}
-            for note in row:
-                if note:
-                    row_data['values'].append({'note': note})
-                else:
-                    row_data['values'].append({'note': ''})
-            rows.append(row_data)
-        return self.make_set_request(field='note', rows=rows)
+        return self.make_set_request(
+            field='note',
+            data=notes,
+            set_parser=CellParsers.set_note,
+            batch=batch
+        )
+
+    def get_font_colors(self):
+        """
+        Get the font colors of the Range.
+        :return: 2D array of the font colors, of size matching the range coordinates.
+        """
+        return self.make_get_request(
+            field_mask="sheets/data/rowData/values/effectiveFormat/textFormat/foregroundColor",
+            cell_parser=CellParsers.get_font_color
+        )
+
+    @check_size
+    def set_font_colors(self, colors, batch=False):
+        """
+        Set font colors for the Range.
+        :param colors: 2D array of font colors (size must match range coordinates).
+        """
+        return self.make_set_request(
+            field='userEnteredFormat.textFormat.foregroundColor',
+            data=colors,
+            set_parser=CellParsers.set_font_color,
+            batch=batch
+        )
+
+    def set_font_color(self, font_color, batch=False):
+        font_colors = list()
+        for row in range(0, self.coordinates.number_of_rows):
+            font_colors.append(list())
+            for column in range(0, self.coordinates.number_of_columns):
+                font_colors[row].append(font_color)
+
+        return self.set_font_colors(font_colors, batch)
 
     def get_formulas(self):
         """
         Get the formulas of the Range.
         :return: 2D array of the formulas strings, of size matching the range coordinates.
         """
-        data = self.make_get_request('formula')
-        # todo
+        data = self.make_get_request(
+            field_mask="sheets/data/rowData/values/userEnteredValue/formulaValue",
+            cell_parser=CellParsers.get_formula
+        )
         return data
 
     @check_size
-    def set_formulas(self, formulas):
+    def set_formulas(self, formulas, batch=False):
         """
         Set formulas for the Range.
         :param formulas: 2D array of formulas (size must match range coordinates).
@@ -335,52 +431,9 @@ class Range:
         # todo
         return formulas
 
-    def make_get_request(self, dimension):
-        """
-        Make a get request for the range.
-        :param dimension: The targeted dimension (node, background, formula, ...).
-        :return: The raw response of the request.
-        """
-        request = self.client.sheet_service.spreadsheets().get(
-            spreadsheetId=self.sheet.spreadsheet_id,
-            includeGridData=True,
-            ranges=[self.a1],
-            fields=self.fields[dimension]
-        )
-        response = request.execute()
-        return response
-
-    def make_set_request(self, field, rows):
-        """
-        Make a set request for the range.
-        :param field: the targeted field.
-        :param rows: the 2D arrays with size matching range coordinates.
-        :return: raw response from the API.
-        """
-        body = {
-            'requests': [
-                {'updateCells': {
-                    'range': {
-                        "sheetId": self.sheet.sid,
-                        "startRowIndex": self.coordinates.row - 1,
-                        "endRowIndex": self.coordinates.row + self.coordinates.number_of_rows,
-                        "startColumnIndex": self.coordinates.column - 1,
-                        "endColumnIndex": self.coordinates.column + self.coordinates.number_of_columns
-                    },
-                    'field': field,
-                    'rows': rows
-                }}
-            ]
-        }
-        response = self.client.sheet_service.spreadsheets().batchUpdate(
-            spreadsheetId=self.sheet.spreadsheet_id,
-            body=body
-        ).execute()
-        return response
-
     def persist_a1(self, response):
         """
-        If a1 attribute is None, it calculates the a1 notation and ramge coordinates based on the number of rows and
+        If a1 attribute is None, it calculates the a1 notation and range coordinates based on the number of rows and
         columns found in the response object.
         :param response: raw response of a request for values to google sheets API.
         """
@@ -409,3 +462,9 @@ class Range:
         )
         self.coordinates = convert_a1_to_coordinates(self.a1)
 
+    def push(self):
+        body = {'requests': [self.batches]}
+        return self.client.sheet_service.spreadsheets().batchUpdate(
+            spreadsheetId=self.sheet.spreadsheet_id,
+            body=body
+        ).execute()

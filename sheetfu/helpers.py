@@ -96,4 +96,4 @@ def hex_to_rgb(hex_color):
         hex_color = hex_color.replace('#', '')
 
     rgb = tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
-    return {'red': rgb[0] / 255, 'green': rgb[1] / 255, 'blue': rgb[2] / 255}
+    return {'red': rgb[0] / 255.0, 'green': rgb[1] / 255.0, 'blue': rgb[2] / 255.0}

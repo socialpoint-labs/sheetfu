@@ -14,7 +14,7 @@ class TestSpreadsheetApp:
 
     def test_create_spreadsheet(self):
         spreadsheet = self.client.create("test_spreadsheet")
-        assert type(spreadsheet) == Spreadsheet
+        assert isinstance(spreadsheet, Spreadsheet)
 
 
 class TestSpreadsheetAppInstances:

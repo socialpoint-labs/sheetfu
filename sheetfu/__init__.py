@@ -11,6 +11,7 @@
 
 __version__ = '0.4'
 
+
 from sheetfu.client import SpreadsheetApp
 from sheetfu.modules.table import Table
 

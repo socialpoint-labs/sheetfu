@@ -86,3 +86,14 @@ def convert_letter_to_column(letters_string):
         column_number += number_of_columns
     return column_number
 
+
+def rgb_to_hex(red=0, green=0, blue=0):
+    return "#{0:02x}{1:02x}{2:02x}".format(int(red*255), int(green*255), int(blue*255)).lower()
+
+
+def hex_to_rgb(hex_color):
+    if "#" in hex_color:
+        hex_color = hex_color.replace('#', '')
+
+    rgb = tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
+    return {'red': rgb[0] / 255.0, 'green': rgb[1] / 255.0, 'blue': rgb[2] / 255.0}

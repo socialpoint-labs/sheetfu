@@ -3,8 +3,8 @@ Introduction
 
 
 Sheetfu is a Python library that easily interacts with Google Sheets. Its API is simple, intuitive, and fast.
-For Google apps scripts users, the API will be familiar as the primary goal of this code is to adapt the app
-script API for spreadsheets to Python.
+For Google apps scripts users, the API will be familiar as the primary goal of this code is to adapt the
+original Javascript apps script API for spreadsheets to Python.
 
 For example, this is how you would get the backgrounds data for a given sheet range.
 

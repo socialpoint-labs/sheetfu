@@ -17,4 +17,5 @@ deploy-loc:
 	python setup.py install
 
 release:
-	python setup.py sdist bdist_wininst upload
+	python setup.py sdist bdist_wheel
+	twine upload dist/*

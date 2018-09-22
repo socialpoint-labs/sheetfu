@@ -141,26 +141,20 @@ class Sheet:
             sheet=self,
         )
 
-    def clear(self):
-        """
-        Clear everything from the sheet.
-        """
-        sheet_range = self.get_data_range()
-        sheet_range.clear()
-
 
 def check_size(f):
     """
     Decorator to check length of the 2D matrix to be set. Raise an error if lengths are not matching with Range
     object coordinates.
     """
-    def wrapper(range_object, data):
+    def wrapper(range_object, data, batch):
         if len(data) != range_object.coordinates.number_of_rows:
             error_message = "Wrong number of rows. {} instead of {}".format(
                 len(data),
                 range_object.coordinates.number_of_rows
             )
             raise SizeNotMatchingException(error_message)
+
         for i, row in enumerate(data):
             if len(row) != range_object.coordinates.number_of_columns:
                 context = {
@@ -170,8 +164,10 @@ def check_size(f):
                 }
                 error_message = "Wrong number of column in row {i}. {columns} instead of {expected}".format(**context)
                 raise SizeNotMatchingException(error_message)
+
         else:
-            return f(range_object, data)
+            return f(range_object, data, batch)
+
     return wrapper
 
 
@@ -351,6 +347,15 @@ class Range:
             batch=batch
         )
 
+    def set_background(self, background_color, batch=False):
+        backgrounds = list()
+        for row in range(0, self.coordinates.number_of_rows):
+            backgrounds.append(list())
+            for column in range(0, self.coordinates.number_of_columns):
+                backgrounds[row].append(background_color)
+
+        return self.set_backgrounds(backgrounds, batch)
+
     def get_notes(self):
         """
         Get the notes of the Range.
@@ -397,6 +402,15 @@ class Range:
             batch=batch
         )
 
+    def set_font_color(self, font_color, batch=False):
+        font_colors = list()
+        for row in range(0, self.coordinates.number_of_rows):
+            font_colors.append(list())
+            for column in range(0, self.coordinates.number_of_columns):
+                font_colors[row].append(font_color)
+
+        return self.set_font_colors(font_colors, batch)
+
     def get_formulas(self):
         """
         Get the formulas of the Range.
@@ -409,7 +423,7 @@ class Range:
         return data
 
     @check_size
-    def set_formulas(self, formulas):
+    def set_formulas(self, formulas, batch=False):
         """
         Set formulas for the Range.
         :param formulas: 2D array of formulas (size must match range coordinates).

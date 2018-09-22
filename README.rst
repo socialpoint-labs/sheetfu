@@ -4,6 +4,7 @@ Sheetfu
 .. image:: https://travis-ci.org/socialpoint-labs/sheetfu.svg?branch=master
     :target: https://travis-ci.org/socialpoint-labs/sheetfu
 
+
 Sheetfu was built to interacts with Google Sheets with a simple, intuitive, and fast API.
 The primary goal of this library is to adapt the Google App Script API for spreadsheets,
 to Python. With Sheetfu, you can easily get or set cell values, background colors, font
@@ -63,3 +64,8 @@ Links
 
 
 .. _pip: https://pip.pypa.io/en/stable/quickstart/
+
+
+If you are looking for the original sheetfu google apps script library, it has been relocated to `this page`_.
+
+.. _this page: https://github.com/socialpoint-labs/sheetfu-apps-script

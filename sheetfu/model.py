@@ -83,6 +83,13 @@ class Spreadsheet:
         else:
             raise SheetIdNoMatchError
 
+    def commit(self):
+        body = {'requests': [self.batches]}
+        return self.client.sheet_service.spreadsheets().batchUpdate(
+            spreadsheetId=self.id,
+            body=body
+        ).execute()
+
 
 class Sheet:
     """Sheet object from which Range objects are accessible."""
@@ -462,13 +469,6 @@ class Range:
             sheet_name=self.sheet.name
         )
         self.coordinates = convert_a1_to_coordinates(self.a1)
-
-    def commit(self):
-        body = {'requests': [self.sheet.spreadsheet.batches]}
-        return self.client.sheet_service.spreadsheets().batchUpdate(
-            spreadsheetId=self.sheet.spreadsheet.id,
-            body=body
-        ).execute()
 
     def get_cell(self, row, column):
         row_number = self.coordinates.row + row - 1

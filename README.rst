@@ -38,7 +38,7 @@ A Simple Example
 
     # this is how you set things
     data_range.set_background('#000000')          # set every cell backgrounds to black
-    data_range.set_background('#ffffff')          # set every cell font colors to white
+    data_range.set_font_color('#ffffff')          # set every cell font colors to white
 
 
 To obtain your secret json file, you can refer to `the authentication tutorial`_.

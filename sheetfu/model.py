@@ -27,6 +27,7 @@ class Spreadsheet:
         self.client = client
         self.id = spreadsheet_id
         self.sheets = self.get_sheets()
+        self.batches = list()
 
     def __repr__(self):
         return '<Spreadsheet object {}>'.format(self.id)
@@ -40,7 +41,7 @@ class Spreadsheet:
         """
         return Sheet(
             client=self.client,
-            spreadsheet_id=self.id,
+            spreadsheet=self,
             name=name,
             sid=sid
         )
@@ -82,11 +83,18 @@ class Spreadsheet:
         else:
             raise SheetIdNoMatchError
 
+    def commit(self):
+        body = {'requests': [self.batches]}
+        return self.client.sheet_service.spreadsheets().batchUpdate(
+            spreadsheetId=self.id,
+            body=body
+        ).execute()
+
 
 class Sheet:
     """Sheet object from which Range objects are accessible."""
 
-    def __init__(self, client, spreadsheet_id, name, sid):
+    def __init__(self, client, spreadsheet, name, sid):
         """
         Instantiate
         :param client: The sheet client (SpreadsheetApp object).
@@ -95,7 +103,7 @@ class Sheet:
         :param sid: The sheet id.
         """
         self.client = client
-        self.spreadsheet_id = spreadsheet_id
+        self.spreadsheet = spreadsheet
         self.name = name
         self.sid = sid
 
@@ -210,7 +218,7 @@ class Range:
         """
         # first we request data to the API
         request = self.client.sheet_service.spreadsheets().get(
-            spreadsheetId=self.sheet.spreadsheet_id,
+            spreadsheetId=self.sheet.spreadsheet.id,
             includeGridData=True,
             ranges=[self.a1],
             fields=field_mask
@@ -268,11 +276,11 @@ class Range:
         if not batch:
             body = {'requests': [request]}
             return self.client.sheet_service.spreadsheets().batchUpdate(
-                spreadsheetId=self.sheet.spreadsheet_id,
+                spreadsheetId=self.sheet.spreadsheet.id,
                 body=body
             ).execute()
 
-        return self.batches.append(request)
+        return self.sheet.spreadsheet.append(request)
 
     def get_values(self, from_cache=True):
         """
@@ -286,7 +294,7 @@ class Range:
 
         target_range = self.a1 if self.a1 is not None else self.sheet.name
         request = self.client.sheet_service.spreadsheets().values().get(
-            spreadsheetId=self.sheet.spreadsheet_id,
+            spreadsheetId=self.sheet.spreadsheet.id,
             range=target_range
         )
         response = request.execute()
@@ -316,7 +324,7 @@ class Range:
             'values': values
         }
         request = self.client.sheet_service.spreadsheets().values().update(
-            spreadsheetId=self.sheet.spreadsheet_id,
+            spreadsheetId=self.sheet.spreadsheet.id,
             range=self.a1,
             valueInputOption="USER_ENTERED",
             body=body_request
@@ -462,9 +470,13 @@ class Range:
         )
         self.coordinates = convert_a1_to_coordinates(self.a1)
 
-    def push(self):
-        body = {'requests': [self.batches]}
-        return self.client.sheet_service.spreadsheets().batchUpdate(
-            spreadsheetId=self.sheet.spreadsheet_id,
-            body=body
-        ).execute()
+    def get_cell(self, row, column):
+        row_number = self.coordinates.row + row - 1
+        column_number = self.coordinates.column + column - 1
+        a1 = convert_coordinates_to_a1(row_number, column_number)
+        return Range(
+            client=self.client,
+            sheet=self.sheet,
+            a1=a1
+        )
+

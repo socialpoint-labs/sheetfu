@@ -106,6 +106,7 @@ class Sheet:
         self.spreadsheet = spreadsheet
         self.name = name
         self.sid = sid
+        self.batches = list()
 
     def __repr__(self):
         return '<Sheet object {}>'.format(self.name)
@@ -192,15 +193,17 @@ class Range:
         self.a1 = a1
         self.coordinates = None if self.a1 is None else convert_a1_to_coordinates(self.a1)
 
-        # we may extract the values when instantiating in case we do not have the
-        # A1 range (typically when using the get_data_range method from the Sheet
-        # object). This gives us the opportunity to figure out the a1 notation.
+        # there is a special case when instantiating if we do not know yet the
+        # A1 range. This gives us the opportunity to figure out the a1 notation in
+        # case we do not have it when instantiating. This happens only when using
+        # the get_data_range Sheet method. In any other cases, the A1 notation is
+        # an information we have and therefore no requests are made when instantiating.
         self.values = None
         if self.a1 is None:
             self.values = self.get_values()
 
         # placeholder for putting requests object if we
-        # want to send multiple requests in one api call.
+        # want to send multiple set requests in one api call.
         self.batches = list()
 
     def __repr__(self):
@@ -242,7 +245,7 @@ class Range:
             data.append(data_row)
         return data
 
-    def make_set_request(self, field, data, set_parser, batch=False):
+    def make_set_request(self, field, data, set_parser, batch_to=None):
         """
         Make a set request for the range.
         :param field: the targeted field.
@@ -273,7 +276,7 @@ class Range:
             }
         }
 
-        if not batch:
+        if batch_to is None:
             body = {'requests': [request]}
             return self.client.sheet_service.spreadsheets().batchUpdate(
                 spreadsheetId=self.sheet.spreadsheet.id,
@@ -343,7 +346,7 @@ class Range:
         )
 
     @check_size
-    def set_backgrounds(self, backgrounds, batch=False):
+    def set_backgrounds(self, backgrounds, batch_to=None):
         """
         Set color backgrounds for the Range.
         :param backgrounds: 2D array of notes (size must match range coordinates).
@@ -352,17 +355,17 @@ class Range:
             field='userEnteredFormat.backgroundColor',
             data=backgrounds,
             set_parser=CellParsers.set_background,
-            batch=batch
+            batch_to=batch_to
         )
 
-    def set_background(self, background_color, batch=False):
+    def set_background(self, background_color, batch_to=None):
         backgrounds = list()
         for row in range(0, self.coordinates.number_of_rows):
             backgrounds.append(list())
             for column in range(0, self.coordinates.number_of_columns):
                 backgrounds[row].append(background_color)
 
-        return self.set_backgrounds(backgrounds, batch)
+        return self.set_backgrounds(backgrounds, batch_to)
 
     def get_notes(self):
         """
@@ -375,7 +378,7 @@ class Range:
         )
 
     @check_size
-    def set_notes(self, notes, batch=False):
+    def set_notes(self, notes, batch_to=False):
         """
         Set notes for the Range.
         :param notes: 2D array of notes (size must match range coordinates).
@@ -384,7 +387,7 @@ class Range:
             field='note',
             data=notes,
             set_parser=CellParsers.set_note,
-            batch=batch
+            batch_to=batch_to
         )
 
     def get_font_colors(self):
@@ -398,7 +401,7 @@ class Range:
         )
 
     @check_size
-    def set_font_colors(self, colors, batch=False):
+    def set_font_colors(self, colors, batch_to=None):
         """
         Set font colors for the Range.
         :param colors: 2D array of font colors (size must match range coordinates).
@@ -407,17 +410,17 @@ class Range:
             field='userEnteredFormat.textFormat.foregroundColor',
             data=colors,
             set_parser=CellParsers.set_font_color,
-            batch=batch
+            batch_to=batch_to
         )
 
-    def set_font_color(self, font_color, batch=False):
+    def set_font_color(self, font_color, batch_to=None):
         font_colors = list()
         for row in range(0, self.coordinates.number_of_rows):
             font_colors.append(list())
             for column in range(0, self.coordinates.number_of_columns):
                 font_colors[row].append(font_color)
 
-        return self.set_font_colors(font_colors, batch)
+        return self.set_font_colors(font_colors, batch_to)
 
     def get_formulas(self):
         """
@@ -431,7 +434,7 @@ class Range:
         return data
 
     @check_size
-    def set_formulas(self, formulas, batch=False):
+    def set_formulas(self, formulas, batch_to=None):
         """
         Set formulas for the Range.
         :param formulas: 2D array of formulas (size must match range coordinates).
@@ -479,4 +482,3 @@ class Range:
             sheet=self.sheet,
             a1=a1
         )
-

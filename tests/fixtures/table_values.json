@@ -1,0 +1,26 @@
+{
+  "majorDimension":"ROWS",
+  "values":[
+    [
+      "name",
+      "surname",
+      "age"
+    ],
+    [
+      "philippe",
+      "oger",
+      "37"
+    ],
+    [
+      "john",
+      "doe",
+      "25"
+    ],
+    [
+      "jane",
+      "doe",
+      "25"
+    ]
+  ],
+  "range":"Sheet1!A1:C4"
+}

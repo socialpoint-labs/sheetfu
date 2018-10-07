@@ -439,7 +439,7 @@ class Range:
         Set formulas for the Range.
         :param formulas: 2D array of formulas (size must match range coordinates).
         """
-        # todo
+        # todo: set formula.
         return formulas
 
     def persist_a1(self, response):
@@ -468,12 +468,11 @@ class Range:
             row=first_cell_coordinates.row,
             column=first_cell_coordinates.column,
             number_of_row=number_of_rows,
-            number_of_column=number_of_columns,
-            sheet_name=self.sheet.name
+            number_of_column=number_of_columns
         )
         self.coordinates = convert_a1_to_coordinates(self.a1)
 
-    def get_cell(self, row, column):
+    def get_cell(self, row, column):        # todo: have a custom error when row and/or column is 0
         row_number = self.coordinates.row + row - 1
         column_number = self.coordinates.column + column - 1
         a1 = convert_coordinates_to_a1(row_number, column_number)

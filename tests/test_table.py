@@ -2,6 +2,7 @@ from sheetfu import Table
 from sheetfu.modules.table import Item
 from tests.utils import mock_google_sheets_responses
 from sheetfu import SpreadsheetApp
+from sheetfu.model import Range
 
 
 class TestTableRanges:
@@ -77,3 +78,49 @@ class TestItem:
     def test_get_field_font_colors(self):
         assert self.item.get_field_font_color('name') == '#000fff'
         assert self.item.get_field_font_color('surname') == '#000000'
+
+
+class TestTableItemRanges:
+    http_mocks = mock_google_sheets_responses([
+        'table_get_sheets.json',
+        'table_values.json',
+        'table_notes.json',
+        'table_backgrounds.json',
+        'table_font_colors.json'
+    ])
+
+    sa = SpreadsheetApp(http=http_mocks)
+    table_range = sa.open_by_id('whatever').get_sheet_by_name('Sheet1').get_data_range()
+    table = Table(
+        full_range=table_range,
+        notes=True,
+        backgrounds=True,
+        font_colors=True
+    )
+
+    def test_table_range(self):
+        assert self.table.full_range.a1 == 'A1:C4'
+
+    def test_table_items_range(self):
+        assert self.table.items_range.a1 == 'A2:C4'
+
+    def test_first_item_range(self):
+        first_item = self.table[0]
+        assert isinstance(first_item, Item)
+        assert first_item.get_range().a1 == 'A2:C2'
+
+    def test_field_ranges_type(self):
+        second_item = self.table[1]
+        assert isinstance(second_item, Item)
+        assert second_item.get_range().a1 == 'A3:C3'
+
+        for field in ['name', 'surname', 'age']:
+            field_range = second_item.get_field_range(field)
+            assert isinstance(field_range, Range)
+
+    def test_field_ranges(self):
+        third_item = self.table[2]
+        assert third_item.get_field_range('name').a1 == 'A4'
+        assert third_item.get_field_range('surname').a1 == 'B4'
+        assert third_item.get_field_range('age').a1 == 'C4'
+

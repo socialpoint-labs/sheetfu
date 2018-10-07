@@ -44,7 +44,7 @@ class TestGettersFromDataRange:
     data_range = client.open_by_id('spreadsheet id').get_sheet_by_name('people').get_data_range()
 
     def test_a1_notation_is_right(self):
-        assert self.data_range.a1 == "people!A1:D21"
+        assert self.data_range.a1 == "A1:D21"
 
     def test_values_already_queried(self):
         assert self.data_range.values is not None
@@ -55,3 +55,17 @@ class TestGettersFromDataRange:
         assert len(backgrounds) == self.data_range.coordinates.number_of_rows
         for row in backgrounds:
             assert len(row) == self.data_range.coordinates.number_of_columns
+
+
+class TestCellRange:
+
+    http_sheets_mocks = mock_range_instance()
+    client = SpreadsheetApp(http=http_sheets_mocks)
+    data_range = client.open_by_id('spreadsheet id').get_sheet_by_name('people').get_data_range()
+
+    def test_a1(self):
+        assert self.data_range.a1 == 'A1:D21'
+
+    def test_get_cell(self):
+        assert self.data_range.get_cell(1, 1).a1 == 'A1'
+

@@ -25,6 +25,9 @@ class Table:
     def __iter__(self):
         return iter(self.items)
 
+    def __getitem__(self, index):
+        return self.items[index]
+
     def get_items_range(self):
         a1 = convert_coordinates_to_a1(
             row=self.full_range.coordinates.row + 1,
@@ -92,3 +95,24 @@ class Item:
 
     def get_field_font_color(self, target_field):
         return self.font_colors[self.get_index(target_field)]
+
+    def get_range(self):
+        a1 = convert_coordinates_to_a1(
+            row= self.table.items_range.coordinates.row + self.row_index,
+            column=self.table.items_range.coordinates.column,
+            number_of_row=1,
+            number_of_column=self.table.items_range.coordinates.number_of_columns
+        )
+        return Range(
+            client=self.table.full_range.client,
+            sheet=self.table.full_range.sheet,
+            a1=a1
+        )
+
+    def get_field_range(self, target_field):
+        # rows and columns index start at 1
+        # row will always be 1 in that case
+        # as an item is contained in one row
+        row = 1
+        column = self.get_index(target_field) + 1
+        return self.get_range().get_cell(row, column)

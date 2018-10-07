@@ -20,7 +20,10 @@ class Table:
         self.batches = list()
 
     def __len__(self):
-        return self.items.__len__
+        return len(self.items)
+
+    def __iter__(self):
+        return iter(self.items)
 
     def get_items_range(self):
         a1 = convert_coordinates_to_a1(
@@ -64,8 +67,7 @@ class Table:
 
 class Item:
 
-    def __init__(self, parent_table, row_index, header, values, notes=None, backgrounds=None, font_colors=None):
-        self.table = parent_table
+    def __init__(self, row_index, header, values, notes=None, backgrounds=None, font_colors=None, parent_table=None):
         self.row_index = row_index
         self.header = header
         self.values = values
@@ -73,3 +75,20 @@ class Item:
         self.backgrounds = backgrounds
         self.font_colors = font_colors
 
+        # needed so we can commit things at table level easily
+        self.table = parent_table
+
+    def get_index(self, field_name):
+        return self.header.index(field_name)
+
+    def get_field_value(self, target_field):
+        return self.values[self.get_index(target_field)]
+
+    def get_field_note(self, target_field):
+        return self.notes[self.get_index(target_field)]
+
+    def get_field_background(self, target_field):
+        return self.backgrounds[self.get_index(target_field)]
+
+    def get_field_font_color(self, target_field):
+        return self.font_colors[self.get_index(target_field)]

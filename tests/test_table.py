@@ -42,3 +42,38 @@ class TestTableRanges:
         for item in self.table.items:
             assert isinstance(item, Item)
 
+    def test_table_length(self):
+        assert len(self.table) == len(self.table.items)
+
+    def test_for_loops(self):
+        for item in self.table:
+            assert isinstance(item, Item)
+
+
+class TestItem:
+
+    item = Item(
+        parent_table=None,
+        row_index=0,
+        header=['name', 'surname'],
+        values=['john', 'doe'],
+        notes=['note name', 'note surname'],
+        backgrounds=['#ffffff', '#fff000'],
+        font_colors=['#000fff', '#000000']
+    )
+
+    def test_get_field_value(self):
+        assert self.item.get_field_value('name') == 'john'
+        assert self.item.get_field_value('surname') == 'doe'
+
+    def test_get_field_note(self):
+        assert self.item.get_field_note('name') == 'note name'
+        assert self.item.get_field_note('surname') == 'note surname'
+
+    def test_get_field_background(self):
+        assert self.item.get_field_background('name') == '#ffffff'
+        assert self.item.get_field_background('surname') == '#fff000'
+
+    def test_get_field_font_colors(self):
+        assert self.item.get_field_font_color('name') == '#000fff'
+        assert self.item.get_field_font_color('surname') == '#000000'

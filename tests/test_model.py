@@ -68,4 +68,5 @@ class TestCellRange:
 
     def test_get_cell(self):
         assert self.data_range.get_cell(1, 1).a1 == 'A1'
-
+        assert self.data_range.get_cell(1, 2).a1 == 'B1'
+        assert self.data_range.get_cell(2, 1).a1 == 'A2'

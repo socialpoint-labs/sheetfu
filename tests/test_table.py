@@ -9,6 +9,7 @@ class TestTableRanges:
 
     http_mocks = mock_google_sheets_responses([
         'table_get_sheets.json',
+        'table_check_data_range.json',
         'table_values.json',
         'table_notes.json',
         'table_backgrounds.json',
@@ -42,6 +43,7 @@ class TestTableRanges:
     def test_items_instance(self):
         for item in self.table.items:
             assert isinstance(item, Item)
+            assert isinstance(item.get_range(), Range)
 
     def test_table_length(self):
         assert len(self.table) == len(self.table.items)
@@ -83,6 +85,7 @@ class TestItem:
 class TestTableItemRanges:
     http_mocks = mock_google_sheets_responses([
         'table_get_sheets.json',
+        'table_check_data_range.json',
         'table_values.json',
         'table_notes.json',
         'table_backgrounds.json',

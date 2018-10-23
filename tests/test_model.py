@@ -46,9 +46,6 @@ class TestGettersFromDataRange:
     def test_a1_notation_is_right(self):
         assert self.data_range.a1 == "A1:D21"
 
-    def test_values_already_queried(self):
-        assert self.data_range.values is not None
-
     def test_get_backgrounds(self):
         backgrounds = self.data_range.get_backgrounds()
         assert type(backgrounds) == list

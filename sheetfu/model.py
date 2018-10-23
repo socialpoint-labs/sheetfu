@@ -156,7 +156,7 @@ def check_size(f):
     Decorator to check length of the 2D matrix to be set. Raise an error if lengths are not matching with Range
     object coordinates.
     """
-    def wrapper(range_object, data, batch):
+    def wrapper(range_object, data, batch_to=None):
         if len(data) != range_object.coordinates.number_of_rows:
             error_message = "Wrong number of rows. {} instead of {}".format(
                 len(data),
@@ -175,7 +175,7 @@ def check_size(f):
                 raise SizeNotMatchingException(error_message)
 
         else:
-            return f(range_object, data, batch)
+            return f(range_object, data, batch_to)
 
     return wrapper
 
@@ -190,26 +190,15 @@ class Range:
         """
         self.client = client
         self.sheet = sheet
-        self.a1 = a1
-        self.coordinates = None if self.a1 is None else convert_a1_to_coordinates(self.a1)
-
-        # there is a special case when instantiating if we do not know yet the
-        # A1 range. This gives us the opportunity to figure out the a1 notation in
-        # case we do not have it when instantiating. This happens only when using
-        # the get_data_range Sheet method. In any other cases, the A1 notation is
-        # an information we have and therefore no requests are made when instantiating.
-        self.values = None
-        if self.a1 is None:
-            self.values = self.get_values()
+        self.a1 = self.persist_a1_data_range(a1)     # this checks the data range coordinates
+        self.coordinates = convert_a1_to_coordinates(self.a1)
 
         # placeholder for putting requests object if we
         # want to send multiple set requests in one api call.
         self.batches = list()
 
     def __repr__(self):
-        a1 = self.a1
-        if a1 is None:
-            a1 = self.sheet.name
+        a1 = self.a1 or self.sheet.name
         return '<Range object {}>'.format(a1)
 
     def make_get_request(self, field_mask, cell_parser):
@@ -219,15 +208,15 @@ class Range:
         :param cell_parser: Function to run to parse cell data as expected.
         :return: The raw response of the request.
         """
+        target_range = self.a1 or self.sheet.name
         # first we request data to the API
         request = self.client.sheet_service.spreadsheets().get(
             spreadsheetId=self.sheet.spreadsheet.id,
             includeGridData=True,
-            ranges=[self.a1],
+            ranges=[target_range],
             fields=field_mask
         )
         response = request.execute()
-
         # now we parse the rows from the response using the cell parser
         data = []
         values = response["sheets"][0]["data"]
@@ -251,6 +240,7 @@ class Range:
         :param field: the targeted field.
         :param data: the 2D arrays with size matching range coordinates.
         :param set_parser: the function to run as a cell parser.
+        :param batch_to: Object from which the request must be batched. Object must contain a 'batches' attribute.
         :return: raw response from the API.
         """
         # Parsing the rows to be in API format
@@ -283,56 +273,36 @@ class Range:
                 body=body
             ).execute()
 
-        return self.sheet.spreadsheet.append(request)
+        return batch_to.batches.append(request)
 
-    def get_values(self, from_cache=True):
-        """
-        Get the values within the range.
-        :param from_cache: If True(default) avoid making a request the data an extra time if the values were queried
-        already when instantiating. False if we want to query regardless.
-        :return: 2D array of the values, of size matching the range coordinates.
-        """
-        if self.values and from_cache:
-            return self.values
-
-        target_range = self.a1 if self.a1 is not None else self.sheet.name
-        request = self.client.sheet_service.spreadsheets().values().get(
-            spreadsheetId=self.sheet.spreadsheet.id,
-            range=target_range
+    def get_values(self):
+        data = self.make_get_request(
+            field_mask="sheets/data/rowData/values/effectiveValue",
+            cell_parser=CellParsers.get_value
         )
-        response = request.execute()
-        self.persist_a1(response)     # very important, so we know the range sizes in case we don't know already
-
-        # parsing the result to be sure number of rows and columns matches range coordinates.
-        data = list()
-        for row in range(0, self.coordinates.number_of_rows):
-            data_row = []
-            for column in range(0, self.coordinates.number_of_columns):
-                try:
-                    data_row.append(response["values"][row][column])
-                except (KeyError, IndexError):
-                    data_row.append("")
-            data.append(data_row)
         return data
 
     @check_size
-    def set_values(self, values):
+    def set_values(self, values, batch_to=None):
         """
         Set values for the Range.
         :param values: 2D array of values (size must match range coordinates).
         """
-        body_request = {
-            'range': self.a1,
-            'majorDimension': 'ROWS',
-            'values': values
-        }
-        request = self.client.sheet_service.spreadsheets().values().update(
-            spreadsheetId=self.sheet.spreadsheet.id,
-            range=self.a1,
-            valueInputOption="USER_ENTERED",
-            body=body_request
+        return self.make_set_request(
+            field='userEnteredValue',
+            data=values,
+            set_parser=CellParsers.set_value,
+            batch_to=batch_to
         )
-        return request.execute()
+
+    def set_value(self, value, batch_to=None):
+        values = list()
+        for row in range(0, self.coordinates.number_of_rows):
+            values.append(list())
+            for column in range(0, self.coordinates.number_of_columns):
+                values[row].append(value)
+
+        return self.set_values(values, batch_to)
 
     def get_backgrounds(self):
         """
@@ -378,7 +348,7 @@ class Range:
         )
 
     @check_size
-    def set_notes(self, notes, batch_to=False):
+    def set_notes(self, notes, batch_to=None):
         """
         Set notes for the Range.
         :param notes: 2D array of notes (size must match range coordinates).
@@ -389,6 +359,15 @@ class Range:
             set_parser=CellParsers.set_note,
             batch_to=batch_to
         )
+
+    def set_note(self, note, batch_to=None):
+        notes = list()
+        for row in range(0, self.coordinates.number_of_rows):
+            notes.append(list())
+            for column in range(0, self.coordinates.number_of_columns):
+                notes[row].append(note)
+
+        return self.set_values(notes, batch_to)
 
     def get_font_colors(self):
         """
@@ -442,15 +421,21 @@ class Range:
         # todo: set formula.
         return formulas
 
-    def persist_a1(self, response):
+    def persist_a1_data_range(self, a1):
         """
-        If a1 attribute is None, it calculates the a1 notation and range coordinates based on the number of rows and
-        columns found in the response object.
-        :param response: raw response of a request for values to google sheets API.
+        If a1 attribute is None (typically when we get_data_range, it calculates the a1 notation and range coordinates
+        based on the number of rows and columns found in the data.
+        :param data: raw response of a request for values to google sheets API.
         """
-        if self.a1 is not None:
-            return
+        if a1 is not None:
+            return a1
 
+        request = self.client.sheet_service.spreadsheets().values().get(
+            spreadsheetId=self.sheet.spreadsheet.id,
+            range=self.sheet.name
+        )
+
+        response = request.execute()
         display_a1 = response["range"]
         first_cell_a1 = display_a1.split('!')[1].split(':')[0]
 
@@ -464,13 +449,12 @@ class Range:
                 number_of_columns = len(row)
 
         first_cell_coordinates = convert_a1_to_coordinates(first_cell_a1)
-        self.a1 = convert_coordinates_to_a1(
+        return convert_coordinates_to_a1(
             row=first_cell_coordinates.row,
             column=first_cell_coordinates.column,
             number_of_row=number_of_rows,
             number_of_column=number_of_columns
         )
-        self.coordinates = convert_a1_to_coordinates(self.a1)
 
     def get_cell(self, row, column):        # todo: have a custom error when row and/or column is 0
         row_number = self.coordinates.row + row - 1
@@ -481,3 +465,33 @@ class Range:
             sheet=self.sheet,
             a1=a1
         )
+
+    def add_dropdown(self, choices, strict=True, batch_to=None):
+        values = [{"userEnteredValue": choice} for choice in choices]
+        request = {
+            "setDataValidation": {
+                'range': {
+                    "sheetId": self.sheet.sid,
+                    "startRowIndex": self.coordinates.row - 1,
+                    "endRowIndex": self.coordinates.row + self.coordinates.number_of_rows,
+                    "startColumnIndex": self.coordinates.column - 1,
+                    "endColumnIndex": self.coordinates.column + self.coordinates.number_of_columns
+                },
+                "rule": {
+                    "condition": {
+                        "type": 'ONE_OF_LIST',
+                        "values": values,
+                    },
+                    "showCustomUi": True,
+                    "strict": strict
+                }
+            }
+        }
+        if batch_to is None:
+            body = {'requests': [request]}
+            return self.client.sheet_service.spreadsheets().batchUpdate(
+                spreadsheetId=self.sheet.spreadsheet.id,
+                body=body
+            ).execute()
+
+        return batch_to.batches.append(request)

@@ -6,14 +6,14 @@ class Table:
 
     def __init__(self, full_range, notes=False, backgrounds=False, font_colors=False):
         self.full_range = full_range
-
-        self.values = self.full_range.get_values()
-        self.notes = self.full_range.get_notes() if notes else None
-        self.backgrounds = self.full_range.get_backgrounds() if backgrounds else None
-        self.font_colors = self.full_range.get_font_colors() if font_colors else None
-
-        self.header = self.values[0]
         self.items_range = self.get_items_range()
+
+        self.data = self.full_range.get_values()
+        self.header = self.data[0]
+        self.values = self.data[1:]
+        self.notes = self.items_range.get_notes() if notes else None
+        self.backgrounds = self.items_range.get_backgrounds() if backgrounds else None
+        self.font_colors = self.items_range.get_font_colors() if font_colors else None
 
         self.items = self.parse_items()
 
@@ -35,19 +35,26 @@ class Table:
             number_of_row=self.full_range.coordinates.number_of_rows - 1,
             number_of_column=self.full_range.coordinates.number_of_columns
         )
-        return Range(
-            client=self.full_range.client,
-            sheet=self.full_range.sheet,
-            a1=a1
-        )
+        return Range(client=self.full_range.client, sheet=self.full_range.sheet, a1=a1)
 
     def parse_items(self):
         items = list()
         for row_number in range(0, self.items_range.coordinates.number_of_rows):
-            values = self.values[row_number] or None
-            notes = self.notes[row_number] or None
-            backgrounds = self.backgrounds[row_number] or None
-            font_colors = self.font_colors[row_number] or None
+
+            values = None
+            notes = None
+            backgrounds = None
+            font_colors = None
+
+            if self.values:
+                values = self.values[row_number] or None
+            if self.notes:
+                notes = self.notes[row_number] or None
+            if self.backgrounds:
+                backgrounds = self.backgrounds[row_number] or None
+            if self.font_colors:
+                font_colors = self.font_colors[row_number] or None
+
             item = Item(
                 parent_table=self,
                 row_index=row_number,
@@ -63,7 +70,7 @@ class Table:
     def commit(self):
         body = {'requests': [self.batches]}
         return self.full_range.client.sheet_service.spreadsheets().batchUpdate(
-            spreadsheetId=self.full_range.spreadsheet.id,
+            spreadsheetId=self.full_range.sheet.spreadsheet.id,
             body=body
         ).execute()
 
@@ -116,3 +123,19 @@ class Item:
         row = 1
         column = self.get_index(target_field) + 1
         return self.get_range().get_cell(row, column)
+
+    def set_field_value(self, target_field, value):
+        self.values[self.get_index(target_field)] = value
+        self.get_field_range(target_field).set_value(value, batch_to=self.table)
+
+    def set_field_note(self, target_field, note):
+        self.notes[self.get_index(target_field)] = note
+        self.get_field_range(target_field).set_note(note, batch_to=self.table)
+
+    def set_field_background(self, target_field, background_hex):
+        self.backgrounds[self.get_index(target_field)] = background_hex
+        self.get_field_range(target_field).set_background(background_hex, batch_to=self.table)
+
+    def set_field_font_color(self, target_field, font_color_hex):
+        self.font_colors[self.get_index(target_field)] = font_color_hex
+        self.get_field_range(target_field).set_font_color(font_color_hex, batch_to=self.table)

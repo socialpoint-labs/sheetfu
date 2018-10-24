@@ -257,9 +257,9 @@ class Range:
                 'range': {
                     "sheetId": self.sheet.sid,
                     "startRowIndex": self.coordinates.row - 1,
-                    "endRowIndex": self.coordinates.row + self.coordinates.number_of_rows,
+                    "endRowIndex": self.coordinates.row + self.coordinates.number_of_rows - 1,
                     "startColumnIndex": self.coordinates.column - 1,
-                    "endColumnIndex": self.coordinates.column + self.coordinates.number_of_columns
+                    "endColumnIndex": self.coordinates.column + self.coordinates.number_of_columns - 1
                 },
                 'fields': field,
                 'rows': rows

@@ -67,6 +67,14 @@ class Table:
             items.append(item)
         return items
 
+    # def add_one(self, item):
+    #     new_item = Item(
+    #         parent_table=self,
+    #         row_index=len(self.items),
+    #         header=self.header,
+    #         values=values
+    #     )
+
     def commit(self):
         body = {'requests': [self.batches]}
         return self.full_range.client.sheet_service.spreadsheets().batchUpdate(
@@ -125,17 +133,21 @@ class Item:
         return self.get_range().get_cell(row, column)
 
     def set_field_value(self, target_field, value):
-        self.values[self.get_index(target_field)] = value
+        if self.values:
+            self.values[self.get_index(target_field)] = value
         self.get_field_range(target_field).set_value(value, batch_to=self.table)
 
     def set_field_note(self, target_field, note):
-        self.notes[self.get_index(target_field)] = note
+        if self.notes:
+            self.notes[self.get_index(target_field)] = note
         self.get_field_range(target_field).set_note(note, batch_to=self.table)
 
     def set_field_background(self, target_field, background_hex):
-        self.backgrounds[self.get_index(target_field)] = background_hex
+        if self.backgrounds:
+            self.backgrounds[self.get_index(target_field)] = background_hex
         self.get_field_range(target_field).set_background(background_hex, batch_to=self.table)
 
     def set_field_font_color(self, target_field, font_color_hex):
-        self.font_colors[self.get_index(target_field)] = font_color_hex
+        if self.font_colors:
+            self.font_colors[self.get_index(target_field)] = font_color_hex
         self.get_field_range(target_field).set_font_color(font_color_hex, batch_to=self.table)

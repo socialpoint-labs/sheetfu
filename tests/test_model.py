@@ -67,3 +67,29 @@ class TestCellRange:
         assert self.data_range.get_cell(1, 1).a1 == 'A1'
         assert self.data_range.get_cell(1, 2).a1 == 'B1'
         assert self.data_range.get_cell(2, 1).a1 == 'A2'
+
+
+class TestGridRange:
+
+    http_sheets_mocks = mock_spreadsheet_instance()
+    spreadsheet = SpreadsheetApp(http=http_sheets_mocks).open_by_id('some_id')
+    sheet = spreadsheet.sheets[0]
+
+    def test_grid_range_one_cell(self):
+        cell = self.sheet.get_range_from_a1('A1')
+        assert cell.a1 == 'A1'
+        cell_grid_range = cell.get_grid_range()
+        assert cell_grid_range['startRowIndex'] == 0
+        assert cell_grid_range['endRowIndex'] == 1
+        assert cell_grid_range['startColumnIndex'] == 0
+        assert cell_grid_range['endColumnIndex'] == 1
+
+    def test_grid_range_multiple_cells(self):
+        range_ = self.sheet.get_range_from_a1('A3:B4')
+        assert range_.a1 == 'A3:B4'
+        grid_range = range_.get_grid_range()
+        assert grid_range['startRowIndex'] == 2
+        assert grid_range['endRowIndex'] == 4
+        assert grid_range['startColumnIndex'] == 0
+        assert grid_range['endColumnIndex'] == 2
+

@@ -254,13 +254,7 @@ class Range:
         # preparing the request
         request = {
             'updateCells': {
-                'range': {
-                    "sheetId": self.sheet.sid,
-                    "startRowIndex": self.coordinates.row - 1,
-                    "endRowIndex": self.coordinates.row + self.coordinates.number_of_rows - 1,
-                    "startColumnIndex": self.coordinates.column - 1,
-                    "endColumnIndex": self.coordinates.column + self.coordinates.number_of_columns - 1
-                },
+                'range': self.get_grid_range(),
                 'fields': field,
                 'rows': rows
             }
@@ -470,13 +464,7 @@ class Range:
         values = [{"userEnteredValue": choice} for choice in choices]
         request = {
             "setDataValidation": {
-                'range': {
-                    "sheetId": self.sheet.sid,
-                    "startRowIndex": self.coordinates.row - 1,
-                    "endRowIndex": self.coordinates.row + self.coordinates.number_of_rows,
-                    "startColumnIndex": self.coordinates.column - 1,
-                    "endColumnIndex": self.coordinates.column + self.coordinates.number_of_columns
-                },
+                'range': self.get_grid_range(),
                 "rule": {
                     "condition": {
                         "type": 'ONE_OF_LIST',
@@ -495,3 +483,16 @@ class Range:
             ).execute()
 
         return batch_to.batches.append(request)
+
+    def get_grid_range(self):
+        """
+        As explained here: https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets#GridRange
+        :return: the grid range for set requests.
+        """
+        return {
+            "sheetId": self.sheet.sid,
+            "startRowIndex": self.coordinates.row - 1,
+            "endRowIndex": self.coordinates.row - 1 + self.coordinates.number_of_rows,
+            "startColumnIndex": self.coordinates.column - 1,
+            "endColumnIndex": self.coordinates.column - 1 + self.coordinates.number_of_columns
+        }

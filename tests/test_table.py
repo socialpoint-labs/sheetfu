@@ -38,7 +38,7 @@ class TestTableRanges:
     def test_items(self):
         assert self.table.items is not None
         assert type(self.table.items) == list
-        assert len(self.table.items) == len(self.table.values) - 1
+        assert len(self.table.items) == len(self.table.values)
 
     def test_items_instance(self):
         for item in self.table.items:

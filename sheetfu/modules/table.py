@@ -67,13 +67,15 @@ class Table:
             items.append(item)
         return items
 
-    # def add_one(self, item):
-    #     new_item = Item(
-    #         parent_table=self,
-    #         row_index=len(self.items),
-    #         header=self.header,
-    #         values=values
-    #     )
+    def add_one(self, item_dict):
+        values = [item_dict[label]for label in self.header]
+        new_item = Item(
+            parent_table=self,
+            row_index=len(self.items),
+            header=self.header,
+            values=values
+        )
+        new_item.get_range().set_values([values], batch_to=self)
 
     def commit(self):
         body = {'requests': [self.batches]}

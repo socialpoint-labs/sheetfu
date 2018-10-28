@@ -44,10 +44,7 @@ class TestGettersFromDataRange:
     data_range = client.open_by_id('spreadsheet id').get_sheet_by_name('people').get_data_range()
 
     def test_a1_notation_is_right(self):
-        assert self.data_range.a1 == "people!A1:D21"
-
-    def test_values_already_queried(self):
-        assert self.data_range.values is not None
+        assert self.data_range.a1 == "A1:D21"
 
     def test_get_backgrounds(self):
         backgrounds = self.data_range.get_backgrounds()
@@ -55,3 +52,44 @@ class TestGettersFromDataRange:
         assert len(backgrounds) == self.data_range.coordinates.number_of_rows
         for row in backgrounds:
             assert len(row) == self.data_range.coordinates.number_of_columns
+
+
+class TestCellRange:
+
+    http_sheets_mocks = mock_range_instance()
+    client = SpreadsheetApp(http=http_sheets_mocks)
+    data_range = client.open_by_id('spreadsheet id').get_sheet_by_name('people').get_data_range()
+
+    def test_a1(self):
+        assert self.data_range.a1 == 'A1:D21'
+
+    def test_get_cell(self):
+        assert self.data_range.get_cell(1, 1).a1 == 'A1'
+        assert self.data_range.get_cell(1, 2).a1 == 'B1'
+        assert self.data_range.get_cell(2, 1).a1 == 'A2'
+
+
+class TestGridRange:
+
+    http_sheets_mocks = mock_spreadsheet_instance()
+    spreadsheet = SpreadsheetApp(http=http_sheets_mocks).open_by_id('some_id')
+    sheet = spreadsheet.sheets[0]
+
+    def test_grid_range_one_cell(self):
+        cell = self.sheet.get_range_from_a1('A1')
+        assert cell.a1 == 'A1'
+        cell_grid_range = cell.get_grid_range()
+        assert cell_grid_range['startRowIndex'] == 0
+        assert cell_grid_range['endRowIndex'] == 1
+        assert cell_grid_range['startColumnIndex'] == 0
+        assert cell_grid_range['endColumnIndex'] == 1
+
+    def test_grid_range_multiple_cells(self):
+        range_ = self.sheet.get_range_from_a1('A3:B4')
+        assert range_.a1 == 'A3:B4'
+        grid_range = range_.get_grid_range()
+        assert grid_range['startRowIndex'] == 2
+        assert grid_range['endRowIndex'] == 4
+        assert grid_range['startColumnIndex'] == 0
+        assert grid_range['endColumnIndex'] == 2
+

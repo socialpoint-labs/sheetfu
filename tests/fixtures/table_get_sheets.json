@@ -1,0 +1,57 @@
+{
+	"spreadsheetId": "1VZ8tXVWRn_h0nkvXOoKhM9Bnw68olM8Gz2oE4DAP-BY",
+	"properties": {
+		"title": "sheetfu",
+		"locale": "en_US",
+		"autoRecalc": "ON_CHANGE",
+		"timeZone": "Europe/Berlin",
+		"defaultFormat": {
+			"backgroundColor": {
+				"red": 1,
+				"green": 1,
+				"blue": 1
+			},
+			"padding": {
+				"top": 2,
+				"right": 3,
+				"bottom": 2,
+				"left": 3
+			},
+			"verticalAlignment": "BOTTOM",
+			"wrapStrategy": "OVERFLOW_CELL",
+			"textFormat": {
+				"foregroundColor": {},
+				"fontFamily": "arial,sans,sans-serif",
+				"fontSize": 10,
+				"bold": false,
+				"italic": false,
+				"strikethrough": false,
+				"underline": false
+			}
+		}
+	},
+	"sheets": [{
+		"properties": {
+			"sheetId": 0,
+			"title": "Sheet1",
+			"index": 0,
+			"sheetType": "GRID",
+			"gridProperties": {
+				"rowCount": 1000,
+				"columnCount": 26
+			}
+		}
+	}, {
+		"properties": {
+			"sheetId": 1826625011,
+			"title": "whatever",
+			"index": 1,
+			"sheetType": "GRID",
+			"gridProperties": {
+				"rowCount": 1000,
+				"columnCount": 26
+			}
+		}
+	}],
+	"spreadsheetUrl": "https://docs.google.com/spreadsheets/d/1VZ8tXVWRn_h0nkvXOoKhM9Bnw68olM8Gz2oE4DAP-BY/edit"
+}

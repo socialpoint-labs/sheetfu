@@ -5,11 +5,22 @@ class CellParsers:
 
     @staticmethod
     def get_value(cell):
-        return
+        value_body = cell["effectiveValue"]
+        for value_type in ['stringValue', 'numberValue', 'boolValue', 'formulaValue']:
+            if value_body.get(value_type) is not None:
+                return value_body[value_type]
 
     @staticmethod
     def set_value(cell):
-        return
+        if cell:
+            if isinstance(cell, str):
+                return {"userEnteredValue": {"stringValue": cell}}
+            elif isinstance(cell, int) or isinstance(cell, float):
+                return {"userEnteredValue": {"numberValue": cell}}
+            elif isinstance(cell, bool):
+                return {"userEnteredValue": {"boolValue": cell}}
+        else:
+            return {"userEnteredValue": {"stringValue": ''}}
 
     @staticmethod
     def get_background(cell):

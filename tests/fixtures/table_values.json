@@ -1,0 +1,88 @@
+{
+  "sheets": [
+    {
+      "data": [
+        {
+          "rowData": [
+            {
+              "values": [
+                {
+                  "effectiveValue": {
+                    "stringValue": "name"
+                  }
+                },
+                {
+                  "effectiveValue": {
+                    "stringValue": "surname"
+                  }
+                },
+                {
+                  "effectiveValue": {
+                    "stringValue": "age"
+                  }
+                }
+              ]
+            },
+            {
+              "values": [
+                {
+                  "effectiveValue": {
+                    "stringValue": "philippe"
+                  }
+                },
+                {
+                  "effectiveValue": {
+                    "stringValue": "oger"
+                  }
+                },
+                {
+                  "effectiveValue": {
+                    "numberValue": 37
+                  }
+                }
+              ]
+            },
+            {
+              "values": [
+                {
+                  "effectiveValue": {
+                    "stringValue": "john"
+                  }
+                },
+                {
+                  "effectiveValue": {
+                    "stringValue": "doe"
+                  }
+                },
+                {
+                  "effectiveValue": {
+                    "numberValue": 25
+                  }
+                }
+              ]
+            },
+            {
+              "values": [
+                {
+                  "effectiveValue": {
+                    "stringValue": "jane"
+                  }
+                },
+                {
+                  "effectiveValue": {
+                    "stringValue": "doe"
+                  }
+                },
+                {
+                  "effectiveValue": {
+                    "numberValue": 25
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

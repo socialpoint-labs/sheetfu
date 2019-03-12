@@ -11,6 +11,9 @@ script: py.test
 jobs:
   include:
     - stage: release
+      language: python
+      python:
+        - '3.6'
       env:
         - TRAVIS=true
         - DEBUG=*

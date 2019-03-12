@@ -7,7 +7,7 @@ python:
   - "3.5"
   - "3.6"
 install: "pip install -r requirements_dev.txt"
-script: pytest
+script: py.test
 jobs:
   include:
     - stage: semantic-release

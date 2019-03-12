@@ -7,18 +7,13 @@ python:
   - "3.5"
   - "3.6"
 install: "pip install -r requirements_dev.txt"
-stages:
-  - test
-  - release
-env:
-  - GITHUB_TOKEN=5ff1996402aa385ff61ab77eaadc2d5924c5f807
+script: pytest
 jobs:
   include:
-    - stage: test
-      script:
-        - pytest
     - stage: semantic-release
       install: true
+      env:
+        - GITHUB_TOKEN=5ff1996402aa385ff61ab77eaadc2d5924c5f807
       script:
           - npm install @semantic-release/changelog -D
           - nvm install lts/*

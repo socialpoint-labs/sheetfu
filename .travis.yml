@@ -6,6 +6,7 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+install: "pip install -r requirements_dev.txt"
 stages:
   - test
   - release
@@ -14,8 +15,6 @@ env:
 jobs:
   include:
     - stage: test
-      install:
-        - pip install -r requirements_dev.txt
       script:
         - pytest
     - stage: semantic-release

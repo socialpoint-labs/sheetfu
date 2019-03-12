@@ -25,6 +25,6 @@ jobs:
       script:
       - git config --global user.name "semantic-release (via TravisCI)"
       - git config --global user.email "semantic-release@travis"
-      - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then pip install python-semantic-release; fi
-      - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then semantic-release publish; fi
+      - if [ "TRAVIS_BRANCH" = "master" ]; then pip install python-semantic-release; fi
+      - if [ "TRAVIS_BRANCH" = "master" ]; then semantic-release publish; fi
 

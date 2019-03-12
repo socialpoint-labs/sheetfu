@@ -1,11 +1,30 @@
 dist: trusty
 language: python
 python:
-  - "2.7"
-  - "3.3"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-
-install: "pip install -r requirements_dev.txt"
+- '2.7'
+- '3.3'
+- '3.4'
+- '3.5'
+- '3.6'
+install: pip install -r requirements_dev.txt
 script: py.test
+jobs:
+  include:
+    - stage: release
+      language: python
+      python:
+        - '3.6'
+      env:
+        - TRAVIS=true
+        - DEBUG=*
+      secure:
+        - "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"
+      install: skip
+      script:
+      - git config --global user.name "semantic-release (via TravisCI)"
+      - git config --global user.email "semantic-release@travis"
+      - if [ "TRAVIS_BRANCH" = "master" ]; then pip install python-semantic-release; fi
+      - if [ "TRAVIS_BRANCH" = "master" ]; then semantic-release publish; fi
+

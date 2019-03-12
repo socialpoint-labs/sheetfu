@@ -6,6 +6,18 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+
+install: "pip install -r requirements_dev.txt"
+script: py.test
+
+dist: trusty
+language: python
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
 stages:
   - test
   - release
@@ -19,6 +31,7 @@ jobs:
       script:
         - pytest
     - stage: semantic-release
+      install: true
       script:
           - npm install @semantic-release/changelog -D
           - nvm install lts/*

@@ -23,8 +23,9 @@ jobs:
         - "U+3I5WZr/EN3z3TZyh9hkBZ1fTKT3+JR7g5LIj/ukSrLwDfkN6l1TR7Jl5YtgfxllLftxnazj1oQ1HQdE1evcCxgcCQj3DiGII9K86RTfpnOuewUVhSbmKqVpNjqgOmJy9zkf7IY615ZuIn5TITTCBh0notNE8X8ZdlNo6iru3wzPeU77OhU41Lk/lM83SQcnyieSe7vYC0U/0YKT+udRfsY3X6xz5B6/NUsNO2/W3VLcoxAjKEfpNyYkvPyxkHziT2wID9mHUMqsAL6N+Ll8X2Cms8p7BkHY5/9WV51yKFfafKRdjQrMlI/sXBNZ3UIxw/HnvIx1eX59knSnRlM2i3V5Yt6SvPhzoF2XzvM2q16Wjw0Z2wj9QlK4Y8ZeMPEfBei0BSC4MTRBe0QeDeM6mnquVCb3N8qIrMe4a00LTGBWcoEvKGTwiNBKn1Hm0k1neARwPhDWHY5K6+hWRzONAv+c/msHwdFDHsfJYW1bYx0v8aBr6mtOUG4JVaZBJf2GeSAu+CFTOgIxerXELVxhBNK8Ay7uLqlyQ2t2y0Z1BrigjtxwK7770Je4V+L9EUYELUcFuPlN70/xeRt2vhK2X+odzF9X1ZeeSvgMCjopvvDxfUmXZN94iv6VNERJDs8s1AEA1x+2LW8R80ILRShXK4rnOHR7WTzZsJs0QI47A8="
       install: skip
       script:
+      - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
       - git config --global user.name "semantic-release (via TravisCI)"
       - git config --global user.email "semantic-release@travis"
-      - if [ "TRAVIS_BRANCH" = "master" ]; then pip install python-semantic-release; fi
-      - if [ "TRAVIS_BRANCH" = "master" ]; then semantic-release publish; fi
+      - if [ "BRANCH" = "master" ]; then pip install python-semantic-release; fi
+      - if [ "BRANCH" = "master" ]; then semantic-release publish; fi
 

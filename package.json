@@ -1,0 +1,20 @@
+{
+  "name": "Sheetfu",
+  "release": {
+    "branch": "master",
+    "repositoryUrl": "https://github.com/socialpoint-labs/sp-tools-test-semantic",
+    "tagFormat": "v${version}",
+    "changelogFile": "CHANGELOG.md",
+    "debug": true,
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github",
+      "@semantic-release/changelog"
+    ]
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^3.0.2"
+  }
+}
+

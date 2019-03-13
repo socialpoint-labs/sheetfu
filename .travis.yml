@@ -26,6 +26,6 @@ jobs:
       - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
       - git config --global user.name "semantic-release (via TravisCI)"
       - git config --global user.email "semantic-release@travis"
-      - if [ "BRANCH" == "master" ]; then pip install python-semantic-release; fi
-      - if [ "BRANCH" == "master" ]; then semantic-release publish; fi
+      - if [ "$BRANCH" == "master" ]; then pip install python-semantic-release; fi
+      - if [ "$BRANCH" == "master" ]; then semantic-release publish; fi
 

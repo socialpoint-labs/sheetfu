@@ -13,7 +13,7 @@ jobs:
     - stage: release
       language: python
       python:
-        - '3.6'
+        - '3.4'
       env:
         - TRAVIS=true
         - DEBUG=*
@@ -22,7 +22,6 @@ jobs:
         - secure: DxzR9NM0j7jJ5iZEwkhc+rgEe9ZCYPcJgwCmnftCA6DOS5Da9TE9bE13co5vAPJg64pJmON4peYakhur3FJMpMomAfcFoP8/y2oIv/6ZowkybEDi7Dwdyalp2e8j4IJ83gPFTkAlTaWUtr53zYWtM6/SySkl7rRlPhdPIpGayme7g94S74P7Lu2cf/s8eNv8eEL3mrQ0C4gWo6Ie2M1EjO8gOug4PXot0LeHJe+Ong29DVahG/4CvAuWkgpAkmgOrUfKUhxyUfMfDJit0mEZ7oLUZlMNOWPAhf0wSap/cltLz7r+mbnLcJ8kktwX8tDqF1tTrReo/w7wPT4pBa7bHGpG57Ku+r5Lq9I2VndHLmafrp1qpysoPtE44g6NWQTsSjo+MvdURNHDM2ASA5PWGG5VwXBWGRijJUwUB3XYdrxIcFvuBJRXpLPMiN0mATZEBLBPXujAShW9l29t5Uf+thLSmosyH2UPrt2+9rT7Kgr8p9wSWkvY72IKtg4fTvyYG3y5wdybxsZFujqmqHoGH4IzMLuYnhhu/n6OIPrm79Y1zS/lV+ubNUnMMWyHkOmyBXHi9r0/STP5+D6wb50bVEg11iJ4RRApvh7TE78IuqN8v5boMwpbzY4y1IEx/oFw3nn9U3gHoQsDawCZ4mU3vq0SvNNUw3ljJUfHjgByybM=
       install: skip
       script:
-      - echo $GH_TOKEN, $PYPI_USERNAME, $PYPI_PASSWORD
       - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
       - git config --global user.name "semantic-release (via TravisCI)"
       - git config --global user.email "semantic-release@travis"

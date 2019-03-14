@@ -1,6 +1,8 @@
 from sheetfu.client import SpreadsheetApp
 from sheetfu.model import Spreadsheet, Sheet, Range
 from tests.utils import mock_range_instance, mock_spreadsheet_instance, mock_google_sheets_responses
+from tests.utils import open_fixture
+import json
 
 
 class TestModelClients:
@@ -26,7 +28,7 @@ class TestModelClients:
 
 class TestSpreadsheet:
 
-    http_sheets_mocks = mock_spreadsheet_instance()
+    http_sheets_mocks = mock_spreadsheet_instance(["add_sheets.json"])
     spreadsheet = SpreadsheetApp(http=http_sheets_mocks).open_by_id('some_id')
 
     def test_get_sheets(self):
@@ -34,6 +36,18 @@ class TestSpreadsheet:
         assert len(sheets) == 2
         for sheet in sheets:
             assert isinstance(sheet, Sheet)
+
+    def test_create_sheets(self):
+        self.spreadsheet.create_sheets(["test_sheet", "test_sheet_2"])
+        assert len(self.spreadsheet.sheets) == 4
+
+    def test_add_sheets_from_response(self):
+        dummy_response_create = json.loads(open_fixture("add_sheets.json"))
+        self.spreadsheet._add_sheets_from_response(response=dummy_response_create, reply_type="addSheet")
+        assert len(self.spreadsheet.sheets) == 6
+        dummy_response_duplicate = json.loads(open_fixture("duplicate_sheets.json"))
+        self.spreadsheet._add_sheets_from_response(response=dummy_response_duplicate, reply_type="duplicateSheet")
+        assert len(self.spreadsheet.sheets) == 7
 
 
 class TestGettersFromDataRange:

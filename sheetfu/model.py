@@ -83,6 +83,71 @@ class Spreadsheet:
         else:
             raise SheetIdNoMatchError
 
+    def _add_sheets_from_response(self, response, reply_type):
+        replies = response["replies"]
+        reply_type_found = False
+        for reply in replies:
+            new_sheet_reply = reply.get(reply_type)
+            if new_sheet_reply is None:
+                continue
+
+            reply_type_found = True
+            new_sheet = self.get_sheet(name=new_sheet_reply['properties']['title'],
+                                       sid=new_sheet_reply['properties']['sheetId'])
+            self.sheets.append(new_sheet)
+        if not reply_type_found:
+            raise ValueError("No reply of type '" + reply_type + "' was found in the replies of the batch request."
+                             " Response: '" + str(response) + "'.")
+
+    def create_sheets(self, sheet_names):
+        """
+        Creates multiple sheets in the target spreadsheet
+        :oaram sheet_names: list of sheet names to create. Can also be a string to create a single sheet
+        """
+        if type(sheet_names) is not list:
+            sheet_names = [sheet_names]
+
+        body = {'requests': []}
+        for sheet_name in sheet_names:
+            add_sheet_request = {"addSheet": {
+                    "properties": {
+                        "title": sheet_name
+                    }
+                }
+            }
+            body["requests"].append(add_sheet_request)
+
+        response = self.client.sheet_service.spreadsheets().batchUpdate(
+            spreadsheetId=self.id,
+            body=body
+        ).execute()
+        self._add_sheets_from_response(response=response, reply_type="addSheet")
+
+    def duplicate_sheet(self, new_sheet_name, sheet_id=None, sheet_name=None):
+        """
+        Creates multiple sheets in the target spreadsheet
+        :oaram sheet_names: list of sheet names to create. Can also be a string to create a single sheet
+        """
+
+        body = {'requests': []}
+        if sheet_id is None:
+            if sheet_name is None:
+                raise AttributeError("You must either specify a sheet name or a sheet id to duplicate.")
+            sheet_id = self.get_sheet_by_name(sheet_name).sid
+
+        duplicate_sheet_request = {"duplicateSheet": {
+                "sourceSheetId": sheet_id,
+                "newSheetName": new_sheet_name
+            }
+        }
+        body["requests"].append(duplicate_sheet_request)
+
+        response = self.client.sheet_service.spreadsheets().batchUpdate(
+            spreadsheetId=self.id,
+            body=body
+        ).execute()
+        self._add_sheets_from_response(response=response, reply_type="duplicateSheet")
+
     def commit(self):
         body = {'requests': [self.batches]}
         return self.client.sheet_service.spreadsheets().batchUpdate(

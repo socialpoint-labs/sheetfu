@@ -76,13 +76,16 @@ class Table:
             values=values
         )
         new_item.get_range().set_values([values], batch_to=self)
+        self.items.append(new_item)
 
     def commit(self):
         body = {'requests': [self.batches]}
-        return self.full_range.client.sheet_service.spreadsheets().batchUpdate(
+        response = self.full_range.client.sheet_service.spreadsheets().batchUpdate(
             spreadsheetId=self.full_range.sheet.spreadsheet.id,
             body=body
         ).execute()
+        self.batches = list()
+        return response
 
 
 class Item:

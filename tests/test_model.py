@@ -28,7 +28,7 @@ class TestModelClients:
 
 class TestSpreadsheet:
 
-    http_sheets_mocks = mock_spreadsheet_instance(["add_sheets.json"])
+    http_sheets_mocks = mock_spreadsheet_instance(["add_sheets.json", "duplicate_sheets.json"])
     spreadsheet = SpreadsheetApp(http=http_sheets_mocks).open_by_id('some_id')
 
     def test_get_sheets(self):
@@ -41,13 +41,18 @@ class TestSpreadsheet:
         self.spreadsheet.create_sheets(["test_sheet", "test_sheet_2"])
         assert len(self.spreadsheet.sheets) == 4
 
+    def test_duplicate_sheet(self):
+        # Important! This test needs to be executed after test_create_sheets, as it clones that sheet #
+        self.spreadsheet.duplicate_sheet(new_sheet_name="cloned_sheet", sheet_name="test_sheet")
+        assert len(self.spreadsheet.sheets) == 5
+
     def test_add_sheets_from_response(self):
         dummy_response_create = json.loads(open_fixture("add_sheets.json"))
         self.spreadsheet._add_sheets_from_response(response=dummy_response_create, reply_type="addSheet")
-        assert len(self.spreadsheet.sheets) == 6
+        assert len(self.spreadsheet.sheets) == 7
         dummy_response_duplicate = json.loads(open_fixture("duplicate_sheets.json"))
         self.spreadsheet._add_sheets_from_response(response=dummy_response_duplicate, reply_type="duplicateSheet")
-        assert len(self.spreadsheet.sheets) == 7
+        assert len(self.spreadsheet.sheets) == 8
 
 
 class TestGettersFromDataRange:

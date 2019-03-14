@@ -127,3 +127,44 @@ class TestTableItemRanges:
         assert third_item.get_field_range('surname').a1 == 'B4'
         assert third_item.get_field_range('age').a1 == 'C4'
 
+
+class TestTableCRUD:
+    http_mocks = mock_google_sheets_responses([
+        'table_get_sheets.json',
+        'table_check_data_range.json',
+        'table_values.json',
+        'table_commit_reply.json',
+        'table_commit_reply.json',
+        'table_commit_reply.json',
+    ])
+
+    sa = SpreadsheetApp(http=http_mocks)
+    table_range = sa.open_by_id('whatever').get_sheet_by_name('Sheet1').get_data_range()
+    table = Table(
+        full_range=table_range,
+        notes=False,
+        backgrounds=False,
+        font_colors=False
+    )
+
+    def test_add_one_item(self):
+        assert len(self.table.items) == 3
+        self.table.add_one({"name": "Alex", "surname": "Muelas", "age": 25})
+        assert len(self.table.batches) == 1
+        assert len(self.table.items) == 4
+        self.table.commit()
+        assert len(self.table.batches) == 0
+        assert len(self.table.items) == 4
+
+    def test_add_several_items(self):
+        assert len(self.table.items) == 4
+        self.table.add_one({"name": "John", "surname": "Snpw", "age": 25})
+        self.table.add_one({"name": "Ned", "surname": "Stark", "age": 25})
+        self.table.add_one({"name": "Tyrion", "surname": "Lannister", "age": 25})
+        assert len(self.table.batches) == 3
+        assert len(self.table.items) == 7
+        self.table.commit()
+        assert len(self.table.batches) == 0
+        assert len(self.table.items) == 7
+
+

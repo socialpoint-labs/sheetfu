@@ -102,7 +102,7 @@ class Spreadsheet:
     def create_sheets(self, sheet_names):
         """
         Creates multiple sheets in the target spreadsheet
-        :oaram sheet_names: list of sheet names to create. Can also be a string to create a single sheet
+        :param sheet_names: list of sheet names to create. Can also be a string to create a single sheet
         """
         if type(sheet_names) is not list:
             sheet_names = [sheet_names]
@@ -125,8 +125,10 @@ class Spreadsheet:
 
     def duplicate_sheet(self, new_sheet_name, sheet_id=None, sheet_name=None):
         """
-        Creates multiple sheets in the target spreadsheet
-        :oaram sheet_names: list of sheet names to create. Can also be a string to create a single sheet
+        Creates a new sheet cloning an existing one, either by ID or by name
+        :oaram new_sheet_name: name with which the clone will be created
+        :oaram sheet_id: (Optional) ID of the sheet to be cloned. This will have preference over sheet_name
+        :oaram sheet_name: (Optional) name of the sheet to be cloned, in case sheet_id is not set
         """
 
         body = {'requests': []}

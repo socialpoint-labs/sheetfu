@@ -2,9 +2,9 @@ import io
 import re
 import sys
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
-    from distutils.core import setup
+    from distutils.core import setup, find_packages
 
 
 with io.open('sheetfu/__init__.py', 'rt', encoding='utf8') as f:
@@ -24,7 +24,7 @@ except ImportError:
 
 setup(
     name='sheetfu',
-    packages=['sheetfu'],
+    packages=find_packages(),
     description='Sheetfu is a library to interact with Google sheets.',
     long_description='Sheetfu long description coming soon ...',
     version=version,

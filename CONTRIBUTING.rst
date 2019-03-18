@@ -12,7 +12,7 @@ Support questions
 
 For questions about your own code ask on `Stack Overflow`_. Search with
 Google first using:
-  ``site:stackoverflow.com sheetfu {search term, exception message, etc.}``
+``site:stackoverflow.com sheetfu {search term, exception message, etc.}``
 
 .. _Stack Overflow: https://stackoverflow.com/questions/tagged/sheetfu?sort=linked
 
@@ -123,6 +123,43 @@ report on the terminal and as an interactive HTML document::
 
 Read more about `coverage <https://coverage.readthedocs.io>`_.
 
+
+Semantic versioning
+~~~~~~~~~~~~~~~~~~~
+
+Sheetfu follows the 2.0.0 specification of Semantic Versioning. All version number should follow the following format::
+
+    v<major>.<minor>.<patch>
+    example: v3.5.1
+
+Read more about `semantic versioning <https://semver.org/>`_.
+
+AngularJS commit convention
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Sheetfu follows the AngularJS commit specifications. Commit messages should be structured with the following format::
+
+    <type>(<scope>): <subject>
+    <BLANK LINE>
+    <body>
+    <BLANK LINE>
+    <footer>
+
+Allowed <type> values are the following::
+
+    feat (feature)
+    fix (bug fix)
+    docs (documentation)
+    style (formatting)
+    refactor
+    test (when adding missing tests)
+    chore (maintain)
+
+It's important to follow this commit specification, as the version numbers will be generated accordingly to the commit messages since the previous version.
+It's also important to specify which commits include breaking changes in the commit footer.
+
+
+Read more about `AngularJS commit convention <https://gist.github.com/stephenparish/9941e89d80e2bc58a153/>`_.
 
 make targets
 ~~~~~~~~~~~~

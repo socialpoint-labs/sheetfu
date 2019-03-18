@@ -9,6 +9,8 @@
     :license: MIT, see LICENSE for more details.
 """
 
+# Important! Never update this version manually. The automatic semantic-releases library takes care of updating it #
+# Manually changing this number could result in unexpected behaviour #
 __version__ = "0.7.1"
 
 

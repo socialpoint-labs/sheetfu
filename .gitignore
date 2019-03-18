@@ -12,3 +12,4 @@ sheetfu.egg-info/
 .coverage
 source/
 env/
+.vscode/

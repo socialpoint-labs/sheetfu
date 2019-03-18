@@ -24,7 +24,7 @@ except ImportError:
 
 setup(
     name='sheetfu',
-    packages=find_packages(),
+    packages=find_packages(include=['sheetfu','sheetfu.*']),
     description='Sheetfu is a library to interact with Google sheets.',
     long_description='Sheetfu long description coming soon ...',
     version=version,

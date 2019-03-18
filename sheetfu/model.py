@@ -152,10 +152,12 @@ class Spreadsheet:
 
     def commit(self):
         body = {'requests': [self.batches]}
-        return self.client.sheet_service.spreadsheets().batchUpdate(
+        response = self.client.sheet_service.spreadsheets().batchUpdate(
             spreadsheetId=self.id,
             body=body
         ).execute()
+        self.batches = list()
+        return response
 
 
 class Sheet:

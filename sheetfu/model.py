@@ -270,6 +270,93 @@ class Range:
         a1 = self.a1 or self.sheet.name
         return '<Range object {}>'.format(a1)
 
+    def expand(self, rows_top=None, rows_bottom=None, columns_left=None, columns_right=None):
+        """
+        Expand a range by a certain amount of rows/columns and return the new expanded range.
+        :param rows_top: Number of rows to expand to the top
+        :param rows_bottom: Number of rows to expand to the bottom
+        :param columns_left: Number of columns to expand to the left
+        :param columns_right: Number of columns to expand to the right
+        :return: A range object that corresponds to the expanded range.
+        """
+        return self.trim(rows_top=-rows_top if rows_top else None,
+                         rows_bottom=-rows_bottom if rows_bottom else None,
+                         columns_left=-columns_left if columns_left else None,
+                         columns_right=-columns_right if columns_right else None)
+
+    def trim(self, rows_top=None, rows_bottom=None, columns_left=None, columns_right=None):
+        """
+        Trim a certain amount of rows/columns from the range and return the new trimmed range.
+        :param rows_top: Number of rows to trim from the top
+        :param rows_bottom: Number of rows to trim from the bottom
+        :param columns_left: Number of columns to trim from the left
+        :param columns_right: Number of columns to trim from the right
+        :return: A range object that corresponds to the trimmed range.
+        """
+        top_row = self.coordinates.row
+        left_column = self.coordinates.column
+        number_of_columns = self.coordinates.number_of_columns
+        number_of_rows = self.coordinates.number_of_rows
+        if rows_top and rows_top != 0:
+            if rows_top < 0 and abs(rows_top) >= top_row:
+                raise ValueError("Tried expanding " + str(-rows_top) + " rows to the top of a range starting at row " +
+                                 str(top_row) + ".")
+            if rows_top >= number_of_rows:
+                raise ValueError("Tried trimming " + str(rows_top) + " rows from a range containing only "
+                                 + str(number_of_rows) + " columns.")
+            number_of_rows = number_of_rows - rows_top
+            top_row = top_row + rows_top
+
+        if columns_left and left_column != 0:
+            if columns_left < 0 and abs(columns_left) >= top_row:
+                raise ValueError("Tried expanding " + str(-columns_left) +
+                                 " columns to the left of a range starting at column " + str(left_column) + ".")
+            if columns_left >= number_of_columns:
+                raise ValueError("Tried trimming " + str(columns_left) + " columns from a range containing only "
+                                 + str(number_of_columns) + " columns.")
+            number_of_columns = number_of_columns - columns_left
+            left_column = left_column + columns_left
+
+        if rows_bottom and rows_bottom != 0:
+            if rows_bottom >= number_of_rows:
+                raise ValueError("Tried trimming " + str(rows_bottom) + " rows from a range containing only "
+                                 + str(number_of_rows) + " columns.")
+            number_of_rows = number_of_rows - rows_bottom
+
+        if columns_right and columns_right != 0:
+            if columns_right >= number_of_columns:
+                raise ValueError("Tried trimming " + str(columns_right) + " columns from a range containing only "
+                                + str(number_of_columns) + " columns.")
+            number_of_columns = number_of_columns - columns_right
+
+        a1 = convert_coordinates_to_a1(row=top_row,
+                                       column=left_column,
+                                       number_of_row=number_of_rows,
+                                       number_of_column=number_of_columns)
+        return Range(
+            client=self.client,
+            sheet=self.sheet,
+            a1=a1
+        )
+
+    @staticmethod
+    def has_empty_values(row_values):
+        for cell_value in row_values:
+            if cell_value != '':
+                return False
+        return True
+
+    def trim_empty_bottom_rows(self):
+        data = self.get_values()
+
+        rows_to_trim_from_bottom = 0
+        for row_values in reversed(data):
+            if not self.has_empty_values(row_values):
+                break
+            rows_to_trim_from_bottom += 1
+
+        return self.trim(rows_bottom=rows_to_trim_from_bottom)
+
     def make_get_request(self, field_mask, cell_parser):
         """
         Make a get request for the range.

@@ -79,6 +79,44 @@
                   }
                 }
               ]
+            },
+            {
+              "values": [
+                {
+                  "effectiveValue": {
+                    "stringValue": "mike"
+                  }
+                },
+                {
+                  "effectiveValue": {
+                    "stringValue": "peter"
+                  }
+                },
+                {
+                  "effectiveValue": {
+                    "numberValue": 30
+                  }
+                }
+              ]
+            },
+            {
+              "values": [
+                {
+                  "effectiveValue": {
+                    "stringValue": "random"
+                  }
+                },
+                {
+                  "effectiveValue": {
+                    "stringValue": "name"
+                  }
+                },
+                {
+                  "effectiveValue": {
+                    "numberValue": 30
+                  }
+                }
+              ]
             }
           ]
         }

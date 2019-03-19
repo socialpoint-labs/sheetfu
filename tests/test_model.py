@@ -2,6 +2,7 @@ from sheetfu.client import SpreadsheetApp
 from sheetfu.model import Spreadsheet, Sheet, Range
 from tests.utils import mock_range_instance, mock_spreadsheet_instance, mock_google_sheets_responses
 from tests.utils import open_fixture
+import pytest
 import json
 
 
@@ -111,4 +112,44 @@ class TestGridRange:
         assert grid_range['endRowIndex'] == 4
         assert grid_range['startColumnIndex'] == 0
         assert grid_range['endColumnIndex'] == 2
+
+    def test_trim_range(self):
+        range = self.sheet.get_range_from_a1('B1:D20')
+        assert range.coordinates.row == 1
+        assert range.coordinates.column == 2
+        assert range.coordinates.number_of_rows == 20
+        assert range.coordinates.number_of_columns == 3
+
+        top_trimmed_range = range.trim(rows_top=2)
+        assert top_trimmed_range.coordinates.row == 3
+        assert top_trimmed_range.coordinates.column == 2
+        assert top_trimmed_range.coordinates.number_of_rows == 18
+        assert top_trimmed_range.coordinates.number_of_columns == 3
+
+        bottom_trimmed_range = range.trim(rows_bottom=5, columns_right=1)
+        assert bottom_trimmed_range.coordinates.row == 1
+        assert bottom_trimmed_range.coordinates.column == 2
+        assert bottom_trimmed_range.coordinates.number_of_rows == 15
+        assert bottom_trimmed_range.coordinates.number_of_columns == 2
+
+        sides_trimmed_range = range.trim(columns_left=1, columns_right=1)
+        assert sides_trimmed_range.coordinates.row == 1
+        assert sides_trimmed_range.coordinates.column == 3
+        assert sides_trimmed_range.coordinates.number_of_rows == 20
+        assert sides_trimmed_range.coordinates.number_of_columns == 1
+
+    def test_invalid_trim_ranges(self):
+        range = self.sheet.get_range_from_a1('A5:B10')
+        assert range.coordinates.row == 5
+        assert range.coordinates.column == 1
+        assert range.coordinates.number_of_rows == 6
+        assert range.coordinates.number_of_columns == 2
+        with pytest.raises(ValueError):
+            range.trim(rows_top=6)
+        with pytest.raises(ValueError):
+            range.trim(rows_top=3, rows_bottom=3)
+        with pytest.raises(ValueError):
+            range.trim(columns_right=4)
+        with pytest.raises(ValueError):
+            range.trim(columns_right=1).trim(columns_left=1)
 

@@ -11,6 +11,7 @@ class TestTableRanges:
         'table_get_sheets.json',
         'table_check_data_range.json',
         'table_values.json',
+        'table_values.json',
         'table_notes.json',
         'table_backgrounds.json',
         'table_font_colors.json'
@@ -87,6 +88,7 @@ class TestTableItemRanges:
         'table_get_sheets.json',
         'table_check_data_range.json',
         'table_values.json',
+        'table_values.json',
         'table_notes.json',
         'table_backgrounds.json',
         'table_font_colors.json'
@@ -102,10 +104,10 @@ class TestTableItemRanges:
     )
 
     def test_table_range(self):
-        assert self.table.full_range.a1 == 'A1:C4'
+        assert self.table.full_range.a1 == 'A1:C6'
 
     def test_table_items_range(self):
-        assert self.table.items_range.a1 == 'A2:C4'
+        assert self.table.items_range.a1 == 'A2:C6'
 
     def test_first_item_range(self):
         first_item = self.table[0]
@@ -133,6 +135,7 @@ class TestTableCRUD:
         'table_get_sheets.json',
         'table_check_data_range.json',
         'table_values.json',
+        'table_values.json',
         'table_commit_reply.json',
         'table_commit_reply.json',
         'table_commit_reply.json',
@@ -148,23 +151,31 @@ class TestTableCRUD:
     )
 
     def test_add_one_item(self):
-        assert len(self.table.items) == 3
+        assert self.table.full_range.a1 == "A1:C6"
+        assert self.table.items_range.a1 == "A2:C6"
+        assert len(self.table.items) == 5
         self.table.add_one({"name": "Alex", "surname": "Muelas", "age": 25})
+        assert self.table.full_range.a1 == "A1:C7"
+        assert self.table.items_range.a1 == "A2:C7"
         assert len(self.table.batches) == 1
-        assert len(self.table.items) == 4
+        assert len(self.table.items) == 6
         self.table.commit()
         assert len(self.table.batches) == 0
-        assert len(self.table.items) == 4
+        assert len(self.table.items) == 6
 
     def test_add_several_items(self):
-        assert len(self.table.items) == 4
+        assert len(self.table.items) == 6
+        assert self.table.full_range.a1 == "A1:C7"
+        assert self.table.items_range.a1 == "A2:C7"
         self.table.add_one({"name": "John", "surname": "Snpw", "age": 25})
         self.table.add_one({"name": "Ned", "surname": "Stark", "age": 25})
         self.table.add_one({"name": "Tyrion", "surname": "Lannister", "age": 25})
         assert len(self.table.batches) == 3
-        assert len(self.table.items) == 7
+        assert len(self.table.items) == 9
         self.table.commit()
         assert len(self.table.batches) == 0
-        assert len(self.table.items) == 7
+        assert len(self.table.items) == 9
+        assert self.table.full_range.a1 == "A1:C10"
+        assert self.table.items_range.a1 == "A2:C10"
 
 

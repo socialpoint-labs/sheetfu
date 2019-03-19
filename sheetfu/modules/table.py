@@ -5,7 +5,11 @@ from sheetfu.helpers import convert_coordinates_to_a1
 class Table:
 
     def __init__(self, full_range, notes=False, backgrounds=False, font_colors=False, header_row=1):
-        self.full_range = full_range.trim(rows_top=(header_row - 1)).trim_empty_bottom_rows()
+        self.full_range = full_range.offset(
+            row_offset=(header_row - 1),
+            column_offset=0,
+            num_rows=(full_range.coordinates.number_of_rows - (header_row - 1))
+        ).trim_empty_bottom_rows()
         self.items_range = self.get_items_range()
 
         self.data = self.full_range.get_values()
@@ -30,9 +34,10 @@ class Table:
 
     def get_items_range(self):
         # We need to check for the case where the table has no items, only the header row #
-        if self.full_range.coordinates.number_of_rows == 1:
+        full_range_num_rows = self.full_range.coordinates.number_of_rows
+        if full_range_num_rows == 1:
             return None
-        return self.full_range.trim(rows_top=1)
+        return self.full_range.offset(row_offset=1, column_offset=0, num_rows=(full_range_num_rows - 1))
 
     def parse_items(self):
         items = list()
@@ -74,7 +79,10 @@ class Table:
             header=self.header,
             values=values
         )
-        self.full_range = self.full_range.expand(rows_bottom=1)
+        self.full_range = self.full_range.offset(
+            row_offset=0,
+            column_offset=0,
+            num_rows=self.full_range.coordinates.number_of_rows + 1)
         self.items_range = self.get_items_range()
         self.items.append(new_item)
         new_item.get_range().set_values([values], batch_to=self)

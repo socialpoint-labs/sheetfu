@@ -270,73 +270,53 @@ class Range:
         a1 = self.a1 or self.sheet.name
         return '<Range object {}>'.format(a1)
 
-    def expand(self, rows_top=None, rows_bottom=None, columns_left=None, columns_right=None):
+    def offset(self, row_offset, column_offset, num_rows=None, num_columns=None):
         """
-        Expand a range by a certain amount of rows/columns and return the new expanded range.
-        :param rows_top: Number of rows to expand to the top
-        :param rows_bottom: Number of rows to expand to the bottom
-        :param columns_left: Number of columns to expand to the left
-        :param columns_right: Number of columns to expand to the right
-        :return: A range object that corresponds to the expanded range.
+        Returns a new range that is relative to the current range, whose upper left point is offset from the current
+        range by the given rows and columns, and with the given height and width in cells.
+        :param row_offset: The number of rows down from the range's top-left cell; negative values represent rows up
+         from the range's top-left cell.
+        :param column_offset: The number of columns right from the range's top-left cell; negative values represent
+         columns left from the range's top-left cell.
+        :param num_rows: (Optional) The height in rows of the new range.
+        :param num_columns: (Optional) The width in columns of the new range.
+        :return: A range object that corresponds to the new offset range
         """
-        return self.trim(rows_top=-rows_top if rows_top else None,
-                         rows_bottom=-rows_bottom if rows_bottom else None,
-                         columns_left=-columns_left if columns_left else None,
-                         columns_right=-columns_right if columns_right else None)
 
-    def trim(self, rows_top=None, rows_bottom=None, columns_left=None, columns_right=None):
-        """
-        Trim a certain amount of rows/columns from the range and return the new trimmed range.
-        :param rows_top: Number of rows to trim from the top
-        :param rows_bottom: Number of rows to trim from the bottom
-        :param columns_left: Number of columns to trim from the left
-        :param columns_right: Number of columns to trim from the right
-        :return: A range object that corresponds to the trimmed range.
-        """
         top_row = self.coordinates.row
+        if row_offset != 0:
+            if row_offset < 0 and abs(row_offset) >= top_row:
+                raise ValueError("Tried creating an offset of " + str(row_offset) +
+                                 " rows from the top of a range starting at row " + str(top_row) + ".")
+            top_row = top_row + row_offset
+
         left_column = self.coordinates.column
-        number_of_columns = self.coordinates.number_of_columns
-        number_of_rows = self.coordinates.number_of_rows
-        if rows_top and rows_top != 0:
-            if rows_top < 0 and abs(rows_top) >= top_row:
-                raise ValueError("Tried expanding " + str(-rows_top) + " rows to the top of a range starting at row " +
-                                 str(top_row) + ".")
-            if rows_top >= number_of_rows:
-                raise ValueError("Tried trimming " + str(rows_top) + " rows from a range containing only "
-                                 + str(number_of_rows) + " columns.")
-            number_of_rows = number_of_rows - rows_top
-            top_row = top_row + rows_top
-
-        if columns_left and left_column != 0:
-            if columns_left < 0 and abs(columns_left) >= top_row:
-                raise ValueError("Tried expanding " + str(-columns_left) +
+        if column_offset != 0:
+            if column_offset < 0 and abs(column_offset) >= left_column:
+                raise ValueError("Tried creating an offset of " + str(column_offset) +
                                  " columns to the left of a range starting at column " + str(left_column) + ".")
-            if columns_left >= number_of_columns:
-                raise ValueError("Tried trimming " + str(columns_left) + " columns from a range containing only "
-                                 + str(number_of_columns) + " columns.")
-            number_of_columns = number_of_columns - columns_left
-            left_column = left_column + columns_left
+            left_column = left_column + column_offset
 
-        if rows_bottom and rows_bottom != 0:
-            if rows_bottom >= number_of_rows:
-                raise ValueError("Tried trimming " + str(rows_bottom) + " rows from a range containing only "
-                                 + str(number_of_rows) + " columns.")
-            number_of_rows = number_of_rows - rows_bottom
+        number_of_rows = self.coordinates.number_of_rows
+        if num_rows is not None:
+            if num_rows <= 0:
+                raise ValueError("Tried creating an offset of " + str(num_rows) + " rows.")
+            number_of_rows = num_rows
 
-        if columns_right and columns_right != 0:
-            if columns_right >= number_of_columns:
-                raise ValueError("Tried trimming " + str(columns_right) + " columns from a range containing only "
-                                + str(number_of_columns) + " columns.")
-            number_of_columns = number_of_columns - columns_right
+        number_of_columns = self.coordinates.number_of_columns
+        if num_columns is not None:
+            if num_columns <= 0:
+                raise ValueError("Tried creating an offset of " + str(num_columns) + " columns.")
+            number_of_columns = num_columns
 
-        a1 = convert_coordinates_to_a1(row=top_row,
-                                       column=left_column,
-                                       number_of_row=number_of_rows,
-                                       number_of_column=number_of_columns)
+        new_range_a1 = convert_coordinates_to_a1(row=top_row,
+                                                 column=left_column,
+                                                 number_of_row=number_of_rows,
+                                                 number_of_column=number_of_columns)
         return Range(
             client=self.client,
             sheet=self.sheet,
-            a1=a1
+            a1=new_range_a1
         )
 
     @staticmethod
@@ -355,7 +335,8 @@ class Range:
                 break
             rows_to_trim_from_bottom += 1
 
-        return self.trim(rows_bottom=rows_to_trim_from_bottom)
+        new_number_of_rows = self.coordinates.number_of_rows - rows_to_trim_from_bottom
+        return self.offset(row_offset=0, column_offset=0, num_rows=new_number_of_rows)
 
     def make_get_request(self, field_mask, cell_parser):
         """

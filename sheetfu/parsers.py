@@ -1,4 +1,5 @@
-from sheetfu.helpers import rgb_to_hex, hex_to_rgb
+from sheetfu.helpers import rgb_to_hex, hex_to_rgb, datetime_to_serial_number
+from datetime import datetime
 
 
 class CellParsers:
@@ -15,12 +16,14 @@ class CellParsers:
         if cell:
             if isinstance(cell, str):
                 return {"userEnteredValue": {"stringValue": cell}}
-            elif isinstance(cell, int) or isinstance(cell, float):
-                return {"userEnteredValue": {"numberValue": cell}}
             elif isinstance(cell, bool):
                 return {"userEnteredValue": {"boolValue": cell}}
-        else:
-            return {"userEnteredValue": {"stringValue": ''}}
+            elif isinstance(cell, int) or isinstance(cell, float):
+                return {"userEnteredValue": {"numberValue": cell}}
+            elif isinstance(cell, datetime):
+                return {"userEnteredValue": {"numberValue": datetime_to_serial_number(cell)},
+                        "userEnteredFormat": {"numberFormat": {"type": "DATE"}}}
+        return {"userEnteredValue": {"stringValue": ''}}
 
     @staticmethod
     def get_background(cell):

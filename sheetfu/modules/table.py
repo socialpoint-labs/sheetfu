@@ -11,9 +11,9 @@ class Table:
         self.data = self.full_range.get_values()
         self.header = self.data[0]
         self.values = self.data[1:]
-        self.notes = self.items_range.get_notes() if notes else None
-        self.backgrounds = self.items_range.get_backgrounds() if backgrounds else None
-        self.font_colors = self.items_range.get_font_colors() if font_colors else None
+        self.notes = self.items_range.get_notes() if notes and self.items_range else None
+        self.backgrounds = self.items_range.get_backgrounds() if backgrounds and self.items_range else None
+        self.font_colors = self.items_range.get_font_colors() if font_colors and self.items_range else None
 
         self.items = self.parse_items()
 
@@ -29,10 +29,15 @@ class Table:
         return self.items[index]
 
     def get_items_range(self):
+        # We need to check for the case where the table has no items, only the header row #
+        if self.full_range.coordinates.number_of_rows == 1:
+            return None
         return self.full_range.trim(rows_top=1)
 
     def parse_items(self):
         items = list()
+        if not self.items_range:
+            return items
         for row_number in range(0, self.items_range.coordinates.number_of_rows):
 
             values = None
@@ -69,10 +74,10 @@ class Table:
             header=self.header,
             values=values
         )
-        new_item.get_range().set_values([values], batch_to=self)
         self.full_range = self.full_range.expand(rows_bottom=1)
         self.items_range = self.get_items_range()
         self.items.append(new_item)
+        new_item.get_range().set_values([values], batch_to=self)
 
     def commit(self):
         body = {'requests': [self.batches]}

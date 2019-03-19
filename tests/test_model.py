@@ -2,6 +2,7 @@ from sheetfu.client import SpreadsheetApp
 from sheetfu.model import Spreadsheet, Sheet, Range
 from tests.utils import mock_range_instance, mock_spreadsheet_instance, mock_google_sheets_responses
 from tests.utils import open_fixture
+import pytest
 import json
 
 
@@ -111,4 +112,71 @@ class TestGridRange:
         assert grid_range['endRowIndex'] == 4
         assert grid_range['startColumnIndex'] == 0
         assert grid_range['endColumnIndex'] == 2
+
+    def test_offsets(self):
+        range = self.sheet.get_range_from_a1('C5:E20')
+        assert range.coordinates.row == 5
+        assert range.coordinates.column == 3
+        assert range.coordinates.number_of_rows == 16
+        assert range.coordinates.number_of_columns == 3
+
+        bottom_offset = range.offset(row_offset=5, column_offset=5)
+        assert bottom_offset.coordinates.row == 10
+        assert bottom_offset.coordinates.column == 8
+        assert bottom_offset.coordinates.number_of_rows == 16
+        assert bottom_offset.coordinates.number_of_columns == 3
+        assert bottom_offset.a1 == "H10:J25"
+
+        top_offset = range.offset(row_offset=-3, column_offset=-2)
+        assert top_offset.coordinates.row == 2
+        assert top_offset.coordinates.column == 1
+        assert top_offset.coordinates.number_of_rows == 16
+        assert top_offset.coordinates.number_of_columns == 3
+        assert top_offset.a1 == "A2:C17"
+
+    def test_offset_trims(self):
+        range = self.sheet.get_range_from_a1('B1:D20')
+        assert range.coordinates.row == 1
+        assert range.coordinates.column == 2
+        assert range.coordinates.number_of_rows == 20
+        assert range.coordinates.number_of_columns == 3
+
+        top_trimmed_range = range.offset(row_offset=2, column_offset=0, num_rows=18, num_columns=3)
+        assert top_trimmed_range.coordinates.row == 3
+        assert top_trimmed_range.coordinates.column == 2
+        assert top_trimmed_range.coordinates.number_of_rows == 18
+        assert top_trimmed_range.coordinates.number_of_columns == 3
+        assert top_trimmed_range.a1 == "B3:D20"
+
+        bottom_trimmed_range = range.offset(row_offset=0, column_offset=0, num_rows=15, num_columns=2)
+        assert bottom_trimmed_range.coordinates.row == 1
+        assert bottom_trimmed_range.coordinates.column == 2
+        assert bottom_trimmed_range.coordinates.number_of_rows == 15
+        assert bottom_trimmed_range.coordinates.number_of_columns == 2
+        assert bottom_trimmed_range.a1 == "B1:C15"
+
+        sides_trimmed_range = range.offset(row_offset=0, column_offset=1,
+                                           num_rows=range.coordinates.number_of_rows, num_columns=1)
+        assert sides_trimmed_range.coordinates.row == 1
+        assert sides_trimmed_range.coordinates.column == 3
+        assert sides_trimmed_range.coordinates.number_of_rows == 20
+        assert sides_trimmed_range.coordinates.number_of_columns == 1
+        assert sides_trimmed_range.a1 == "C1:C20"
+
+    def test_invalid_offset_ranges(self):
+        range = self.sheet.get_range_from_a1('A5:B10')
+        assert range.coordinates.row == 5
+        assert range.coordinates.column == 1
+        assert range.coordinates.number_of_rows == 6
+        assert range.coordinates.number_of_columns == 2
+        with pytest.raises(ValueError):
+            range.offset(row_offset=-5, column_offset=0)
+        with pytest.raises(ValueError):
+            range.offset(row_offset=0, column_offset=-1)
+        with pytest.raises(ValueError):
+            range.offset(row_offset=0, column_offset=0,
+                         num_rows=0, num_columns=2)
+        with pytest.raises(ValueError):
+            range.offset(row_offset=0, column_offset=0,
+                         num_rows=6, num_columns=-2)
 

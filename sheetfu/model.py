@@ -270,6 +270,74 @@ class Range:
         a1 = self.a1 or self.sheet.name
         return '<Range object {}>'.format(a1)
 
+    def offset(self, row_offset, column_offset, num_rows=None, num_columns=None):
+        """
+        Returns a new range that is relative to the current range, whose upper left point is offset from the current
+        range by the given rows and columns, and with the given height and width in cells.
+        :param row_offset: The number of rows down from the range's top-left cell; negative values represent rows up
+         from the range's top-left cell.
+        :param column_offset: The number of columns right from the range's top-left cell; negative values represent
+         columns left from the range's top-left cell.
+        :param num_rows: (Optional) The height in rows of the new range.
+        :param num_columns: (Optional) The width in columns of the new range.
+        :return: A range object that corresponds to the new offset range
+        """
+
+        top_row = self.coordinates.row
+        if row_offset != 0:
+            if row_offset < 0 and abs(row_offset) >= top_row:
+                raise ValueError("Tried creating an offset of " + str(row_offset) +
+                                 " rows from the top of a range starting at row " + str(top_row) + ".")
+            top_row = top_row + row_offset
+
+        left_column = self.coordinates.column
+        if column_offset != 0:
+            if column_offset < 0 and abs(column_offset) >= left_column:
+                raise ValueError("Tried creating an offset of " + str(column_offset) +
+                                 " columns to the left of a range starting at column " + str(left_column) + ".")
+            left_column = left_column + column_offset
+
+        number_of_rows = self.coordinates.number_of_rows
+        if num_rows is not None:
+            if num_rows <= 0:
+                raise ValueError("Tried creating an offset of " + str(num_rows) + " rows.")
+            number_of_rows = num_rows
+
+        number_of_columns = self.coordinates.number_of_columns
+        if num_columns is not None:
+            if num_columns <= 0:
+                raise ValueError("Tried creating an offset of " + str(num_columns) + " columns.")
+            number_of_columns = num_columns
+
+        new_range_a1 = convert_coordinates_to_a1(row=top_row,
+                                                 column=left_column,
+                                                 number_of_row=number_of_rows,
+                                                 number_of_column=number_of_columns)
+        return Range(
+            client=self.client,
+            sheet=self.sheet,
+            a1=new_range_a1
+        )
+
+    @staticmethod
+    def has_empty_values(row_values):
+        for cell_value in row_values:
+            if cell_value != '':
+                return False
+        return True
+
+    def trim_empty_bottom_rows(self):
+        data = self.get_values()
+
+        rows_to_trim_from_bottom = 0
+        for row_values in reversed(data):
+            if not self.has_empty_values(row_values):
+                break
+            rows_to_trim_from_bottom += 1
+
+        new_number_of_rows = self.coordinates.number_of_rows - rows_to_trim_from_bottom
+        return self.offset(row_offset=0, column_offset=0, num_rows=new_number_of_rows)
+
     def make_get_request(self, field_mask, cell_parser):
         """
         Make a get request for the range.
@@ -352,7 +420,7 @@ class Range:
         :param values: 2D array of values (size must match range coordinates).
         """
         return self.make_set_request(
-            field='userEnteredValue',
+            field='userEnteredValue, userEnteredFormat',
             data=values,
             set_parser=CellParsers.set_value,
             batch_to=batch_to

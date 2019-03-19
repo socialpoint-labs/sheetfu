@@ -12,6 +12,7 @@
 
 import string
 import math
+from datetime import datetime
 from collections import namedtuple
 
 
@@ -97,3 +98,10 @@ def hex_to_rgb(hex_color):
 
     rgb = tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
     return {'red': rgb[0] / 255.0, 'green': rgb[1] / 255.0, 'blue': rgb[2] / 255.0}
+
+
+def datetime_to_serial_number(date):
+    google_sheets_epoch = datetime(1899, 12, 30)
+    time_delta = (date - google_sheets_epoch)
+    date_serial_number = float(time_delta.days) + (float(time_delta.seconds) / 86400)
+    return date_serial_number

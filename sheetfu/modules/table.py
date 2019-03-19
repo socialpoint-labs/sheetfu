@@ -4,16 +4,20 @@ from sheetfu.helpers import convert_coordinates_to_a1
 
 class Table:
 
-    def __init__(self, full_range, notes=False, backgrounds=False, font_colors=False):
-        self.full_range = full_range
+    def __init__(self, full_range, notes=False, backgrounds=False, font_colors=False, header_row=1):
+        self.full_range = full_range.offset(
+            row_offset=(header_row - 1),
+            column_offset=0,
+            num_rows=(full_range.coordinates.number_of_rows - (header_row - 1))
+        ).trim_empty_bottom_rows()
         self.items_range = self.get_items_range()
 
         self.data = self.full_range.get_values()
         self.header = self.data[0]
         self.values = self.data[1:]
-        self.notes = self.items_range.get_notes() if notes else None
-        self.backgrounds = self.items_range.get_backgrounds() if backgrounds else None
-        self.font_colors = self.items_range.get_font_colors() if font_colors else None
+        self.notes = self.items_range.get_notes() if notes and self.items_range else None
+        self.backgrounds = self.items_range.get_backgrounds() if backgrounds and self.items_range else None
+        self.font_colors = self.items_range.get_font_colors() if font_colors and self.items_range else None
 
         self.items = self.parse_items()
 
@@ -29,16 +33,16 @@ class Table:
         return self.items[index]
 
     def get_items_range(self):
-        a1 = convert_coordinates_to_a1(
-            row=self.full_range.coordinates.row + 1,
-            column=self.full_range.coordinates.column,
-            number_of_row=self.full_range.coordinates.number_of_rows - 1,
-            number_of_column=self.full_range.coordinates.number_of_columns
-        )
-        return Range(client=self.full_range.client, sheet=self.full_range.sheet, a1=a1)
+        # We need to check for the case where the table has no items, only the header row #
+        full_range_num_rows = self.full_range.coordinates.number_of_rows
+        if full_range_num_rows == 1:
+            return None
+        return self.full_range.offset(row_offset=1, column_offset=0, num_rows=(full_range_num_rows - 1))
 
     def parse_items(self):
         items = list()
+        if not self.items_range:
+            return items
         for row_number in range(0, self.items_range.coordinates.number_of_rows):
 
             values = None
@@ -75,8 +79,13 @@ class Table:
             header=self.header,
             values=values
         )
-        new_item.get_range().set_values([values], batch_to=self)
+        self.full_range = self.full_range.offset(
+            row_offset=0,
+            column_offset=0,
+            num_rows=self.full_range.coordinates.number_of_rows + 1)
+        self.items_range = self.get_items_range()
         self.items.append(new_item)
+        new_item.get_range().set_values([values], batch_to=self)
 
     def commit(self):
         body = {'requests': [self.batches]}

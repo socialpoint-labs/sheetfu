@@ -18,14 +18,9 @@ class Table:
         # Boolean values that represent if the Table contains this information #
         self.notes = notes
         self.backgrounds = backgrounds
-        self.font_colors = notes
+        self.font_colors = font_colors
 
-        self.items = self.parse_items(
-            values=table_data[1:],
-            notes=self.items_range.get_notes() if notes and self.items_range else None,
-            backgrounds=self.items_range.get_backgrounds() if backgrounds and self.items_range else None,
-            font_colors=self.items_range.get_font_colors() if font_colors and self.items_range else None
-        )
+        self.items = self.parse_items(values=table_data[1:])
 
         self.batches = list()
         # This attribute determines if the next commit will re-write the whole table instead of executing the batches #
@@ -47,10 +42,15 @@ class Table:
             return None
         return self.full_range.offset(row_offset=1, column_offset=0, num_rows=(full_range_num_rows - 1))
 
-    def parse_items(self, values, notes, backgrounds, font_colors):
+    def parse_items(self, values):
         items = list()
         if not self.items_range:
             return items
+
+        notes = self.items_range.get_notes() if self.notes else None
+        backgrounds = self.items_range.get_notes() if self.backgrounds else None
+        font_colors = self.items_range.get_notes() if self.font_colors else None
+
         for row_number in range(0, self.items_range.coordinates.number_of_rows):
 
             item_values = None

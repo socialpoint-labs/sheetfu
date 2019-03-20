@@ -64,7 +64,7 @@ class TestGettersFromDataRange:
     data_range = client.open_by_id('spreadsheet id').get_sheet_by_name('people').get_data_range()
 
     def test_a1_notation_is_right(self):
-        assert self.data_range.a1 == "A1:D21"
+        assert self.data_range.a1 == "people!A1:D21"
 
     def test_get_backgrounds(self):
         backgrounds = self.data_range.get_backgrounds()
@@ -81,12 +81,12 @@ class TestCellRange:
     data_range = client.open_by_id('spreadsheet id').get_sheet_by_name('people').get_data_range()
 
     def test_a1(self):
-        assert self.data_range.a1 == 'A1:D21'
+        assert self.data_range.a1 == 'people!A1:D21'
 
     def test_get_cell(self):
-        assert self.data_range.get_cell(1, 1).a1 == 'A1'
-        assert self.data_range.get_cell(1, 2).a1 == 'B1'
-        assert self.data_range.get_cell(2, 1).a1 == 'A2'
+        assert self.data_range.get_cell(1, 1).a1 == 'people!A1'
+        assert self.data_range.get_cell(1, 2).a1 == 'people!B1'
+        assert self.data_range.get_cell(2, 1).a1 == 'people!A2'
 
 
 class TestGridRange:

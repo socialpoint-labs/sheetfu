@@ -312,7 +312,8 @@ class Range:
         new_range_a1 = convert_coordinates_to_a1(row=top_row,
                                                  column=left_column,
                                                  number_of_row=number_of_rows,
-                                                 number_of_column=number_of_columns)
+                                                 number_of_column=number_of_columns,
+                                                 sheet_name=self.coordinates.sheet_name)
         return Range(
             client=self.client,
             sheet=self.sheet,
@@ -584,13 +585,14 @@ class Range:
             row=first_cell_coordinates.row,
             column=first_cell_coordinates.column,
             number_of_row=number_of_rows,
-            number_of_column=number_of_columns
+            number_of_column=number_of_columns,
+            sheet_name=self.sheet.name
         )
 
     def get_cell(self, row, column):        # todo: have a custom error when row and/or column is 0
         row_number = self.coordinates.row + row - 1
         column_number = self.coordinates.column + column - 1
-        a1 = convert_coordinates_to_a1(row_number, column_number)
+        a1 = convert_coordinates_to_a1(row_number, column_number, sheet_name=self.coordinates.sheet_name)
         return Range(
             client=self.client,
             sheet=self.sheet,

@@ -99,9 +99,8 @@ class Table:
     def as_dataframe(self, pd):
         """
         Create a panda DataFrame object using the values of the table object.
-        Numpy and Panda must be installed.
+        Panda must be installed.
         :param pd: Panda module object.
-        :param np: Numpy module object.
         :return: The panda DataFrame.
         """
         return pd.DataFrame(self.values,columns=self.header)

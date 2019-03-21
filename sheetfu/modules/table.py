@@ -87,6 +87,8 @@ class Table:
         new_item.get_range().set_values([values], batch_to=self)
 
     def sort(self, field, reverse=False):
+        if not self.items_range:
+            return
         self.items.sort(key=lambda item: item.get_field_value(field), reverse=reverse)
         self.needs_full_table_syncro = True
 

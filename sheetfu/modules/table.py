@@ -47,34 +47,22 @@ class Table:
         if not self.items_range:
             return items
 
-        notes = self.items_range.get_notes() if self.notes else None
-        backgrounds = self.items_range.get_notes() if self.backgrounds else None
-        font_colors = self.items_range.get_notes() if self.font_colors else None
+        empty_list = [None] * self.items_range.coordinates.number_of_rows
+
+        notes = self.items_range.get_notes() if self.notes else list(empty_list)
+        backgrounds = self.items_range.get_backgrounds() if self.backgrounds else list(empty_list)
+        font_colors = self.items_range.get_font_colors() if self.font_colors else list(empty_list)
 
         for row_number in range(0, self.items_range.coordinates.number_of_rows):
-
-            item_values = None
-            item_notes = None
-            item_backgrounds = None
-            item_font_colors = None
-
-            if values:
-                item_values = values[row_number] or None
-            if notes:
-                item_notes = notes[row_number] or None
-            if backgrounds:
-                item_backgrounds = backgrounds[row_number] or None
-            if font_colors:
-                item_font_colors = font_colors[row_number] or None
 
             item = Item(
                 parent_table=self,
                 row_index=row_number,
                 header=self.header,
-                values=item_values,
-                notes=item_notes,
-                backgrounds=item_backgrounds,
-                font_colors=item_font_colors
+                values=values[row_number],
+                notes=notes[row_number],
+                backgrounds=backgrounds[row_number],
+                font_colors=font_colors[row_number]
             )
             items.append(item)
         return items

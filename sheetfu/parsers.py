@@ -13,7 +13,7 @@ class CellParsers:
 
     @staticmethod
     def set_value(cell):
-        if cell:
+        if cell is not None:
             if isinstance(cell, str):
                 return {"userEnteredValue": {"stringValue": cell}}
             elif isinstance(cell, bool):
@@ -21,8 +21,7 @@ class CellParsers:
             elif isinstance(cell, int) or isinstance(cell, float):
                 return {"userEnteredValue": {"numberValue": cell}}
             elif isinstance(cell, datetime):
-                return {"userEnteredValue": {"numberValue": datetime_to_serial_number(cell)},
-                        "userEnteredFormat": {"numberFormat": {"type": "DATE"}}}
+                return {"userEnteredValue": {"numberValue": datetime_to_serial_number(cell)}}
         return {"userEnteredValue": {"stringValue": ''}}
 
     @staticmethod

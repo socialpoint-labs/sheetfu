@@ -12,16 +12,19 @@ class Table:
         ).trim_empty_bottom_rows()
         self.items_range = self.get_items_range()
 
-        self.data = self.full_range.get_values()
-        self.header = self.data[0]
-        self.values = self.data[1:]
-        self.notes = self.items_range.get_notes() if notes and self.items_range else None
-        self.backgrounds = self.items_range.get_backgrounds() if backgrounds and self.items_range else None
-        self.font_colors = self.items_range.get_font_colors() if font_colors and self.items_range else None
+        table_data = self.full_range.get_values()
+        self.header = table_data[0]
 
-        self.items = self.parse_items()
+        # Boolean values that represent if the Table contains this information #
+        self.has_notes = notes
+        self.has_backgrounds = backgrounds
+        self.has_font_colors = font_colors
+
+        self.items = self.parse_items(values=table_data[1:])
 
         self.batches = list()
+        # This attribute determines if the next commit will re-write the whole table instead of executing the batches #
+        self.needs_full_table_syncro = False
 
     def __len__(self):
         return len(self.items)
@@ -39,34 +42,27 @@ class Table:
             return None
         return self.full_range.offset(row_offset=1, column_offset=0, num_rows=(full_range_num_rows - 1))
 
-    def parse_items(self):
+    def parse_items(self, values):
         items = list()
         if not self.items_range:
             return items
+
+        empty_list = [None] * self.items_range.coordinates.number_of_rows
+
+        notes = self.items_range.get_notes() if self.has_notes else list(empty_list)
+        backgrounds = self.items_range.get_backgrounds() if self.has_backgrounds else list(empty_list)
+        font_colors = self.items_range.get_font_colors() if self.has_font_colors else list(empty_list)
+
         for row_number in range(0, self.items_range.coordinates.number_of_rows):
-
-            values = None
-            notes = None
-            backgrounds = None
-            font_colors = None
-
-            if self.values:
-                values = self.values[row_number] or None
-            if self.notes:
-                notes = self.notes[row_number] or None
-            if self.backgrounds:
-                backgrounds = self.backgrounds[row_number] or None
-            if self.font_colors:
-                font_colors = self.font_colors[row_number] or None
 
             item = Item(
                 parent_table=self,
                 row_index=row_number,
                 header=self.header,
-                values=values,
-                notes=notes,
-                backgrounds=backgrounds,
-                font_colors=font_colors
+                values=values[row_number],
+                notes=notes[row_number],
+                backgrounds=backgrounds[row_number],
+                font_colors=font_colors[row_number]
             )
             items.append(item)
         return items
@@ -77,7 +73,10 @@ class Table:
             parent_table=self,
             row_index=len(self.items),
             header=self.header,
-            values=values
+            values=values,
+            notes=[''] * len(self.header) if self.has_notes else None,
+            backgrounds=[''] * len(self.header) if self.has_backgrounds else None,
+            font_colors=[''] * len(self.header) if self.has_font_colors else None,
         )
         self.full_range = self.full_range.offset(
             row_offset=0,
@@ -87,7 +86,40 @@ class Table:
         self.items.append(new_item)
         new_item.get_range().set_values([values], batch_to=self)
 
+    def sort(self, field, reverse=False):
+        self.items.sort(key=lambda item: item.get_field_value(field), reverse=reverse)
+        self.needs_full_table_syncro = True
+
+    def get_full_table_syncro_batches(self):
+        self.batches = list()
+        table_values, table_notes, table_backgrounds, table_font_colors = list(), list(), list(), list()
+        for item in self.items:
+            item_values, item_notes, item_backgrounds, item_font_colors = list(), list(), list(), list()
+            for field_name in self.header:
+                item_values.append(item.get_field_value(field_name))
+                if self.has_notes:
+                    item_notes.append(item.get_field_note(field_name))
+                if self.has_backgrounds:
+                    item_backgrounds.append(item.get_field_background(field_name))
+                if self.has_font_colors:
+                    item_font_colors.append(item.get_field_font_color(field_name))
+            table_values.append(item_values)
+            table_notes.append(item_notes)
+            table_backgrounds.append(item_backgrounds)
+            table_font_colors.append(item_font_colors)
+
+        self.items_range.set_values(table_values, batch_to=self)
+        if self.has_notes:
+            self.items_range.set_notes(table_notes, batch_to=self)
+        if self.has_backgrounds:
+            self.items_range.set_backgrounds(table_backgrounds, batch_to=self)
+        if self.has_font_colors:
+            self.items_range.set_font_colors(table_font_colors, batch_to=self)
+
     def commit(self):
+        if self.needs_full_table_syncro:
+            self.get_full_table_syncro_batches()
+            self.needs_full_table_syncro = False
         body = {'requests': [self.batches]}
         response = self.full_range.client.sheet_service.spreadsheets().batchUpdate(
             spreadsheetId=self.full_range.sheet.spreadsheet.id,
@@ -117,12 +149,18 @@ class Item:
         return self.values[self.get_index(target_field)]
 
     def get_field_note(self, target_field):
+        if not self.table.has_notes:
+            raise AttributeError("The table was not built reading the notes of the sheet.")
         return self.notes[self.get_index(target_field)]
 
     def get_field_background(self, target_field):
+        if not self.table.has_backgrounds:
+            raise AttributeError("The table was not built reading the backgrounds of the sheet.")
         return self.backgrounds[self.get_index(target_field)]
 
     def get_field_font_color(self, target_field):
+        if not self.table.has_font_colors:
+            raise AttributeError("The table was not built reading the font colors of the sheet.")
         return self.font_colors[self.get_index(target_field)]
 
     def get_range(self):
@@ -130,7 +168,8 @@ class Item:
             row= self.table.items_range.coordinates.row + self.row_index,
             column=self.table.items_range.coordinates.column,
             number_of_row=1,
-            number_of_column=self.table.items_range.coordinates.number_of_columns
+            number_of_column=self.table.items_range.coordinates.number_of_columns,
+            sheet_name=self.table.items_range.coordinates.sheet_name
         )
         return Range(
             client=self.table.full_range.client,

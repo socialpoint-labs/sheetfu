@@ -122,6 +122,9 @@ class Table:
         if self.needs_full_table_syncro:
             self.get_full_table_syncro_batches()
             self.needs_full_table_syncro = False
+        if len(self.batches) == 0:
+            # Sending a batch update with an empty list of requests would return an error
+            return
         body = {'requests': [self.batches]}
         response = self.full_range.client.sheet_service.spreadsheets().batchUpdate(
             spreadsheetId=self.full_range.sheet.spreadsheet.id,

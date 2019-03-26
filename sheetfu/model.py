@@ -151,6 +151,9 @@ class Spreadsheet:
         self._add_sheets_from_response(response=response, reply_type="duplicateSheet")
 
     def commit(self):
+        if len(self.batches) == 0:
+            # Sending a batch update with an empty list of requests would return an error
+            return
         body = {'requests': [self.batches]}
         response = self.client.sheet_service.spreadsheets().batchUpdate(
             spreadsheetId=self.id,

@@ -150,6 +150,27 @@ class Table:
         self.batches = list()
         return response
 
+    def select(self, filters):
+        """
+        Method to filter items on a table based on field name and value.
+        Values on the same header will be filtered using OR
+        Values on different headers will be filtered using AND
+
+        :param filters: Dictionary that has header as key and an List (or a single item) of values
+        as the value. Example: {"Version": ["1.2", "1.4", "1.3"], "body": ["test"]}
+        :return: List of Items containing only filtered items or and empty List.
+
+        """
+        results = self.items
+
+        for header, values in filters.items():
+            if type(values) is not list:
+                raise ValueError("Select values are not a list.")
+
+            results = [item for item in results if (item.get_field_value(header) in values)]
+
+        return results
+
 
 class Item:
 

@@ -152,3 +152,22 @@ class TestTableCRUD:
     def get_table_from_sheet(self, spreadsheet):
         table = Table.get_table_from_sheet(spreadsheet, "Sheet1")
         assert len(table.items) == 5
+
+
+class TestTableSelect:
+
+    def test_or_clause(self, table):
+        values = table.select({"name": ["john", "jane"]})
+        assert len(values) == 2
+
+    def test_and_clause(self, table):
+        values = table.select({"name": ["john", "jane"], "age": [25]})
+        assert len(values) == 2
+
+    def test_empty_select(self, table):
+        values = table.select({"name": ["adrian"]})
+        assert len(values) == 0
+
+    def test_value_error_exception(self, table):
+        with pytest.raises(ValueError):
+            table.select({"age": 25})

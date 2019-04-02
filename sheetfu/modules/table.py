@@ -111,6 +111,8 @@ class Table:
         if not self.items_range:
             return
         self.items.sort(key=lambda item: item.get_field_value(field), reverse=reverse)
+        for index, item in enumerate(self.items):
+            item.row_index = index
         self._generate_full_items_range_batches()
 
     def delete_all(self):

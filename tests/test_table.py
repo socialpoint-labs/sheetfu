@@ -162,10 +162,15 @@ class TestTableCRUD:
         assert len(table.items) == 5
         assert len(table.batches) == 1
         assert table.items[0].get_field_value("name") == "jane"
+        assert table.items[0].row_index == 0
         assert table.items[4].get_field_value("name") == "random"
         table.sort("name", reverse=True)
         assert table.items[0].get_field_value("name") == "random"
+        assert table.items[0].row_index == 0
         assert table.items[4].get_field_value("name") == "jane"
+        assert table.items[4].row_index == 4
+        for index, item in enumerate(table.items):
+            assert item.row_index == index
 
     def test_generate_set_own_range_values_batches(self, table):
         empty_values = [["value", "value", "value"]] * 5

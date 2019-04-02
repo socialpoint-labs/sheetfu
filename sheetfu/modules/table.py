@@ -4,6 +4,28 @@ from sheetfu.model import Range
 from sheetfu.modules.table_selector import TableSelector
 
 
+def func():
+    from sheetfu import SpreadsheetApp
+    sheet = SpreadsheetApp(path_to_secret="secret.json").open_by_id("14KLkE2gpjn6DnvoKDR0nM40PPWYXj7e39w-1KCS88vE").get_sheet_by_name("random")
+    table = Table(sheet.get_range_from_a1(a1_notification="A1:C1000"), notes=False, backgrounds=False, font_colors=True)
+    table.add_one({"index": 1, "name": "Muelas", "age": 25})
+    table.add_one({"index": 2, "name": "Muelas", "age": 30})
+    table.delete_all()
+    table.add_one({"index": 3, "name": "Muelas", "age": 35})
+    table.add_one({"index": 4, "name": "Muelas", "age": 35})
+    table.add_one({"index": 5, "name": "Muelas", "age": 35})
+    table.add_one({"index": 6, "name": "Muelas", "age": 35})
+    table.add_one({"index": 7, "name": "Muelas", "age": 35})
+    table.add_one({"index": 8, "name": "Muelas", "age": 35})
+    table.add_one({"index": 9, "name": "Muelas", "age": 35})
+    table.add_one({"index": 10, "name": "Muelas", "age": 35})
+    table.add_one({"index": 11, "name": "Muelas", "age": 35})
+    table.add_one({"index": 12, "name": "Muelas", "age": 35})
+    table.add_one({"index": 13, "name": "Muelas", "age": 35})
+    table.add_one({"index": 14, "name": "Muelas", "age": 35})
+    table.commit()
+
+
 class Table:
 
     def __init__(self, full_range, notes=False, backgrounds=False, font_colors=False, header_row=1):
@@ -25,8 +47,6 @@ class Table:
         self.items = self.parse_items(values=table_data[1:])
 
         self.batches = list()
-        # This attribute determines if the next commit will re-write the whole table instead of executing the batches #
-        self.needs_full_table_syncro = False
 
     def __len__(self):
         return len(self.items)
@@ -114,10 +134,32 @@ class Table:
         if not self.items_range:
             return
         self.items.sort(key=lambda item: item.get_field_value(field), reverse=reverse)
-        self.needs_full_table_syncro = True
+        self._generate_full_items_range_batches()
 
-    def get_full_table_syncro_batches(self):
-        self.batches = list()
+    def delete_all(self):
+        if self.items_range is None:
+            return
+        self._generate_delete_intitial_items_range_batch()
+        items_to_delete = len(self.items)
+        self.full_range = self.full_range.offset(
+            row_offset=0,
+            column_offset=0,
+            num_rows=self.full_range.coordinates.number_of_rows - items_to_delete)
+        self.items_range = None
+        self.items = list()
+
+    def _set_own_range_values(self, range, values=None, notes=None, backgrounds=None, font_colors=None):
+        range.set_values(values, batch_to=self)
+        if self.has_notes and notes is not None:
+            range.set_notes(notes, batch_to=self)
+        if self.has_backgrounds and backgrounds is not None:
+            range.set_backgrounds(backgrounds, batch_to=self)
+        if self.has_font_colors and font_colors is not None:
+            range.set_font_colors(font_colors, batch_to=self)
+
+    def _generate_full_items_range_batches(self):
+        if self.items_range is None:
+            return
         table_values, table_notes, table_backgrounds, table_font_colors = list(), list(), list(), list()
         for item in self.items:
             item_values, item_notes, item_backgrounds, item_font_colors = list(), list(), list(), list()
@@ -134,18 +176,17 @@ class Table:
             table_backgrounds.append(item_backgrounds)
             table_font_colors.append(item_font_colors)
 
-        self.items_range.set_values(table_values, batch_to=self)
-        if self.has_notes:
-            self.items_range.set_notes(table_notes, batch_to=self)
-        if self.has_backgrounds:
-            self.items_range.set_backgrounds(table_backgrounds, batch_to=self)
-        if self.has_font_colors:
-            self.items_range.set_font_colors(table_font_colors, batch_to=self)
+        self._set_own_range_values(range=self.items_range, values=table_values, notes=table_notes,
+                                   backgrounds=table_backgrounds, font_colors=table_font_colors)
+
+    def _generate_delete_intitial_items_range_batch(self):
+        if self.items_range is None:
+            return
+        empty_column_values = [""] * self.items_range.coordinates.number_of_columns
+        empty_values = [empty_column_values] * self.items_range.coordinates.number_of_rows
+        self._set_own_range_values(range=self.items_range, values=empty_values)
 
     def commit(self):
-        if self.needs_full_table_syncro:
-            self.get_full_table_syncro_batches()
-            self.needs_full_table_syncro = False
         if len(self.batches) == 0:
             # Sending a batch update with an empty list of requests would return an error
             return

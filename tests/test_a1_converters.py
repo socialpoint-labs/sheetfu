@@ -1,5 +1,6 @@
+import pytest
 from sheetfu.helpers import convert_column_to_letter, convert_letter_to_column, convert_a1_to_coordinates, \
-    convert_coordinates_to_a1, RangeCoordinates
+    convert_coordinates_to_a1, RangeCoordinates, append_sheet_name
 
 
 class TestCoordinateColumnToA1Column:
@@ -58,6 +59,21 @@ class TestA1ColumnToCoordinateColumn:
         assert convert_letter_to_column("aab") == 704
         assert convert_letter_to_column("aba") == 729
         assert convert_letter_to_column("zZz") == 18278
+
+
+class TestAppendSheetNameToA1:
+
+    def test_append_sheet_name_to_a1(self):
+        assert append_sheet_name("A1:B2", "random_sheet") == "random_sheet!A1:B2"
+        assert append_sheet_name("random_sheet!A1:B2", "random_sheet") == "random_sheet!A1:B2"
+
+    def test_invalid_append_sheet_name(self):
+        with pytest.raises(ValueError):
+            append_sheet_name("A1:B2", None)
+
+    def test_mismatching_sheet_names(self):
+        with pytest.raises(ValueError):
+            append_sheet_name("another_sheet!A1:B2", "random_sheet")
 
 
 class TestCoordinatesToA1:

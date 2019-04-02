@@ -10,7 +10,7 @@
 """
 
 
-from sheetfu.helpers import convert_a1_to_coordinates, convert_coordinates_to_a1, rgb_to_hex, hex_to_rgb
+from sheetfu.helpers import convert_a1_to_coordinates, convert_coordinates_to_a1, append_sheet_name
 from sheetfu.exceptions import SheetNameNoMatchError, SheetIdNoMatchError, NoDataRangeError, SizeNotMatchingException
 from sheetfu.parsers import CellParsers
 
@@ -205,10 +205,11 @@ class Sheet:
         :param a1_notification: The target A1 notation.
         :return: Range object.
         """
+        sheet_a1_notification = append_sheet_name(a1_notification, self.name)
         return Range(
             client=self.client,
             sheet=self,
-            a1=a1_notification,
+            a1=sheet_a1_notification,
         )
 
     def get_data_range(self):

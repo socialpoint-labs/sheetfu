@@ -97,7 +97,7 @@ class TestGridRange:
 
     def test_grid_range_one_cell(self):
         cell = self.sheet.get_range_from_a1('A1')
-        assert cell.a1 == 'A1'
+        assert cell.a1 == 'people!A1'
         cell_grid_range = cell.get_grid_range()
         assert cell_grid_range['startRowIndex'] == 0
         assert cell_grid_range['endRowIndex'] == 1
@@ -106,7 +106,7 @@ class TestGridRange:
 
     def test_grid_range_multiple_cells(self):
         range_ = self.sheet.get_range_from_a1('A3:B4')
-        assert range_.a1 == 'A3:B4'
+        assert range_.a1 == 'people!A3:B4'
         grid_range = range_.get_grid_range()
         assert grid_range['startRowIndex'] == 2
         assert grid_range['endRowIndex'] == 4
@@ -125,14 +125,14 @@ class TestGridRange:
         assert bottom_offset.coordinates.column == 8
         assert bottom_offset.coordinates.number_of_rows == 16
         assert bottom_offset.coordinates.number_of_columns == 3
-        assert bottom_offset.a1 == "H10:J25"
+        assert bottom_offset.a1 == "people!H10:J25"
 
         top_offset = range.offset(row_offset=-3, column_offset=-2)
         assert top_offset.coordinates.row == 2
         assert top_offset.coordinates.column == 1
         assert top_offset.coordinates.number_of_rows == 16
         assert top_offset.coordinates.number_of_columns == 3
-        assert top_offset.a1 == "A2:C17"
+        assert top_offset.a1 == "people!A2:C17"
 
     def test_offset_trims(self):
         range = self.sheet.get_range_from_a1('B1:D20')
@@ -146,14 +146,14 @@ class TestGridRange:
         assert top_trimmed_range.coordinates.column == 2
         assert top_trimmed_range.coordinates.number_of_rows == 18
         assert top_trimmed_range.coordinates.number_of_columns == 3
-        assert top_trimmed_range.a1 == "B3:D20"
+        assert top_trimmed_range.a1 == "people!B3:D20"
 
         bottom_trimmed_range = range.offset(row_offset=0, column_offset=0, num_rows=15, num_columns=2)
         assert bottom_trimmed_range.coordinates.row == 1
         assert bottom_trimmed_range.coordinates.column == 2
         assert bottom_trimmed_range.coordinates.number_of_rows == 15
         assert bottom_trimmed_range.coordinates.number_of_columns == 2
-        assert bottom_trimmed_range.a1 == "B1:C15"
+        assert bottom_trimmed_range.a1 == "people!B1:C15"
 
         sides_trimmed_range = range.offset(row_offset=0, column_offset=1,
                                            num_rows=range.coordinates.number_of_rows, num_columns=1)
@@ -161,7 +161,7 @@ class TestGridRange:
         assert sides_trimmed_range.coordinates.column == 3
         assert sides_trimmed_range.coordinates.number_of_rows == 20
         assert sides_trimmed_range.coordinates.number_of_columns == 1
-        assert sides_trimmed_range.a1 == "C1:C20"
+        assert sides_trimmed_range.a1 == "people!C1:C20"
 
     def test_invalid_offset_ranges(self):
         range = self.sheet.get_range_from_a1('A5:B10')

@@ -145,7 +145,7 @@ class TestTableCRUD:
         assert len(table.items) == 5
         assert table.full_range.a1 == "Sheet1!A1:C6"
         assert table.items_range.a1 == "Sheet1!A2:C6"
-        table.add_one({"name": "John", "surname": "Snpw", "age": 2})
+        table.add_one({"name": "John", "surname": "Snow", "age": 2})
         table.add_one({"name": "Ned", "surname": "Stark", "age": 3})
         table.add_one({"name": "Tyrion", "surname": "Lannister", "age": 4})
         assert len(table.batches) == 3
@@ -160,11 +160,72 @@ class TestTableCRUD:
         assert len(table.items) == 5
         table.sort("name")
         assert len(table.items) == 5
+        assert len(table.batches) == 1
         assert table.items[0].get_field_value("name") == "jane"
         assert table.items[4].get_field_value("name") == "random"
         table.sort("name", reverse=True)
         assert table.items[0].get_field_value("name") == "random"
         assert table.items[4].get_field_value("name") == "jane"
+
+    def test_generate_set_own_range_values_batches(self, table):
+        empty_values = [["value", "value", "value"]] * 5
+        table._generate_set_own_range_values_batches(range=table.items_range, values=empty_values)
+        assert len(table.batches) == 1
+        assert type(table.batches[0]) == dict
+        assert table.batches[0]["updateCells"]["range"]["startRowIndex"] == 1
+        assert table.batches[0]["updateCells"]["range"]["endRowIndex"] == 6
+        assert table.batches[0]["updateCells"]["range"]["startColumnIndex"] == 0
+        assert table.batches[0]["updateCells"]["range"]["endColumnIndex"] == 3
+        assert len(table.batches[0]["updateCells"]["rows"]) == 5
+        for row in table.batches[0]["updateCells"]["rows"]:
+            for value in row["values"]:
+                assert value["userEnteredValue"]["stringValue"] == "value"
+
+    def test_delete_all(self, table):
+        table.delete_all()
+        assert table.items_range is None
+        assert table.full_range.a1 == "Sheet1!A1:C1"
+        assert len(table.items) == 0
+        assert len(table.batches) == 1
+        assert table.batches[0]["updateCells"]["range"]["startRowIndex"] == 1
+        assert table.batches[0]["updateCells"]["range"]["endRowIndex"] == 6
+        assert table.batches[0]["updateCells"]["range"]["startColumnIndex"] == 0
+        assert table.batches[0]["updateCells"]["range"]["endColumnIndex"] == 3
+        assert len(table.batches[0]["updateCells"]["rows"]) == 5
+        for row in table.batches[0]["updateCells"]["rows"]:
+            for value in row["values"]:
+                assert value["userEnteredValue"]["stringValue"] == ""
+
+    def test_delete_and_add(self, table):
+        table.add_one({"name": "John", "surname": "Snpw", "age": 2})
+        assert len(table.items) == 6
+        table.delete_all()
+        assert table.items_range is None
+        assert table.full_range.a1 == "Sheet1!A1:C1"
+        assert len(table.items) == 0
+        assert len(table.batches) == 2
+        table.add_one({"name": "Peter", "surname": "Mike", "age": 15})
+        table.add_one({"name": "Ned", "surname": "Stark", "age": 3})
+        assert len(table.items) == 2
+        assert len(table.batches) == 4
+        assert table.items_range.a1 == "Sheet1!A2:C3"
+        assert table.full_range.a1 == "Sheet1!A1:C3"
+
+    def test_sort_and_delete(self, table):
+        table.add_one({"name": "John", "surname": "Snow", "age": 2})
+        table.sort("age")
+        assert len(table.items) == 6
+        assert len(table.batches) == 2
+        table.delete_all()
+        table.sort("name")
+        assert len(table.items) == 0
+        assert len(table.batches) == 3
+        table.add_one({"name": "John", "surname": "Snow", "age": 2})
+        table.sort("name")
+        assert len(table.items) == 1
+        assert len(table.batches) == 5
+        assert table.items_range.a1 == "Sheet1!A2:C2"
+        assert table.full_range.a1 == "Sheet1!A1:C2"
 
     def get_table_from_sheet(self, spreadsheet):
         table = Table.get_table_from_sheet(spreadsheet, "Sheet1")

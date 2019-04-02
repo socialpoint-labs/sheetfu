@@ -4,28 +4,6 @@ from sheetfu.model import Range
 from sheetfu.modules.table_selector import TableSelector
 
 
-def func():
-    from sheetfu import SpreadsheetApp
-    sheet = SpreadsheetApp(path_to_secret="secret.json").open_by_id("14KLkE2gpjn6DnvoKDR0nM40PPWYXj7e39w-1KCS88vE").get_sheet_by_name("random")
-    table = Table(sheet.get_range_from_a1(a1_notification="A1:C1000"), notes=False, backgrounds=False, font_colors=True)
-    table.add_one({"index": 1, "name": "Muelas", "age": 25})
-    table.add_one({"index": 2, "name": "Muelas", "age": 30})
-    table.delete_all()
-    table.add_one({"index": 3, "name": "Muelas", "age": 35})
-    table.add_one({"index": 4, "name": "Muelas", "age": 35})
-    table.add_one({"index": 5, "name": "Muelas", "age": 35})
-    table.add_one({"index": 6, "name": "Muelas", "age": 35})
-    table.add_one({"index": 7, "name": "Muelas", "age": 35})
-    table.add_one({"index": 8, "name": "Muelas", "age": 35})
-    table.add_one({"index": 9, "name": "Muelas", "age": 35})
-    table.add_one({"index": 10, "name": "Muelas", "age": 35})
-    table.add_one({"index": 11, "name": "Muelas", "age": 35})
-    table.add_one({"index": 12, "name": "Muelas", "age": 35})
-    table.add_one({"index": 13, "name": "Muelas", "age": 35})
-    table.add_one({"index": 14, "name": "Muelas", "age": 35})
-    table.commit()
-
-
 class Table:
 
     def __init__(self, full_range, notes=False, backgrounds=False, font_colors=False, header_row=1):
@@ -77,7 +55,6 @@ class Table:
         """
         data_range = spreadsheet.get_sheet_by_name(sheet_name).get_data_range()
         return Table(data_range, notes, backgrounds, font_colors, header_row)
-
 
     def get_items_range(self):
         # We need to check for the case where the table has no items, only the header row #
@@ -148,7 +125,7 @@ class Table:
         self.items_range = None
         self.items = list()
 
-    def _set_own_range_values(self, range, values=None, notes=None, backgrounds=None, font_colors=None):
+    def _generate_set_own_range_values_batches(self, range, values=None, notes=None, backgrounds=None, font_colors=None):
         range.set_values(values, batch_to=self)
         if self.has_notes and notes is not None:
             range.set_notes(notes, batch_to=self)
@@ -176,15 +153,15 @@ class Table:
             table_backgrounds.append(item_backgrounds)
             table_font_colors.append(item_font_colors)
 
-        self._set_own_range_values(range=self.items_range, values=table_values, notes=table_notes,
-                                   backgrounds=table_backgrounds, font_colors=table_font_colors)
+        self._generate_set_own_range_values_batches(range=self.items_range, values=table_values, notes=table_notes,
+                                                    backgrounds=table_backgrounds, font_colors=table_font_colors)
 
     def _generate_delete_intitial_items_range_batch(self):
         if self.items_range is None:
             return
         empty_column_values = [""] * self.items_range.coordinates.number_of_columns
         empty_values = [empty_column_values] * self.items_range.coordinates.number_of_rows
-        self._set_own_range_values(range=self.items_range, values=empty_values)
+        self._generate_set_own_range_values_batches(range=self.items_range, values=empty_values)
 
     def commit(self):
         if len(self.batches) == 0:

@@ -39,7 +39,7 @@ def append_sheet_name(a1_string, sheet_name):
                              ", but it had already a different sheet name specified (" + repr(a1_sheet_name) + ").")
         return a1_string
     else:
-        if type(sheet_name) != str or sheet_name == "":
+        if sheet_name is None or sheet_name == "":
             raise ValueError("Specified an invalid sheet name to append. (" + repr(sheet_name) + ")")
         return sheet_name + "!" + a1_string
 

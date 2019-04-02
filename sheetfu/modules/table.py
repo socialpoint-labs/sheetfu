@@ -37,7 +37,9 @@ class Table:
         return self.items[index]
 
     @staticmethod
-    def get_table_from_sheet(spreadsheet, sheet_name, notes=False, backgrounds=False, font_colors=False):
+    def get_table_from_sheet(spreadsheet, sheet_name, notes=False,
+                             backgrounds=False, font_colors=False,
+                             header_row=1):
         """
         Method to create a table from a whole sheet of a spreadsheet.
         This method assumes the header row is 1.
@@ -47,12 +49,13 @@ class Table:
         :param notes: parameter to include the notes of a sheet.
         :param backgrounds: parameter to include the backgrounds of a sheet.
         :param font_colors: parameter to include the font colors of a sheet.
+        :param header_row: parameter to specify in which row is the header of the table.
 
         :return: List of Items containing only filtered items or and empty List.
 
         """
         data_range = spreadsheet.get_sheet_by_name(sheet_name).get_data_range()
-        return Table(data_range, notes, backgrounds, font_colors)
+        return Table(data_range, notes, backgrounds, font_colors, header_row)
 
 
     def get_items_range(self):
@@ -150,26 +153,9 @@ class Table:
         self.batches = list()
         return response
 
-    def select(self, filters):
-        """
-        Method to filter items on a table based on field name and value.
-        Values on the same header will be filtered using OR
-        Values on different headers will be filtered using AND
+    def select(self, criteria):
 
-        :param filters: Dictionary that has header as key and an List (or a single item) of values
-        as the value. Example: {"Version": ["1.2", "1.4", "1.3"], "body": ["test"]}
-        :return: List of Items containing only filtered items or and empty List.
-
-        """
-        results = self.items
-
-        for header, values in filters.items():
-            if type(values) is not list:
-                raise ValueError("Select values are not a list.")
-
-            results = [item for item in results if (item.get_field_value(header) in values)]
-
-        return results
+        return TableSelector(self.items, criteria).execute()
 
 
 class Item:
@@ -247,3 +233,68 @@ class Item:
         if self.font_colors:
             self.font_colors[self.get_index(target_field)] = font_color_hex
         self.get_field_range(target_field).set_font_color(font_color_hex, batch_to=self.table)
+
+    def matches_value(self, header, value):
+        item_value = self.get_field_value(header)
+        return item_value == value
+
+
+class TableSelector:
+    def __init__(self, items, criteria):
+        """
+        Class that acts as a filter for Table's Items
+
+        :param items: List of Items objects that will be filtered.
+        :param criteria: A List used as filter as an AND of ORs (see CNF). Examples:
+            [{date: today}, [{tag: 1},{tag: 2}]] // (date === today && (tags === 1 || tags === 2))
+            [[{assigneeId: 'GO'}, {assigneeId: 'AM'}]] // (assigneeId === 'GO' || assigneeId === 'AM')
+            [{name: 'Guillem'}, {surname: 'Orpinell'}] // (name === 'Guillem' && surname === 'Orpinell')
+            {name: 'Guillem', surname: 'Orpinell'} // (name === 'Guillem' && surname === 'Orpinell')
+
+        """
+        self.items = items
+
+        if isinstance(criteria, list):
+            self.clauses = criteria
+        else:
+            self.clauses = [criteria]
+
+    def execute(self):
+        """
+        Method to filter items on a table based on field name and value.
+
+        :return: List of Items containing only filtered items or and empty List.
+
+        """
+        return [item for item in self.items if self._matches(item, self.clauses)]
+
+    def _matches(self, item, clauses):
+        """
+        Method that applies
+
+        :return: List of Items containing only filtered items or and empty List.
+
+        """
+        for clause in clauses:
+            if isinstance(clause, dict) and not self._matches_and_clause(item, clause):
+                return False
+            if isinstance(clause, list) and not self._matches_or_clauses(item, clause):
+                return False
+        return True
+
+    @staticmethod
+    def _matches_and_clause(item, clause):
+        for header, value in clause.items():
+            if not item.matches_value(header, value):
+                return False
+        return True
+
+    @staticmethod
+    def _matches_or_clauses(item, clauses):
+        for clause in clauses:
+            if not isinstance(clause, dict):
+                raise ValueError('OR clauses need to be dictionaries')
+            for header, value in clause.items():
+                if item.matches_value(header, value):
+                    return True
+        return False

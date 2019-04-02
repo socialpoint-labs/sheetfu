@@ -154,20 +154,24 @@ class TestTableCRUD:
         assert len(table.items) == 5
 
 
-class TestTableSelect:
+class TestTableSelector:
 
     def test_or_clause(self, table):
-        values = table.select({"name": ["john", "jane"]})
+        values = table.select([[{"name": "jane"}, {"name": "john"}]])
         assert len(values) == 2
 
     def test_and_clause(self, table):
-        values = table.select({"name": ["john", "jane"], "age": [25]})
-        assert len(values) == 2
+        values = table.select([{"age": 25}, [{"name": "john"}]])
+        assert len(values) == 1
+        values = table.select([{"name": 'philippe'}, {"surname": 'oger'}])
+        assert len(values) == 1
+        values = table.select({"name": 'jane', "age": 25})
+        assert len(values) == 1
 
     def test_empty_select(self, table):
-        values = table.select({"name": ["adrian"]})
+        values = table.select([{"age": 25}, [{"name": "phillipe"}]])
         assert len(values) == 0
 
     def test_value_error_exception(self, table):
         with pytest.raises(ValueError):
-            table.select({"age": 25})
+            table.select([[25, 35]])

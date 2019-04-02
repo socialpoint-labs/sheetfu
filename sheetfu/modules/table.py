@@ -1,5 +1,7 @@
-from sheetfu.model import Range
+
 from sheetfu.helpers import convert_coordinates_to_a1
+from sheetfu.model import Range
+from sheetfu.modules.table_selector import TableSelector
 
 
 class Table:
@@ -34,6 +36,28 @@ class Table:
 
     def __getitem__(self, index):
         return self.items[index]
+
+    @staticmethod
+    def get_table_from_sheet(spreadsheet, sheet_name, notes=False,
+                             backgrounds=False, font_colors=False,
+                             header_row=1):
+        """
+        Method to create a table from a whole sheet of a spreadsheet.
+        This method assumes the header row is 1.
+
+        :param spreadsheet: spreadsheet in which the table is in.
+        :param sheet_name: specific sheet of the spreadsheet where the table is.
+        :param notes: parameter to include the notes of a sheet.
+        :param backgrounds: parameter to include the backgrounds of a sheet.
+        :param font_colors: parameter to include the font colors of a sheet.
+        :param header_row: parameter to specify in which row is the header of the table.
+
+        :return: List of Items containing only filtered items or and empty List.
+
+        """
+        data_range = spreadsheet.get_sheet_by_name(sheet_name).get_data_range()
+        return Table(data_range, notes, backgrounds, font_colors, header_row)
+
 
     def get_items_range(self):
         # We need to check for the case where the table has no items, only the header row #
@@ -133,6 +157,10 @@ class Table:
         self.batches = list()
         return response
 
+    def select(self, criteria):
+
+        return TableSelector(self.items, criteria).execute()
+
 
 class Item:
 
@@ -209,3 +237,7 @@ class Item:
         if self.font_colors:
             self.font_colors[self.get_index(target_field)] = font_color_hex
         self.get_field_range(target_field).set_font_color(font_color_hex, batch_to=self.table)
+
+    def matches_value(self, header, value):
+        item_value = self.get_field_value(header)
+        return item_value == value

@@ -32,16 +32,16 @@ def convert_coordinates_to_a1(row, column, number_of_row=1, number_of_column=1, 
 
 
 def append_sheet_name(a1_string, sheet_name):
+    if sheet_name is None or sheet_name == "":
+        raise ValueError("Specified an invalid sheet name to append. (" + repr(sheet_name) + ")")
     if '!' in a1_string:
         a1_sheet_name, cells_a1_string = a1_string.split('!')
         if sheet_name != a1_sheet_name:
             raise ValueError("Tried appending sheet name " + repr(sheet_name) + " to the A1 string " + repr(a1_string) +
                              ", but it had already a different sheet name specified (" + repr(a1_sheet_name) + ").")
-        return a1_string
     else:
-        if sheet_name is None or sheet_name == "":
-            raise ValueError("Specified an invalid sheet name to append. (" + repr(sheet_name) + ")")
-        return sheet_name + "!" + a1_string
+        a1_string = sheet_name + "!" + a1_string
+    return a1_string
 
 
 def convert_a1_to_coordinates(a1_string):

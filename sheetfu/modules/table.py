@@ -106,6 +106,7 @@ class Table:
         self.items_range = self.get_items_range()
         self.items.append(new_item)
         new_item.get_range().set_values([values], batch_to=self)
+        return new_item
 
     def sort(self, field, reverse=False):
         if not self.items_range:

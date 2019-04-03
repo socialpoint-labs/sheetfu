@@ -56,6 +56,22 @@ class TestSpreadsheet:
         assert len(self.spreadsheet.sheets) == 8
 
 
+class TestSheet:
+    http_sheets_mocks = mock_range_instance()
+    sheet = SpreadsheetApp(http=http_sheets_mocks).open_by_id("some_id").get_sheet_by_name("people")
+
+    def test_sheet_properties(self):
+        assert self.sheet.name == "people"
+        assert self.sheet.sid == 0
+        assert type(self.sheet.grid_properties) == dict
+        assert type(self.sheet.batches) == list
+        assert len(self.sheet.batches) == 0
+
+    def test_max_rows_columns(self):
+        assert self.sheet.get_max_rows() == 1000
+        assert self.sheet.get_max_columns() == 26
+
+
 class TestGettersFromDataRange:
 
     fixtures = ['get_backgrounds.json', 'get_notes.json', 'get_fonts.json']

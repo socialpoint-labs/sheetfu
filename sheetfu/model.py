@@ -32,18 +32,20 @@ class Spreadsheet:
     def __repr__(self):
         return '<Spreadsheet object {}>'.format(self.id)
 
-    def get_sheet(self, name, sid):
+    def get_sheet(self, name, sid, grid_properties):
         """
         Create a sheet object from sheet ID and sheet name
         :param name: The name of the sheet.
         :param sid: the sheet ID of the sheet.
+        :param grid_properties: the grid properties (row and column count) of the sheet.
         :return Sheet object
         """
         return Sheet(
             client=self.client,
             spreadsheet=self,
             name=name,
-            sid=sid
+            sid=sid,
+            grid_properties=grid_properties
         )
 
     def get_sheets(self):
@@ -54,7 +56,9 @@ class Spreadsheet:
         request = self.client.sheet_service.spreadsheets().get(spreadsheetId=self.id, includeGridData=False)
         response = request.execute()
         sheets = [
-            self.get_sheet(sheet['properties']['title'], sheet['properties']['sheetId'])
+            self.get_sheet(name=sheet['properties']['title'],
+                           sid=sheet['properties']['sheetId'],
+                           grid_properties=sheet['properties']['gridProperties'])
             for sheet in response['sheets']
         ]
         return sheets
@@ -93,7 +97,8 @@ class Spreadsheet:
 
             reply_type_found = True
             new_sheet = self.get_sheet(name=new_sheet_reply['properties']['title'],
-                                       sid=new_sheet_reply['properties']['sheetId'])
+                                       sid=new_sheet_reply['properties']['sheetId'],
+                                       grid_properties=new_sheet_reply['properties']['gridProperties'])
             self.sheets.append(new_sheet)
         if not reply_type_found:
             raise ValueError("No reply of type '" + reply_type + "' was found in the replies of the batch request."
@@ -126,9 +131,9 @@ class Spreadsheet:
     def duplicate_sheet(self, new_sheet_name, sheet_id=None, sheet_name=None):
         """
         Creates a new sheet cloning an existing one, either by ID or by name
-        :oaram new_sheet_name: name with which the clone will be created
-        :oaram sheet_id: (Optional) ID of the sheet to be cloned. This will have preference over sheet_name
-        :oaram sheet_name: (Optional) name of the sheet to be cloned, in case sheet_id is not set
+        :param new_sheet_name: name with which the clone will be created
+        :param sheet_id: (Optional) ID of the sheet to be cloned. This will have preference over sheet_name
+        :param sheet_name: (Optional) name of the sheet to be cloned, in case sheet_id is not set
         """
 
         body = {'requests': []}
@@ -166,19 +171,21 @@ class Spreadsheet:
 class Sheet:
     """Sheet object from which Range objects are accessible."""
 
-    def __init__(self, client, spreadsheet, name, sid):
+    def __init__(self, client, spreadsheet, name, sid, grid_properties):
         """
         Instantiate
         :param client: The sheet client (SpreadsheetApp object).
-        :param spreadsheet_id: The spreadsheet_id of the parent spreadsheet.
+        :param spreadsheet: The spreadsheet_id of the parent spreadsheet.
         :param name: Name/Title of the sheet (tab).
         :param sid: The sheet id.
+        :param grid_properties: The grid properties (row/column count) of the sheet on retrieval.
         """
         self.client = client
         self.spreadsheet = spreadsheet
         self.name = name
         self.sid = sid
         self.batches = list()
+        self.grid_properties = grid_properties
 
     def __repr__(self):
         return '<Sheet object {}>'.format(self.name)
@@ -222,6 +229,22 @@ class Sheet:
             client=self.client,
             sheet=self,
         )
+
+    def get_max_rows(self):
+        """
+        Returns the current number of rows in the sheet, regardless of content,
+        at the moment it was retrieved from the API.
+        :return: (int) the maximum height of the sheet
+        """
+        return self.grid_properties["rowCount"]
+
+    def get_max_columns(self):
+        """
+        Returns the current number of columns in the sheet, regardless of content,
+        at the moment it was retrieved from the API.
+        :return: (int) the maximum width of the sheet
+        """
+        return self.grid_properties["columnCount"]
 
 
 def check_size(f):

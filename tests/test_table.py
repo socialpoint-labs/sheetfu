@@ -109,25 +109,6 @@ class TestTableItemRanges:
 
 
 class TestTableCRUD:
-    http_mocks = mock_google_sheets_responses([
-        'table_get_sheets.json',
-        'table_check_data_range.json',
-        'table_values.json',
-        'table_values.json',
-        'table_commit_reply.json',
-        'table_commit_reply.json',
-        'table_commit_reply.json',
-    ])
-
-    sa = SpreadsheetApp(http=http_mocks)
-    table_range = sa.open_by_id('whatever').get_sheet_by_name('Sheet1').get_data_range()
-    table = Table(
-        full_range=table_range,
-        notes=False,
-        backgrounds=False,
-        font_colors=False
-    )
-
     def test_add_one_item(self, table):
         assert table.full_range.a1 == "Sheet1!A1:C6"
         assert table.items_range.a1 == "Sheet1!A2:C6"

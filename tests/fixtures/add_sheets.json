@@ -7,7 +7,11 @@
                "sheetId":666919535,
                "title":"test_sheet",
                "index":5,
-               "sheetType":"GRID"
+               "sheetType":"GRID",
+               "gridProperties":{
+                  "rowCount":1000,
+                  "columnCount":26
+               }
             }
          }
       },
@@ -17,7 +21,11 @@
                "sheetId":1652626939,
                "title":"test_sheet_2",
                "index":6,
-               "sheetType":"GRID"
+               "sheetType":"GRID",
+               "gridProperties":{
+                  "rowCount":1000,
+                  "columnCount":26
+               }
             }
          }
       }

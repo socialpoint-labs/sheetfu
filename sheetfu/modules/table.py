@@ -25,8 +25,6 @@ class Table:
         self.items = self.parse_items(values=table_data[1:])
 
         self.batches = list()
-        # This attribute determines if the next commit will re-write the whole table instead of executing the batches #
-        self.needs_full_table_syncro = False
 
     def __len__(self):
         return len(self.items)
@@ -57,7 +55,6 @@ class Table:
         """
         data_range = spreadsheet.get_sheet_by_name(sheet_name).get_data_range()
         return Table(data_range, notes, backgrounds, font_colors, header_row)
-
 
     def get_items_range(self):
         # We need to check for the case where the table has no items, only the header row #
@@ -109,15 +106,40 @@ class Table:
         self.items_range = self.get_items_range()
         self.items.append(new_item)
         new_item.get_range().set_values([values], batch_to=self)
+        return new_item
 
     def sort(self, field, reverse=False):
         if not self.items_range:
             return
         self.items.sort(key=lambda item: item.get_field_value(field), reverse=reverse)
-        self.needs_full_table_syncro = True
+        for index, item in enumerate(self.items):
+            item.row_index = index
+        self._generate_full_items_range_batches()
 
-    def get_full_table_syncro_batches(self):
-        self.batches = list()
+    def delete_all(self):
+        if self.items_range is None:
+            return
+        self._generate_delete_intitial_items_range_batch()
+        items_to_delete = len(self.items)
+        self.full_range = self.full_range.offset(
+            row_offset=0,
+            column_offset=0,
+            num_rows=self.full_range.coordinates.number_of_rows - items_to_delete)
+        self.items_range = None
+        self.items = list()
+
+    def _generate_set_own_range_values_batches(self, range, values=None, notes=None, backgrounds=None, font_colors=None):
+        range.set_values(values, batch_to=self)
+        if self.has_notes and notes is not None:
+            range.set_notes(notes, batch_to=self)
+        if self.has_backgrounds and backgrounds is not None:
+            range.set_backgrounds(backgrounds, batch_to=self)
+        if self.has_font_colors and font_colors is not None:
+            range.set_font_colors(font_colors, batch_to=self)
+
+    def _generate_full_items_range_batches(self):
+        if self.items_range is None:
+            return
         table_values, table_notes, table_backgrounds, table_font_colors = list(), list(), list(), list()
         for item in self.items:
             item_values, item_notes, item_backgrounds, item_font_colors = list(), list(), list(), list()
@@ -134,18 +156,17 @@ class Table:
             table_backgrounds.append(item_backgrounds)
             table_font_colors.append(item_font_colors)
 
-        self.items_range.set_values(table_values, batch_to=self)
-        if self.has_notes:
-            self.items_range.set_notes(table_notes, batch_to=self)
-        if self.has_backgrounds:
-            self.items_range.set_backgrounds(table_backgrounds, batch_to=self)
-        if self.has_font_colors:
-            self.items_range.set_font_colors(table_font_colors, batch_to=self)
+        self._generate_set_own_range_values_batches(range=self.items_range, values=table_values, notes=table_notes,
+                                                    backgrounds=table_backgrounds, font_colors=table_font_colors)
+
+    def _generate_delete_intitial_items_range_batch(self):
+        if self.items_range is None:
+            return
+        empty_column_values = [""] * self.items_range.coordinates.number_of_columns
+        empty_values = [empty_column_values] * self.items_range.coordinates.number_of_rows
+        self._generate_set_own_range_values_batches(range=self.items_range, values=empty_values)
 
     def commit(self):
-        if self.needs_full_table_syncro:
-            self.get_full_table_syncro_batches()
-            self.needs_full_table_syncro = False
         if len(self.batches) == 0:
             # Sending a batch update with an empty list of requests would return an error
             return

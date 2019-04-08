@@ -89,15 +89,15 @@ class Table:
         return items
 
     def add_one(self, item_dict):
-        values = [item_dict[label]for label in self.header]
+        values = [item_dict.get(label) for label in self.header]
         new_item = Item(
             parent_table=self,
             row_index=len(self.items),
             header=self.header,
             values=values,
-            notes=[''] * len(self.header) if self.has_notes else None,
-            backgrounds=[''] * len(self.header) if self.has_backgrounds else None,
-            font_colors=[''] * len(self.header) if self.has_font_colors else None,
+            notes=[""] * len(self.header) if self.has_notes else None,
+            backgrounds=[""] * len(self.header) if self.has_backgrounds else None,
+            font_colors=[""] * len(self.header) if self.has_font_colors else None,
         )
         self.full_range = self.full_range.offset(
             row_offset=0,

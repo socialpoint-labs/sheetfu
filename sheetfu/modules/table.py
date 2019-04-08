@@ -112,8 +112,39 @@ class Table:
         if not self.items_range:
             return
         self.items.sort(key=lambda item: item.get_field_value(field), reverse=reverse)
-        for index, item in enumerate(self.items):
-            item.row_index = index
+        self._recalculate_item_indexes()
+        self._generate_full_items_range_batches()
+
+    def delete(self, instances_to_delete):
+        indexes_to_delete = set()
+        if type(instances_to_delete) is not list:
+            instances_to_delete = [instances_to_delete]
+
+        for instance in instances_to_delete:
+            if isinstance(instance, Item):
+                indexes_to_delete.add(instance.row_index)
+            elif type(instance) is int or type(instance) is float:
+                indexes_to_delete.add(instance)
+            else:
+                raise ValueError("Specified unknown value to delete (" + repr(instance) +
+                                 "). Please specify either an index or an Item instance (or a list of these).")
+
+        for index in sorted(indexes_to_delete, reverse=True):
+            if index >= len(self.items):
+                raise ValueError("Tried to delete item (" + repr(instances_to_delete) + ") with index " + str(index) +
+                                 " in a table that only has " + str(len(self.items)) + " items.")
+            del self.items[index]
+
+        self._recalculate_item_indexes()
+
+        self._generate_delete_intitial_items_range_batch()
+
+        self.full_range = self.full_range.offset(
+            row_offset=0,
+            column_offset=0,
+            num_rows=self.full_range.coordinates.number_of_rows - len(indexes_to_delete))
+        self.items_range = self.get_items_range()
+
         self._generate_full_items_range_batches()
 
     def delete_all(self):
@@ -127,6 +158,10 @@ class Table:
             num_rows=self.full_range.coordinates.number_of_rows - items_to_delete)
         self.items_range = None
         self.items = list()
+
+    def _recalculate_item_indexes(self):
+        for index, item in enumerate(self.items):
+            item.row_index = index
 
     def _generate_set_own_range_values_batches(self, range, values=None, notes=None, backgrounds=None, font_colors=None):
         range.set_values(values, batch_to=self)

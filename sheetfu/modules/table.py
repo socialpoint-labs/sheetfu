@@ -115,23 +115,34 @@ class Table:
         self._recalculate_item_indexes()
         self._generate_full_items_range_batches()
 
-    def delete(self, instances_to_delete):
-        indexes_to_delete = set()
-        if type(instances_to_delete) is not list:
-            instances_to_delete = [instances_to_delete]
+    def delete_items(self, items_to_delete):
+        """
+        Method to delete one or multiple items from a Table by Item instance.
+        :param items_to_delete: Item instance or list of Item instances to be deleted from the Table.
+        """
+        if type(items_to_delete) is not list:
+            items_to_delete = [items_to_delete]
 
-        for instance in instances_to_delete:
-            if isinstance(instance, Item):
-                indexes_to_delete.add(instance.row_index)
-            elif type(instance) is int or type(instance) is float:
-                indexes_to_delete.add(instance)
-            else:
+        indexes_to_delete = list()
+        for instance in items_to_delete:
+            if not isinstance(instance, Item):
                 raise ValueError("Specified unknown value to delete (" + repr(instance) +
-                                 "). Please specify either an index or an Item instance (or a list of these).")
+                                 "). Please specify either an Item instance or a list of Item instances.")
+            indexes_to_delete.append(instance.row_index)
+
+        return self.delete(indexes_to_delete)
+
+    def delete(self, indexes_to_delete):
+        """
+        Method to delete one or multiple items from a Table by index.
+        :param indexes_to_delete: index of the item to delete or list of indexes of the items to delete.
+        """
+        if type(indexes_to_delete) is not list:
+            indexes_to_delete = [indexes_to_delete]
 
         for index in sorted(indexes_to_delete, reverse=True):
             if index >= len(self.items):
-                raise ValueError("Tried to delete item (" + repr(instances_to_delete) + ") with index " + str(index) +
+                raise ValueError("Tried to delete item with index " + str(index) +
                                  " in a table that only has " + str(len(self.items)) + " items.")
             del self.items[index]
 
@@ -148,6 +159,10 @@ class Table:
         self._generate_full_items_range_batches()
 
     def delete_all(self):
+        """
+        Method to delete all items of the Table. This will set items_range to None as if the table was built with
+        only the header.
+        """
         if self.items_range is None:
             return
         self._generate_delete_intitial_items_range_batch()
@@ -160,6 +175,9 @@ class Table:
         self.items = list()
 
     def _recalculate_item_indexes(self):
+        """
+        Method to recalculate the row_index of all items of the Table according to their current index in self.items
+        """
         for index, item in enumerate(self.items):
             item.row_index = index
 

@@ -213,6 +213,52 @@ class TestTableCRUD:
         assert table.items_range.a1 == "Sheet1!A2:C2"
         assert table.full_range.a1 == "Sheet1!A1:C2"
 
+    def test_delete_indexes(self, table):
+        assert table.items[0].get_field_value("name") == "philippe"
+        table.add_one({"name": "John", "surname": "Snow", "age": 2})
+        assert len(table.items) == 6
+        table.delete([0, 5])
+        assert len(table.items) == 4
+        assert table.items[0].get_field_value("name") == "john"
+        assert table.items[3].get_field_value("name") == "random"
+
+    def test_delete_items(self, table):
+        assert table.items[0].get_field_value("name") == "philippe"
+        table.add_one({"name": "Jake", "surname": "Lannister", "age": 15})
+        new_item_2 = table.add_one({"name": "John", "surname": "Snow", "age": 2})
+        assert len(table.items) == 7
+        table.delete_items([new_item_2, table.items[1]])
+        assert len(table.items) == 5
+        assert table.items[0].get_field_value("name") == "philippe"
+        assert table.items[4].get_field_value("name") == "Jake"
+
+    def test_delete_mixed(self, table):
+        assert len(table.items) == 5
+        table.delete_items(table.items[0])
+        table.delete([1, 3])
+        assert len(table.items) == 2
+        assert table.items[0].get_field_value("name") == "john"
+        assert table.items[1].get_field_value("name") == "mike"
+
+    def test_delete_duplicate(self, table):
+        new_item = table.add_one({"name": "Jake", "surname": "Lannister", "age": 15})
+        table.delete_items([new_item])
+        with pytest.raises(ValueError):
+            table.delete_items([new_item])
+
+    def test_error_deletes(self, table):
+        with pytest.raises(ValueError):
+            table.delete(5)
+
+        with pytest.raises(ValueError):
+            table.delete_items(0)
+
+        assert len(table.items) == 5
+        table.delete([0, 2])
+        assert len(table.items) == 3
+        with pytest.raises(ValueError):
+            table.delete([3])
+
     def get_table_from_sheet(self, spreadsheet):
         table = Table.get_table_from_sheet(spreadsheet, "Sheet1")
         assert len(table.items) == 5

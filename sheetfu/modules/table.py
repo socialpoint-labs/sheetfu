@@ -89,15 +89,15 @@ class Table:
         return items
 
     def add_one(self, item_dict):
-        values = [item_dict[label]for label in self.header]
+        values = [item_dict.get(label) for label in self.header]
         new_item = Item(
             parent_table=self,
             row_index=len(self.items),
             header=self.header,
             values=values,
-            notes=[''] * len(self.header) if self.has_notes else None,
-            backgrounds=[''] * len(self.header) if self.has_backgrounds else None,
-            font_colors=[''] * len(self.header) if self.has_font_colors else None,
+            notes=[""] * len(self.header) if self.has_notes else None,
+            backgrounds=[""] * len(self.header) if self.has_backgrounds else None,
+            font_colors=[""] * len(self.header) if self.has_font_colors else None,
         )
         self.full_range = self.full_range.offset(
             row_offset=0,
@@ -112,11 +112,57 @@ class Table:
         if not self.items_range:
             return
         self.items.sort(key=lambda item: item.get_field_value(field), reverse=reverse)
-        for index, item in enumerate(self.items):
-            item.row_index = index
+        self._recalculate_item_indexes()
+        self._generate_full_items_range_batches()
+
+    def delete_items(self, items_to_delete):
+        """
+        Method to delete one or multiple items from a Table by Item instance.
+        :param items_to_delete: Item instance or list of Item instances to be deleted from the Table.
+        """
+        if type(items_to_delete) is not list:
+            items_to_delete = [items_to_delete]
+
+        indexes_to_delete = list()
+        for instance in items_to_delete:
+            if not isinstance(instance, Item):
+                raise ValueError("Specified unknown value to delete (" + repr(instance) +
+                                 "). Please specify either an Item instance or a list of Item instances.")
+            indexes_to_delete.append(instance.row_index)
+
+        return self.delete(indexes_to_delete)
+
+    def delete(self, indexes_to_delete):
+        """
+        Method to delete one or multiple items from a Table by index.
+        :param indexes_to_delete: index of the item to delete or list of indexes of the items to delete.
+        """
+        if type(indexes_to_delete) is not list:
+            indexes_to_delete = [indexes_to_delete]
+
+        for index in sorted(indexes_to_delete, reverse=True):
+            if index >= len(self.items):
+                raise ValueError("Tried to delete item with index " + str(index) +
+                                 " in a table that only has " + str(len(self.items)) + " items.")
+            del self.items[index]
+
+        self._recalculate_item_indexes()
+
+        self._generate_delete_intitial_items_range_batch()
+
+        self.full_range = self.full_range.offset(
+            row_offset=0,
+            column_offset=0,
+            num_rows=self.full_range.coordinates.number_of_rows - len(indexes_to_delete))
+        self.items_range = self.get_items_range()
+
         self._generate_full_items_range_batches()
 
     def delete_all(self):
+        """
+        Method to delete all items of the Table. This will set items_range to None as if the table was built with
+        only the header.
+        """
         if self.items_range is None:
             return
         self._generate_delete_intitial_items_range_batch()
@@ -127,6 +173,13 @@ class Table:
             num_rows=self.full_range.coordinates.number_of_rows - items_to_delete)
         self.items_range = None
         self.items = list()
+
+    def _recalculate_item_indexes(self):
+        """
+        Method to recalculate the row_index of all items of the Table according to their current index in self.items
+        """
+        for index, item in enumerate(self.items):
+            item.row_index = index
 
     def _generate_set_own_range_values_batches(self, range, values=None, notes=None, backgrounds=None, font_colors=None):
         range.set_values(values, batch_to=self)

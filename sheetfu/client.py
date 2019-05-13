@@ -17,7 +17,7 @@ import time
 
 class SpreadsheetApp:
 
-    def __init__(self, path_to_secret=None, http=None):
+    def __init__(self, path_to_secret=None, http=None, from_env=False):
         """
         Client object which will slightly copy the API from the spreadsheet google app script API.
         This service assumes that you're connecting to the API with service to service credentials.
@@ -32,9 +32,9 @@ class SpreadsheetApp:
             - One for Drive file and folder manipulation (mostly for giving editor/reader accesses to users).
 
         """
-        self.sheet_service = SheetsService(path_to_secret=path_to_secret).build(http=http)
+        self.sheet_service = SheetsService(path_to_secret=path_to_secret, from_env=from_env).build(http=http)
         if not http:        # if not mock
-            self.drive_service = DriveService(path_to_secret=path_to_secret).build()
+            self.drive_service = DriveService(path_to_secret=path_to_secret, from_env=from_env).build()
 
         self.batches = list()
 

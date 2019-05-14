@@ -17,7 +17,7 @@ from httplib2 import Http
 from googleapiclient.discovery import build
 
 
-class BaseService:
+class BaseService(object):
 
     SERVICE = ""
     VERSION = ""
@@ -70,6 +70,7 @@ class SheetsService(BaseService):
     def __init__(self, path_to_secret=None, from_env=False):
         """
         :param path_to_secret: path to service to service json credentials file.
+        :param from_env: bool to specify if config should be retrieved from ENV variables
         """
         self.scopes = [
             'https://www.googleapis.com/auth/drive',
@@ -87,6 +88,7 @@ class DriveService(BaseService):
     def __init__(self, path_to_secret=None, from_env=False):
         """
         :param path_to_secret: path to service to service json credentials file.
+        :param from_env: bool to specify if config should be retrieved from ENV variables
         """
         self.scopes = [
             'https://www.googleapis.com/auth/drive'

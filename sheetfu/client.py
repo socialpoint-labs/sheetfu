@@ -26,6 +26,7 @@ class SpreadsheetApp:
         https://developers.google.com/identity/protocols/OAuth2ServiceAccount
 
         :param path_to_secret: Absolute path where your service to service secret json credentials is located.
+        :param from_env: bool to specify if config should be retrieved from ENV variables
         :param http: Cache requests content (for mocks requests).
         This client creates 2 services:
             - One for spreadsheet manipulation.

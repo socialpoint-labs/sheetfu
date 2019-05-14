@@ -1,4 +1,5 @@
 .cache/
+.env
 .idea/
 .DS_Store
 .pyc

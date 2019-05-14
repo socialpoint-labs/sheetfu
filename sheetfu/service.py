@@ -19,14 +19,13 @@ from googleapiclient.discovery import build
 
 class BaseService:
 
-    SERVICE=""
-    VERSION=""
+    SERVICE = ""
+    VERSION = ""
 
     def __init__(self, path_to_secret=None, from_env=False):
         if from_env:
             config_dict = self._build_keyfile_dict()
-            print(config_dict)
-            ServiceAccountCredentials.from_json_keyfile_dict(config_dict, self.scopes)
+            self.credentials = ServiceAccountCredentials.from_json_keyfile_dict(config_dict, self.scopes)
         else:
             self.path_to_secret = path_to_secret
 
@@ -34,7 +33,6 @@ class BaseService:
                 self.credentials = None
             else:
                 self.credentials = ServiceAccountCredentials.from_json_keyfile_name(self.path_to_secret, self.scopes)
-
 
     def build(self, http=None):
         """
@@ -53,7 +51,7 @@ class BaseService:
             "type": os.environ.get("SHEETFU_CONFIG_TYPE"),
             "project_id": os.environ.get("SHEETFU_CONFIG_PROJECT_ID"),
             "private_key_id": os.environ.get("SHEETFU_CONFIG_PRIVATE_KEY_ID"),
-            "private_key": os.environ.get("SHEETFU_CONFIG_PRIVATE_KEY"),
+            "private_key": os.environ.get("SHEETFU_CONFIG_PRIVATE_KEY").replace('\\n', '\n'),
             "client_email": os.environ.get("SHEETFU_CONFIG_CLIENT_EMAIL"),
             "client_id": os.environ.get("SHEETFU_CONFIG_CLIENT_ID"),
             "auth_uri": os.environ.get("SHEETFU_CONFIG_AUTH_URI"),
@@ -61,6 +59,7 @@ class BaseService:
             "auth_provider_x509_cert_url": os.environ.get("SHEETFU_CONFIG_AUTH_PROVIDER_URL"),
             "client_x509_cert_url": os.environ.get("SHEETFU_CONFIG_CLIENT_CERT_URL"),
         }
+
 
 class SheetsService(BaseService):
 

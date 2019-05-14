@@ -29,7 +29,10 @@ This is how a secret JSON should look like when the file is opened.
 
 Your service email account is the "client_email" attribute from the secret JSON.
 
-Once you have your secret.json file, you can add it to your Python code as follow;
+Once you have your secret.json file, you can initialize the SpreadsheetApp adding the path to the secret
+JSON file or creating env variables.
+
+Here you have an example using the downloaded JSON file:
 
 .. code-block:: python
 
@@ -41,6 +44,36 @@ Once you have your secret.json file, you can add it to your Python code as follo
     # to have permission to read it.
     spreadsheet = sa.open_by_id('1VZ8tXVWRn_h0nkvXkjfhdnffj5w68olM8Gz2oE4DAP-BY')
 
+
+If you want to initialize it from ENV vars, you will need to create them and set their value with
+the corresponding one from the json file.
+Here you have the mapping between ENV vars and JSON fields:
+
+.. code-block:: json
+
+SHEETFU_CONFIG_TYPE=type
+SHEETFU_CONFIG_PROJECT_ID=project_id
+SHEETFU_CONFIG_PRIVATE_KEY_ID=private_key_id
+SHEETFU_CONFIG_PRIVATE_KEY=private_key
+SHEETFU_CONFIG_CLIENT_EMAIL=client_email
+SHEETFU_CONFIG_CLIENT_ID=client_id
+SHEETFU_CONFIG_AUTH_URI=auth_uri
+SHEETFU_CONFIG_TOKEN_URI=token_uri
+SHEETFU_CONFIG_AUTH_PROVIDER_URL=auth_provider_x509_cert_url
+SHEETFU_CONFIG_CLIENT_CERT_URL=client_x509_cert_url
+
+Once those ENV variables are set, you should be able to initialize it just adding
+the parameter `from_env=True`, which will automatically grab the config from your ENV:
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp(from_env=True)
+
+    # to read a spreadsheet, you need your service account
+    # to have permission to read it.
+    spreadsheet = sa.open_by_id('1VZ8tXVWRn_h0nkvXkjfhdnffj5w68olM8Gz2oE4DAP-BY')
 
 
 For a more detailed explanation on how to get this secret JSON, you can follow the guidelines below.

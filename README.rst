@@ -29,6 +29,9 @@ A Simple Example
     from sheetfu import SpreadsheetApp
 
     spreadsheet = SpreadsheetApp('path/to/secret.json').open_by_id('<insert spreadsheet id here>')
+    # if ENV vars are defined, you can do initialize it with:
+    # spreadsheet = SpreadsheetApp(from_env=True).open_by_id('<insert spreadsheet id here>')
+
     sheet = spreadsheet.get_sheet_by_name('Sheet1')
     data_range = sheet.get_data_range()           # returns the sheet range that contains data values.
 
@@ -41,7 +44,7 @@ A Simple Example
     data_range.set_font_color('#ffffff')          # set every cell font colors to white
 
 
-To obtain your secret json file, you can refer to `the authentication tutorial`_.
+To obtain your secret json file and know more about how to initialize your ENV vars, you can refer to `the authentication tutorial`_.
 
 .. _the authentication tutorial: https://github.com/socialpoint-labs/sheetfu/blob/master/documentation/authentication.rst
 
@@ -58,6 +61,9 @@ columns 'name', 'surname' and 'age'.
     from sheetfu import Table
 
     spreadsheet = SpreadsheetApp('path/to/secret.json').open_by_id('<insert spreadsheet id here>')
+    # if ENV vars are defined, you can do initialize it with:
+    # spreadsheet = SpreadsheetApp(from_env=True).open_by_id('<insert spreadsheet id here>')
+
     data_range = spreadsheet.get_sheet_by_name('people').get_data_range()
 
     table = Table(data_range, backgrounds=True)

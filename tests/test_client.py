@@ -43,6 +43,11 @@ class TestModelInstantiations:
         sheet = SpreadsheetApp(http=http_sheets_mocks).open_by_id('some_id').get_sheet_by_name('people')
         assert isinstance(sheet, Sheet)
 
+    def test_one_line_sheet_instance_different_case(self):
+        http_sheets_mocks = mock_spreadsheet_instance()
+        sheet = SpreadsheetApp(http=http_sheets_mocks).open_by_id('some_id').get_sheet_by_name('PeOpLe')
+        assert isinstance(sheet, Sheet)
+
     def test_one_line_range_instance(self):
         http_sheets_mocks = mock_spreadsheet_instance()
         sheet = SpreadsheetApp(http=http_sheets_mocks).open_by_id('some_id').get_sheet_by_name('people')

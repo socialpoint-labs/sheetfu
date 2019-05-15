@@ -70,7 +70,7 @@ class Spreadsheet:
         :return: Sheet object matching name.
         """
         for sheet in self.sheets:
-            if sheet.name == name:
+            if sheet.name.lower() == name.lower():
                 return sheet
         else:
             raise SheetNameNoMatchError

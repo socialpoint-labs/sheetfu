@@ -17,16 +17,17 @@ List of methods for SpreadsheetApp. For authentication, please refer to
 +------------------------------------------+-------------------------------+
 | `create()_`                              |  Spreadsheet                  |
 +------------------------------------------+-------------------------------+
-| add_permission()_                        |                               |
+| add_permission_                          |                               |
 +------------------------------------------+-------------------------------+
-| open_by_id()_                            |  Spreadsheet                  |
+| open_by_id_                            |  Spreadsheet                  |
 +------------------------------------------+-------------------------------+
 | open_by_url()_                           |  Spreadsheet                  |
 +------------------------------------------+-------------------------------+
 
 
+
 .. _create():
-create()
+**create()**
 
 .. code-block:: python
 
@@ -41,8 +42,8 @@ user from your secret.json. As a result, you will be able to find the created
 spreadsheets in your Google Drive.
 
 
-.. _add_permission():
-add_permission()
+.. _add_permission:
+**add_permission()**
 
 This method will give ownership to any user for any spreadsheets created by
 the service account. Useful, if you have not indicated an editor in the create()
@@ -57,8 +58,8 @@ method.
 
 
 
-.. _open_by_id():
-open_by_id()
+.. _open_by_id:
+**open_by_id()**
 
 .. code-block:: python
 
@@ -71,7 +72,7 @@ Returns a Spreadsheet object.
 
 
 .. _open_by_url():
-open_by_url()
+**open_by_url()**
 
 .. code-block:: python
 

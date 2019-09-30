@@ -15,16 +15,16 @@ List of methods for SpreadsheetApp. For authentication, please refer to
 +------------------------------------------+-------------------------------+
 | Method                                   | return type                   |
 +------------------------------------------+-------------------------------+
-| create() create_                         |  Spreadsheet                  |
+| `create() <usage.rst#create>`__          |  Spreadsheet                  |
 +------------------------------------------+-------------------------------+
-| `add_permission() add-permission_`       |                               |
+| add_permission() add-permission_         |                               |
 +------------------------------------------+-------------------------------+
-| open_by_id():ref:`open-by-id`            |  Spreadsheet                  |
+| open_by_id() :ref:`open-by-id`           |  Spreadsheet                  |
 +------------------------------------------+-------------------------------+
 | open_by_url() open-by-url_               |  Spreadsheet                  |
 +------------------------------------------+-------------------------------+
 
-
+`This <other.html#section>`__
 
 .. _create:
 **create()**

@@ -1,9 +1,6 @@
-Sheetfu API usage examples
-==========================
+Spreadsheet API usage
+=====================
 
-
-SpreadsheetApp
---------------
 
 
 List of methods for SpreadsheetApp. For authentication, please refer to
@@ -12,20 +9,22 @@ List of methods for SpreadsheetApp. For authentication, please refer to
 .. _the authentication tutorial: https://github.com/socialpoint-labs/sheetfu/blob/master/documentation/authentication.rst
 
 
-+------------------------------------------+-------------------------------+
-| Method                                   | return type                   |
-+------------------------------------------+-------------------------------+
-| `create() <usage.rst#create>`__          |  Spreadsheet                  |
-+------------------------------------------+-------------------------------+
-| add_permission() add-permission_         |                               |
-+------------------------------------------+-------------------------------+
-| open_by_id() :ref:`open-by-id`           |  Spreadsheet                  |
-+------------------------------------------+-------------------------------+
-| open_by_url() open-by-url_               |  Spreadsheet                  |
-+------------------------------------------+-------------------------------+
++----------------------------------------------------+---------------------+
+| Method                                             | return type         |
++----------------------------------------------------+---------------------+
+| `create() <usage.rst#create()>`__                  |  Spreadsheet        |
++----------------------------------------------------+---------------------+
+| `add_permission() <usage.rst#add_permission()>`__  |                     |
++----------------------------------------------------+---------------------+
+| `open_by_id() <usage.rst#open_by_id()>`__          |  Spreadsheet        |
++----------------------------------------------------+---------------------+
+| `open_by_url() <usage.rst#open_by_url()>`__        |  Spreadsheet        |
++----------------------------------------------------+---------------------+
 
 
-.. _create: **create()**
+
+**create()**
+------------
 
 .. code-block:: python
 
@@ -40,8 +39,8 @@ user from your secret.json. As a result, you will be able to find the created
 spreadsheets in your Google Drive.
 
 
-.. _add-permission:
 **add_permission()**
+--------------------
 
 This method will give ownership to any user for any spreadsheets created by
 the service account. Useful, if you have not indicated an editor in the create()
@@ -56,8 +55,8 @@ method.
 
 
 
-.. _open-by-id:
 **open_by_id()**
+----------------
 
 .. code-block:: python
 
@@ -69,8 +68,8 @@ method.
 Returns a Spreadsheet object.
 
 
-.. _open-by-url:
 **open_by_url()**
+-----------------
 
 .. code-block:: python
 

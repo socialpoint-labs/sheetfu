@@ -2,6 +2,10 @@ Sheetfu API usage examples
 ==========================
 
 
+SpreadsheetApp
+--------------
+
+
 List of methods for SpreadsheetApp. For authentication, please refer to
 `the authentication tutorial`_.
 
@@ -11,16 +15,17 @@ List of methods for SpreadsheetApp. For authentication, please refer to
 +--------------------------------+-------------------------------+
 | Method                         | return type                   |
 +--------------------------------+-------------------------------+
-| create()                       |  Spreadsheet                  |
+| :ref:`create()`                |  Spreadsheet                  |
 +--------------------------------+-------------------------------+
-| add_permission()               |  Spreadsheet                  |
+| :ref:`add_permission()`        |                               |
 +--------------------------------+-------------------------------+
-| open_by_id()                   |  -                            |
+| :ref:`open_by_id()`            |  Spreadsheet                  |
 +--------------------------------+-------------------------------+
-| open_by_url()                  |  Spreadsheet                  |
+| :ref:`open_by_url()`           |  Spreadsheet                  |
 +--------------------------------+-------------------------------+
 
 
+.. _create():
 create()
 
 .. code-block:: python
@@ -36,6 +41,7 @@ user from your secret.json. As a result, you will be able to find the created
 spreadsheets in your Google Drive.
 
 
+.. _add_permission():
 add_permission()
 
 This method will give ownership to any user for any spreadsheets created by
@@ -51,6 +57,7 @@ method.
 
 
 
+.. _open_by_id():
 open_by_id()
 
 .. code-block:: python
@@ -63,6 +70,7 @@ open_by_id()
 Returns a Spreadsheet object.
 
 
+.. _open_by_url():
 open_by_url()
 
 .. code-block:: python

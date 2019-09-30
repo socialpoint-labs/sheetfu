@@ -24,10 +24,8 @@ List of methods for SpreadsheetApp. For authentication, please refer to
 | open_by_url() open-by-url_               |  Spreadsheet                  |
 +------------------------------------------+-------------------------------+
 
-`This <other.html#section>`__
 
-.. _create:
-**create()**
+.. _create: **create()**
 
 .. code-block:: python
 

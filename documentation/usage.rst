@@ -12,13 +12,13 @@ List of methods for SpreadsheetApp. For authentication, please refer to
 +----------------------------------------------------+---------------------+
 | Method                                             | return type         |
 +----------------------------------------------------+---------------------+
-| `create() <usage.rst#create()>`__                  |  Spreadsheet        |
+| `create() <usage.rst#create>`__                    |  Spreadsheet        |
 +----------------------------------------------------+---------------------+
-| `add_permission() <usage.rst#add_permission()>`__  |                     |
+| `add_permission() <usage.rst#add_permission>`__    |                     |
 +----------------------------------------------------+---------------------+
-| `open_by_id() <usage.rst#open_by_id()>`__          |  Spreadsheet        |
+| `open_by_id() <usage.rst#open_by_id>`__            |  Spreadsheet        |
 +----------------------------------------------------+---------------------+
-| `open_by_url() <usage.rst#open_by_url()>`__        |  Spreadsheet        |
+| `open_by_url() <usage.rst#open_by_url>`__          |  Spreadsheet        |
 +----------------------------------------------------+---------------------+
 
 

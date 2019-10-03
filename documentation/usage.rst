@@ -308,10 +308,10 @@ Sheet Methods
     sheet1 = spreadsheet.get_sheet_by_name('Sheet1')
 
     # to get cell A1
-    A1_cell = sheet1.get_range_from_a1(ai_notification='A1')
+    A1_cell = sheet1.get_range_from_a1(a1_notification='A1')
 
     # to get cell A3:B5
-    A3_B5_range = sheet1.get_range_from_a1(ai_notification='A3:B5')
+    A3_B5_range = sheet1.get_range_from_a1(a1_notification='A3:B5')
 
 
 
@@ -323,36 +323,23 @@ Sheet Methods
     from sheetfu import SpreadsheetApp
 
     sa = SpreadsheetApp('path/to/secret.json')
+    spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
+    sheet = spreadsheet.get_sheet_by_name('Sheet1')
+    data_range = sheet.get_data_range()
 
-
-
-**get_max_rows()**
-------------------
-
-.. code-block:: python
-
-    from sheetfu import SpreadsheetApp
-
-    sa = SpreadsheetApp('path/to/secret.json')
-
-
-
-**get_max_columns()**
----------------------
-
-.. code-block:: python
-
-    from sheetfu import SpreadsheetApp
-
-    sa = SpreadsheetApp('path/to/secret.json')
-
-
-
+This method is particularly useful when you're not quite sure how many rows you
+have in your sheet. Under the hood, this method actually makes a request to the
+sheet and figure out the A1 notification of the range containing data.
 
 
 
 Range Methods
 =============
+
+The Range object is where the magic happens. This is from this object that you
+will be able to get or set values, notes, colors, etc.
+This object implies working with two-dimensional lists (list of list) where an
+inside list represents a row.
 
 
 **get_values()**
@@ -362,8 +349,18 @@ Range Methods
 
     from sheetfu import SpreadsheetApp
 
-    sa = SpreadsheetApp('path/to/secret.json')
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_data_range()
+    values = data_range.get_values()
 
+    # values = [
+    #    ['name', 'surname', 'age'],
+    #    ['john', 'doe', 28],
+    #    ['jane', 'doe', 27]
+    # ]
+
+The values are returned in the form of a 2D arrays. Empty cells will return
+empty strings.
 
 **get_notes()**
 ---------------
@@ -372,7 +369,12 @@ Range Methods
 
     from sheetfu import SpreadsheetApp
 
-    sa = SpreadsheetApp('path/to/secret.json')
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_data_range()
+    notes = data_range.get_notes()
+
+Similar to get_values(), this will return a 2D list of the notes. When a cell
+does not contain a note, it returns an empty string.
 
 
 **get_backgrounds()**
@@ -382,8 +384,19 @@ Range Methods
 
     from sheetfu import SpreadsheetApp
 
-    sa = SpreadsheetApp('path/to/secret.json')
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_data_range()
 
+    backgrounds = data_range.get_backgrounds()
+
+    # [
+    #    ['#ffffff', '#123456', '#000000'],
+    #    ['#ffffff', '#123456', '#000000'],
+    #    ['#ffffff', '#123456', '#000000']
+    #]
+
+The backgrounds colors are returned in the hexadecimal forms. An empty cell
+returns a white background (#ffffff).
 
 **get_font_colors()**
 ---------------------
@@ -392,8 +405,19 @@ Range Methods
 
     from sheetfu import SpreadsheetApp
 
-    sa = SpreadsheetApp('path/to/secret.json')
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_data_range()
 
+    font_colors = data_range.get_font_colors()
+
+    # [
+    #    ['#000000', '#000000', '#000000'],
+    #    ['#000000', '#000000', '#000000'],
+    #    ['#000000', '#000000', '#000000'],
+    #]
+
+The font colors are returned in the hexadecimal forms. An empty cell
+returns a black font (#000000).
 
 **set_values()**
 ----------------

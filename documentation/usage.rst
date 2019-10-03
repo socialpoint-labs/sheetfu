@@ -91,6 +91,8 @@ List of methods for **Range** object
 +-------------------------------------------------------+---------------------+
 | `set_font_color() <usage.rst#set_font_color>`__       |                     |
 +-------------------------------------------------------+---------------------+
+| `commit() <usage.rst#commit - Range>`__               |                     |
++-------------------------------------------------------+---------------------+
 
 
 SpreadsheetApp Methods
@@ -152,6 +154,7 @@ Returns a Spreadsheet object.
     sa = SpreadsheetApp('path/to/secret.json')
     spreadsheet = sa.open_by_url(url='http://<spreadsheet url>')
 
+Returns a Spreadsheet object.
 
 
 Spreadsheet Methods
@@ -167,8 +170,8 @@ Spreadsheet Methods
     from sheetfu import SpreadsheetApp
 
     sa = SpreadsheetApp('path/to/secret.json')
-
-
+    spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
+    sheets = spreadsheet.get_sheets()
 
 
 **get_sheet_by_name()**
@@ -180,6 +183,8 @@ Spreadsheet Methods
     from sheetfu import SpreadsheetApp
 
     sa = SpreadsheetApp('path/to/secret.json')
+    spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
+    sheet1 = spreadsheet.get_sheet_by_name('Sheet1')
 
 
 
@@ -192,6 +197,8 @@ Spreadsheet Methods
     from sheetfu import SpreadsheetApp
 
     sa = SpreadsheetApp('path/to/secret.json')
+    spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
+    sheet1 = spreadsheet.get_sheet_by_id('<sheet_id>')
 
 
 
@@ -204,6 +211,13 @@ Spreadsheet Methods
     from sheetfu import SpreadsheetApp
 
     sa = SpreadsheetApp('path/to/secret.json')
+    spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
+    spreadsheet.create_sheets(['my_first_sheet', 'my_second_sheet'])
+
+    # The 2 new sheets will be added as Sheet objects to the sheets attributes.
+
+    my_first_sheet = spreadsheet.get_sheet_by_name('my_first_sheet')
+    my_second_sheet = spreadsheet.get_sheet_by_name('my_second_sheet')
 
 
 
@@ -216,6 +230,12 @@ Spreadsheet Methods
     from sheetfu import SpreadsheetApp
 
     sa = SpreadsheetApp('path/to/secret.json')
+    spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
+    spreadsheet.duplicate_sheet(
+        new_sheet_name='cloned name',
+        sheet_name='original sheet'
+    )
+    cloned_sheet = spreadsheet.get_sheet_by_name('cloned name')
 
 
 **commit() - Spreadsheet**
@@ -228,6 +248,7 @@ Spreadsheet Methods
 
     sa = SpreadsheetApp('path/to/secret.json')
 
+    # todo: figure out if needed
 
 
 Sheet Methods
@@ -242,7 +263,37 @@ Sheet Methods
     from sheetfu import SpreadsheetApp
 
     sa = SpreadsheetApp('path/to/secret.json')
+    spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
+    sheet1 = spreadsheet.get_sheet_by_name('Sheet1')
 
+    # to get cell A1
+    A1_cell = sheet1.get_range(row=1, column=1)
+
+    # to get cell C5
+    C5_cell = sheet1.get_range(row=5, column=3)
+
+    # to get range A1:A2
+    A1A2_range = sheet1.get_range(
+        row=1,
+        column=1,
+        number_of_column=2
+    )
+
+    # to get range A1:B2
+    A1B2_range = sheet1.get_range(
+        row=1,
+        column=1,
+        number_of_row=2
+        number_of_column=2
+    )
+
+    # to get range C5:F10"
+    A1B2_range = sheet1.get_range(
+        row=5,
+        column=3,
+        number_of_row=6
+        number_of_column=4
+    )
 
 
 **get_range_from_a1()**
@@ -253,6 +304,14 @@ Sheet Methods
     from sheetfu import SpreadsheetApp
 
     sa = SpreadsheetApp('path/to/secret.json')
+    spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
+    sheet1 = spreadsheet.get_sheet_by_name('Sheet1')
+
+    # to get cell A1
+    A1_cell = sheet1.get_range_from_a1(ai_notification='A1')
+
+    # to get cell A3:B5
+    A3_B5_range = sheet1.get_range_from_a1(ai_notification='A3:B5')
 
 
 

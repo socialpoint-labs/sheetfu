@@ -1,12 +1,12 @@
-Spreadsheet API usage
-=====================
+Sheetfu API usage
+=================
 
 
 
 List of methods for **SpreadsheetApp**.
 
 +-------------------------------------------------------+---------------------+
-| Method                                                | return type         |
+| **Methods for SpreadsheetApp object**                 | **return type**     |
 +-------------------------------------------------------+---------------------+
 | `create() <usage.rst#create>`__                       |  Spreadsheet        |
 +-------------------------------------------------------+---------------------+
@@ -27,7 +27,7 @@ For authentication, please refer to
 List of methods for **Spreadsheet** object
 
 +-------------------------------------------------------+---------------------+
-| Method for Spreadsheet                                | return type         |
+| **Methods for Spreadsheet object**                    | **return type**     |
 +-------------------------------------------------------+---------------------+
 | `get_sheets() <usage.rst#get_sheets>`__               |  List[Sheet]        |
 +-------------------------------------------------------+---------------------+
@@ -43,6 +43,58 @@ List of methods for **Spreadsheet** object
 +-------------------------------------------------------+---------------------+
 
 
+
+List of methods for **Sheet** object
+
++-------------------------------------------------------+---------------------+
+| **Methods for Sheet object**                          | **return type**     |
++-------------------------------------------------------+---------------------+
+| `get_range() <usage.rst#get_range>`__                 |  Range              |
++-------------------------------------------------------+---------------------+
+| `get_range_from_a1() <usage.rst#get_range_from_a1>`__ |  Range              |
++-------------------------------------------------------+---------------------+
+| `get_data_range() <usage.rst#get_data_range>`__       |  Range              |
++-------------------------------------------------------+---------------------+
+| `get_max_rows() <usage.rst#get_max_rows>`__           |  Integer            |
++-------------------------------------------------------+---------------------+
+| `get_max_columns() <usage.rst#get_max_columns>`__     |  Integer            |
++-------------------------------------------------------+---------------------+
+
+
+
+List of methods for **Range** object
+
++-------------------------------------------------------+---------------------+
+| **Methods for Range object**                          | **return type**     |
++-------------------------------------------------------+---------------------+
+| `get_values() <usage.rst#get_values>`__               |  List[List]         |
++-------------------------------------------------------+---------------------+
+| `get_notes() <usage.rst#get_notes>`__                 |  List[List]         |
++-------------------------------------------------------+---------------------+
+| `get_backgrounds() <usage.rst#get_backgrounds>`__     |  List[List]         |
++-------------------------------------------------------+---------------------+
+| `get_font_colors() <usage.rst#get_font_colors>`__     |  List[List]         |
++-------------------------------------------------------+---------------------+
+| `set_values() <usage.rst#set_values>`__               |                     |
++-------------------------------------------------------+---------------------+
+| `set_notes() <usage.rst#set_notes>`__                 |                     |
++-------------------------------------------------------+---------------------+
+| `set_backgrounds() <usage.rst#set_backgrounds>`__     |                     |
++-------------------------------------------------------+---------------------+
+| `set_font_colors() <usage.rst#set_font_colors>`__     |                     |
++-------------------------------------------------------+---------------------+
+| `set_value() <usage.rst#set_value>`__                 |                     |
++-------------------------------------------------------+---------------------+
+| `set_note() <usage.rst#set_note>`__                   |                     |
++-------------------------------------------------------+---------------------+
+| `set_background() <usage.rst#set_background>`__       |                     |
++-------------------------------------------------------+---------------------+
+| `set_font_color() <usage.rst#set_font_color>`__       |                     |
++-------------------------------------------------------+---------------------+
+
+
+SpreadsheetApp Methods
+======================
 
 
 **create()**
@@ -102,6 +154,8 @@ Returns a Spreadsheet object.
 
 
 
+Spreadsheet Methods
+===================
 
 
 **get_sheets()**
@@ -175,4 +229,193 @@ Returns a Spreadsheet object.
     sa = SpreadsheetApp('path/to/secret.json')
 
 
+
+Sheet Methods
+=============
+
+
+**get_range()**
+---------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+
+**get_range_from_a1()**
+-----------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+
+**get_data_range()**
+--------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+
+**get_max_rows()**
+------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+
+**get_max_columns()**
+---------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+
+
+
+
+Range Methods
+=============
+
+
+**get_values()**
+----------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+**get_notes()**
+---------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+**get_backgrounds()**
+---------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+**get_font_colors()**
+---------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+**set_values()**
+----------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+
+**set_notes()**
+---------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+**set_backgrounds()**
+---------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+
+**set_font_colors()**
+---------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+
+**set_value()**
+---------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+
+**set_note()**
+--------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+**set_background()**
+--------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+
+
+**set_font_color()**
+--------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
 

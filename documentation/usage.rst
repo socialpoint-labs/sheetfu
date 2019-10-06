@@ -426,9 +426,21 @@ returns a black font (#000000).
 
     from sheetfu import SpreadsheetApp
 
-    sa = SpreadsheetApp('path/to/secret.json')
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
 
+    values = [
+        ['name', 'surname'],
+        ['john', 'doe'],
+        ['jane', 'doe'],
+    ]
+    data_range.set_values(values)
+    data_range.commit()
 
+This will simply fill the values into the range A1:B3. A 2D list must be
+submitted, matching the range size. If it does not match, an error will be
+raised.
+Committing must be done or none of the changes will be sent to the spreadsheets.
 
 **set_notes()**
 ---------------
@@ -437,8 +449,19 @@ returns a black font (#000000).
 
     from sheetfu import SpreadsheetApp
 
-    sa = SpreadsheetApp('path/to/secret.json')
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
 
+    notes = [
+        ['this is a note', 'this is a note'],
+        ['', ''],
+        ['', '']
+    ]
+    data_range.set_backgrounds(backgrounds)
+    data_range.commit()
+
+This would set notes on the top 2 cells of the range. Empty strings means no
+notes to be submitted.
 
 **set_backgrounds()**
 ---------------------
@@ -447,7 +470,16 @@ returns a black font (#000000).
 
     from sheetfu import SpreadsheetApp
 
-    sa = SpreadsheetApp('path/to/secret.json')
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+
+    backgrounds = [
+        ['#0000FF', '#0000FF'],
+        ['#0000FF', '#0000FF'],
+        ['#0000FF', '#0000FF']
+    ]
+    data_range.set_backgrounds(backgrounds)
+    data_range.commit()
 
 
 
@@ -458,7 +490,16 @@ returns a black font (#000000).
 
     from sheetfu import SpreadsheetApp
 
-    sa = SpreadsheetApp('path/to/secret.json')
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+
+    font_colors = [
+        ['#0000FF', '#0000FF'],
+        ['#0000FF', '#0000FF'],
+        ['#0000FF', '#0000FF']
+    ]
+    data_range.set_font_colors(font_colors)
+    data_range.commit()
 
 
 
@@ -469,9 +510,12 @@ returns a black font (#000000).
 
     from sheetfu import SpreadsheetApp
 
-    sa = SpreadsheetApp('path/to/secret.json')
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+    data_range.set_value('foo')
+    data_range.commit()
 
-
+This would set cells value to 'foo' in the whole range.
 
 **set_note()**
 --------------
@@ -480,8 +524,12 @@ returns a black font (#000000).
 
     from sheetfu import SpreadsheetApp
 
-    sa = SpreadsheetApp('path/to/secret.json')
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+    data_range.set_note('this is a note')
+    data_range.commit()
 
+ This would put the note 'this is a note' on every cells within the range.
 
 **set_background()**
 --------------------
@@ -490,8 +538,12 @@ returns a black font (#000000).
 
     from sheetfu import SpreadsheetApp
 
-    sa = SpreadsheetApp('path/to/secret.json')
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+    data_range.set_background('#0000FF')
+    data_range.commit()
 
+This would set the background of the whole range in blue.
 
 **set_font_color()**
 --------------------
@@ -500,5 +552,40 @@ returns a black font (#000000).
 
     from sheetfu import SpreadsheetApp
 
-    sa = SpreadsheetApp('path/to/secret.json')
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+    data_range.set_font_color('#0000FF')
+    data_range.commit()
 
+This would set the font colors of the whole range in blue.
+
+**commit()**
+--------------------
+
+This method is a key part of the API. It permits us to send all the changes we set
+at the same time, using the batch API of the google sheets v4 API.
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+    data_range.set_background('#000000')   # black background
+    data_range.set_font_color('#0000FF')   # blue font
+
+    values = [
+        ['name', 'surname'],
+        ['john', 'doe'],
+        ['jane', 'doe'],
+    ]
+    data_range.set_values(values)
+
+    # now pushing the changes
+    data_range.commit()
+
+When you set a change, nothing is actually sent to the spreadsheet. All the
+change setters instead are batched at the range level. The commit method sends
+every batched requests at once. This means being able to make as many change as
+you want while sending only one request to the google sheet api, giving a
+significant performance boost.

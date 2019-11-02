@@ -69,6 +69,7 @@ class Spreadsheet:
         :param name: name of the sheet we want to access.
         :return: Sheet object matching name.
         """
+        print(self.sheets)
         for sheet in self.sheets:
             if sheet.name.lower() == name.lower():
                 return sheet
@@ -127,6 +128,7 @@ class Spreadsheet:
             body=body
         ).execute()
         self._add_sheets_from_response(response=response, reply_type="addSheet")
+        return [self.get_sheet_by_name(name) for name in sheet_names]
 
     def duplicate_sheet(self, new_sheet_name, sheet_id=None, sheet_name=None):
         """
@@ -154,6 +156,7 @@ class Spreadsheet:
             body=body
         ).execute()
         self._add_sheets_from_response(response=response, reply_type="duplicateSheet")
+        return self.get_sheet_by_name(new_sheet_name)
 
     def commit(self):
         if len(self.batches) == 0:

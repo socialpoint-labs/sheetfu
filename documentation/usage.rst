@@ -212,14 +212,10 @@ Spreadsheet Methods
 
     sa = SpreadsheetApp('path/to/secret.json')
     spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
-    spreadsheet.create_sheets(['my_first_sheet', 'my_second_sheet'])
+    new_sheets = spreadsheet.create_sheets(['my_first_sheet', 'my_second_sheet'])
 
-    # The 2 new sheets will be added as Sheet objects to the sheets attributes.
-
-    my_first_sheet = spreadsheet.get_sheet_by_name('my_first_sheet')
-    my_second_sheet = spreadsheet.get_sheet_by_name('my_second_sheet')
-
-
+It returns a list of Sheet objects in the same order of the new sheet names
+list given as parameter.
 
 **duplicate_sheet()**
 ---------------------
@@ -231,11 +227,12 @@ Spreadsheet Methods
 
     sa = SpreadsheetApp('path/to/secret.json')
     spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
-    spreadsheet.duplicate_sheet(
+    cloned_sheet = spreadsheet.duplicate_sheet(
         new_sheet_name='cloned name',
         sheet_name='original sheet'
     )
-    cloned_sheet = spreadsheet.get_sheet_by_name('cloned name')
+`cloned_sheet` in that case will return the Sheet object of the new cloned
+sheet.
 
 
 **commit() - Spreadsheet**

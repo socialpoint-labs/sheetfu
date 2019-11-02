@@ -202,7 +202,7 @@ class TestSheetCreationMethodReturns:
     http_sheets_mocks = mock_spreadsheet_instance(["add_sheets.json", "duplicate_sheets.json"])
     spreadsheet = SpreadsheetApp(http=http_sheets_mocks).open_by_id('some_id')
 
-    def test_create_sheets(self):
+    def test_create_sheets_types(self):
         new_sheets = self.spreadsheet.create_sheets(["test_sheet", "test_sheet_2"])
         assert isinstance(new_sheets, list)
         assert isinstance(new_sheets[0], Sheet)
@@ -210,9 +210,8 @@ class TestSheetCreationMethodReturns:
         assert isinstance(new_sheets[1], Sheet)
         assert new_sheets[1].name == 'test_sheet_2'
 
-    def test_duplicate_sheet(self):
+    def test_duplicate_sheet_type(self):
         # Important! This test needs to be executed after test_create_sheets, as it clones that sheet #
         duplicated_sheet = self.spreadsheet.duplicate_sheet(new_sheet_name="cloned_sheet", sheet_name="test_sheet")
-        print(duplicated_sheet)
         assert isinstance(duplicated_sheet, Sheet)
         assert duplicated_sheet.name == 'cloned_sheet'

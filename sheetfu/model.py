@@ -69,7 +69,6 @@ class Spreadsheet:
         :param name: name of the sheet we want to access.
         :return: Sheet object matching name.
         """
-        print(self.sheets)
         for sheet in self.sheets:
             if sheet.name.lower() == name.lower():
                 return sheet

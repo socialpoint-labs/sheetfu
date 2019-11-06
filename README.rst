@@ -43,6 +43,7 @@ A Simple Example
     data_range.set_background('#000000')          # set every cell backgrounds to black
     data_range.set_font_color('#ffffff')          # set every cell font colors to white
 
+    data_range.commit()                           # to commit your changes otherwise nothing gets changed.
 
 To obtain your secret json file and know more about how to initialize your ENV vars, you can refer to `the authentication tutorial`_.
 

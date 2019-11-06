@@ -664,3 +664,32 @@ class Range:
             "startColumnIndex": self.coordinates.column - 1,
             "endColumnIndex": self.coordinates.column - 1 + self.coordinates.number_of_columns
         }
+
+    def get_row(self):
+        """
+        Syntactic sugar method to return integer value of first row of range.
+        :return: int
+        """
+        return self.coordinates.row
+
+    def get_column(self):
+        """
+        Syntactic sugar method to return integer value of first column of range.
+        :return: int
+        """
+        return self.coordinates.column
+
+    def get_max_row(self):
+        """
+        Syntactic sugar method to return integer value of last row of range.
+        :return: int
+        """
+        return self.coordinates.row + self.coordinates.number_of_rows - 1
+
+    def get_max_column(self):
+        """
+        Syntactic sugar method to return integer value of last column of range.
+        :return: int
+        """
+        return self.coordinates.column + self.coordinates.number_of_columns - 1
+

@@ -93,6 +93,15 @@ List of methods for **Range** object
 +-------------------------------------------------------+---------------------+
 | `commit() <usage.rst#commit - Range>`__               |                     |
 +-------------------------------------------------------+---------------------+
+| `get_row() <usage.rst#get_row>`__                     |  Integer            |
++-------------------------------------------------------+---------------------+
+| `get_column() <usage.rst#get_column>`__               |  Integer            |
++-------------------------------------------------------+---------------------+
+| `get_max_row() <usage.rst#get_max_row - Range>`__     |  Integer            |
++-------------------------------------------------------+---------------------+
+| `get_max_column() <usage.rst#get_max_column Range>`__ |  Integer            |
++-------------------------------------------------------+---------------------+
+
 
 
 SpreadsheetApp Methods
@@ -328,6 +337,39 @@ This method is particularly useful when you're not quite sure how many rows you
 have in your sheet. Under the hood, this method actually makes a request to the
 sheet and figure out the A1 notification of the range containing data.
 
+
+**get_max_row()**
+--------------------
+
+Method to return the last row in sheet. this does not necessarily means a row
+with data. An empty new sheet, typically, has 1000 rows. The method in that
+case will return 1000.
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+    spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
+    sheet = spreadsheet.get_sheet_by_name('Sheet1')
+    max_row = sheet.get_max_row()
+
+
+**get_max_column()**
+--------------------
+
+Method to return the last column in sheet. this does not necessarily means a
+column with data. An empty new sheet, typically, has 26 columns (letter Z). The
+method in that case will return 26 even if the sheet has no data.
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    sa = SpreadsheetApp('path/to/secret.json')
+    spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
+    sheet = spreadsheet.get_sheet_by_name('Sheet1')
+    max_row = sheet.get_max_column()
 
 
 Range Methods
@@ -586,3 +628,53 @@ change setters instead are batched at the range level. The commit method sends
 every batched requests at once. This means being able to make as many change as
 you want while sending only one request to the google sheet api, giving a
 significant performance boost.
+
+
+**get_row()**
+--------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+    data_range.get_row() # 1
+
+
+
+
+**get_column()**
+--------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+    data_range.get_column() # 1
+
+
+**get_max_row() - Range**
+-------------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+    data_range.get_max_row() # 3
+
+
+**get_max_column() Range**
+-------------------------
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+    data_range.get_max_column() # 2

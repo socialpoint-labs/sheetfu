@@ -197,6 +197,35 @@ class TestGridRange:
                          num_rows=6, num_columns=-2)
 
 
+class TestRangeMaxRowColumn:
+
+    http_sheets_mocks = mock_spreadsheet_instance()
+    spreadsheet = SpreadsheetApp(http=http_sheets_mocks).open_by_id('some_id')
+    sheet = spreadsheet.sheets[0]
+
+    def test_max_coordinates_a1(self):
+        cell = self.sheet.get_range_from_a1('A1')
+        assert cell.get_row() == 1
+        assert cell.get_column() == 1
+        assert cell.get_max_row() == 1
+        assert cell.get_max_column() == 1
+
+    def test_max_coordinates_a1_b4(self):
+        range_ = self.sheet.get_range_from_a1('A1:B4')
+        assert range_.get_row() == 1
+        assert range_.get_column() == 1
+        assert range_.get_max_row() == 4
+        assert range_.get_max_column() == 2
+
+    def test_max_coordinates_a3_b4(self):
+        range_ = self.sheet.get_range_from_a1('B3:D4')
+        assert range_.get_row() == 3
+        assert range_.get_column() == 2
+        assert range_.get_max_row() == 4
+        assert range_.get_max_column() == 4
+
+        
+        
 class TestSheetCreationMethodReturns:
 
     http_sheets_mocks = mock_spreadsheet_instance(["add_sheets.json", "duplicate_sheets.json"])

@@ -373,7 +373,10 @@ class Range:
         :param cell_parser: Function to run to parse cell data as expected.
         :return: The raw response of the request.
         """
-        target_range = self.a1 or self.sheet.name
+        if self.sheet.name and self.a1 and self.sheet.name not in self.a1:
+            target_range = "'{}'!{}".format(self.sheet.name, self.a1)
+        else:
+            target_range = self.a1 or self.sheet.name
         # first we request data to the API
         request = self.client.sheet_service.spreadsheets().get(
             spreadsheetId=self.sheet.spreadsheet.id,

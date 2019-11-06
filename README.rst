@@ -49,6 +49,7 @@ To obtain your secret json file and know more about how to initialize your ENV v
 .. _the authentication tutorial: https://github.com/socialpoint-labs/sheetfu/blob/master/documentation/authentication.rst
 
 You can refer to the `sheetfu API documentation`_ for a more detailed description.
+
 .. _sheetfu API documentation: https://github.com/socialpoint-labs/sheetfu/blob/master/documentation/usage.rst
 
 The Table module

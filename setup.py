@@ -26,7 +26,7 @@ setup(
     name='sheetfu',
     packages=['sheetfu', 'sheetfu.modules'],
     description='Sheetfu is a library to interact with Google sheets.',
-    long_description='Sheetfu long description coming soon ...',
+    long_description=open('README.rst', 'r').read(),
     version=version,
     author='Philippe Oger',
     author_email='phil.oger@gmail.com',

@@ -387,10 +387,11 @@ class Range:
         # now we parse the rows from the response using the cell parser
         data = []
         values = response["sheets"][0]["data"]
-
+        # Assert that number of columns is an integer
+        number_of_columns = int(self.coordinates.number_of_columns)
         for row in range(0, self.coordinates.number_of_rows):
             data_row = []
-            for column in range(0, self.coordinates.number_of_columns):
+            for column in range(0, number_of_columns):
                 try:
                     cell = values[0]["rowData"][row]["values"][column]
                     data_row.append(cell_parser(cell))

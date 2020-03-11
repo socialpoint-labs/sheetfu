@@ -191,7 +191,7 @@ Create a new item object and append to the other items within the Table object.
 
     new_person = {
         'name': 'tyler',
-        'surname': 'Durden,
+        'surname': 'Durden',
         'age': 35
     }
 

@@ -59,6 +59,10 @@ List of methods for **Item**.
 +--------------------------------------------------------------+---------------------+
 
 
+
+Overview
+========
+
 All examples below will be based on the following data in a sheet called `people`.
 
 +-----------------+-----------------+----------+
@@ -73,10 +77,6 @@ All examples below will be based on the following data in a sheet called `people
 | Jane            | Doe             | 33       |
 +-----------------+-----------------+----------+
 
-
-
-Overview
-========
 
 This is how you would most commonly instantiate your Table object:
 
@@ -389,8 +389,11 @@ those requests into the table using the `batch_to` parameter. See below:
     first_row_range.set_background('#0000FF')
 
     # instead do the following for better performance.
+    # this will create the request without executing it,
+    # and add it to the list of pending requests at Table level.
     first_row_range.set_background('#0000FF', batch_to=table)
 
+    # committing will make the row turn blue in your sheet.
     table.commit()
 
 
@@ -409,6 +412,8 @@ those requests into the table using the `batch_to` parameter. See below:
     data_range = spreadsheet.get_sheet_by_name('people').get_data_range()
     table = Table(data_range)
 
+    # recommended to manually add the requests to the table batch list, or
+    # a request will be executed on each iteration.
     for item in table:
         cell_range.add_dropdown(choices=range(0, 100), batch_to=table)
 

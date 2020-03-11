@@ -51,16 +51,16 @@ Here you have the mapping between ENV vars and JSON fields:
 
 .. code-block:: json
 
-SHEETFU_CONFIG_TYPE=type
-SHEETFU_CONFIG_PROJECT_ID=project_id
-SHEETFU_CONFIG_PRIVATE_KEY_ID=private_key_id
-SHEETFU_CONFIG_PRIVATE_KEY=private_key
-SHEETFU_CONFIG_CLIENT_EMAIL=client_email
-SHEETFU_CONFIG_CLIENT_ID=client_id
-SHEETFU_CONFIG_AUTH_URI=auth_uri
-SHEETFU_CONFIG_TOKEN_URI=token_uri
-SHEETFU_CONFIG_AUTH_PROVIDER_URL=auth_provider_x509_cert_url
-SHEETFU_CONFIG_CLIENT_CERT_URL=client_x509_cert_url
+    SHEETFU_CONFIG_TYPE=type
+    SHEETFU_CONFIG_PROJECT_ID=project_id
+    SHEETFU_CONFIG_PRIVATE_KEY_ID=private_key_id
+    SHEETFU_CONFIG_PRIVATE_KEY=private_key
+    SHEETFU_CONFIG_CLIENT_EMAIL=client_email
+    SHEETFU_CONFIG_CLIENT_ID=client_id
+    SHEETFU_CONFIG_AUTH_URI=auth_uri
+    SHEETFU_CONFIG_TOKEN_URI=token_uri
+    SHEETFU_CONFIG_AUTH_PROVIDER_URL=auth_provider_x509_cert_url
+    SHEETFU_CONFIG_CLIENT_CERT_URL=client_x509_cert_url
 
 Once those ENV variables are set, you should be able to initialize it just adding
 the parameter `from_env=True`, which will automatically grab the config from your ENV:

@@ -101,6 +101,10 @@ List of methods for **Range** object
 +-------------------------------------------------------+---------------------+
 | `get_max_column() <usage.rst#get_max_column Range>`__ |  Integer            |
 +-------------------------------------------------------+---------------------+
+| `get_cell() <usage.rst#get_cell Range>`__             |  Range              |
++-------------------------------------------------------+---------------------+
+| `add_dropdown() <usage.rst#add_dropdown Range>`__     |  Integer            |
++-------------------------------------------------------+---------------------+
 
 
 
@@ -678,3 +682,37 @@ significant performance boost.
     ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
     data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
     data_range.get_max_column() # 2
+
+**get_cell() Range**
+-------------------------
+
+Get the range of a specific cell by giving its coordinates within the parent
+range. First row and first column starts at 1 (to keep it consistent with
+google sheet api).
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+    cell_range = data_range.get_cell(row=1, column=1)
+
+
+
+**add_dropdown() Range**
+-------------------------
+
+Adds a dropdown with the given options on every cells within the range.
+
+.. code-block:: python
+
+    from sheetfu import SpreadsheetApp
+
+    ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
+    data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
+    choices = [
+        'option1'
+        'option2'
+    ]
+    data_range.add_dropdown(choices)

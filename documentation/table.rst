@@ -415,6 +415,7 @@ those requests into the table using the `batch_to` parameter. See below:
     # recommended to manually add the requests to the table batch list, or
     # a request will be executed on each iteration.
     for item in table:
+        cell_range = item.get_field_range("age")
         cell_range.add_dropdown(choices=range(0, 100), batch_to=table)
 
     table.commit()

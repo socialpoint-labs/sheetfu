@@ -696,3 +696,4 @@ class Range:
         """
         return self.coordinates.column + self.coordinates.number_of_columns - 1
 
+

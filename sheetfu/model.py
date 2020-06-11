@@ -338,11 +338,13 @@ class Range:
                 raise ValueError("Tried creating an offset of " + str(num_columns) + " columns.")
             number_of_columns = num_columns
 
-        new_range_a1 = convert_coordinates_to_a1(row=top_row,
-                                                 column=left_column,
-                                                 number_of_row=number_of_rows,
-                                                 number_of_column=number_of_columns,
-                                                 sheet_name=self.coordinates.sheet_name)
+        new_range_a1 = convert_coordinates_to_a1(
+            row=top_row,
+            column=left_column,
+            number_of_row=number_of_rows,
+            number_of_column=number_of_columns,
+            sheet_name=self.coordinates.sheet_name
+        )
         return Range(
             client=self.client,
             sheet=self.sheet,
@@ -529,7 +531,7 @@ class Range:
             for column in range(0, self.coordinates.number_of_columns):
                 notes[row].append(note)
 
-        return self.set_values(notes, batch_to)
+        return self.set_notes(notes, batch_to)
 
     def get_font_colors(self):
         """

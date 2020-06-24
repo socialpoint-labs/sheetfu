@@ -1,4 +1,5 @@
 from sheetfu.client import SpreadsheetApp
+from sheetfu.exceptions import RowOrColumnEqualsZeroError
 from sheetfu.model import Spreadsheet, Sheet, Range
 from tests.utils import mock_range_instance, mock_spreadsheet_instance, mock_google_sheets_responses
 from tests.utils import open_fixture
@@ -224,8 +225,7 @@ class TestRangeMaxRowColumn:
         assert range_.get_max_row() == 4
         assert range_.get_max_column() == 4
 
-        
-        
+
 class TestSheetCreationMethodReturns:
 
     http_sheets_mocks = mock_spreadsheet_instance(["add_sheets.json", "duplicate_sheets.json"])
@@ -244,3 +244,24 @@ class TestSheetCreationMethodReturns:
         duplicated_sheet = self.spreadsheet.duplicate_sheet(new_sheet_name="cloned_sheet", sheet_name="test_sheet")
         assert isinstance(duplicated_sheet, Sheet)
         assert duplicated_sheet.name == 'cloned_sheet'
+
+
+class TestWrongRowAndColumnValues:
+    http_sheets_mocks = mock_range_instance()
+
+    client = SpreadsheetApp(http=http_sheets_mocks)
+    spreadsheet = client.open_by_id('some_id')
+    sheet = spreadsheet.get_sheet_by_name("people")
+
+    def test_invalid_row(self):
+        with pytest.raises(RowOrColumnEqualsZeroError):
+            self.sheet.get_range(row=0, column=1)
+
+    def test_invalid_column(self):
+        with pytest.raises(RowOrColumnEqualsZeroError):
+            self.sheet.get_range(row=1, column=0)
+
+    def test_invalid_row_and_column(self):
+        with pytest.raises(RowOrColumnEqualsZeroError):
+            self.sheet.get_range(row=0, column=0)
+

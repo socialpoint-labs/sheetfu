@@ -19,3 +19,7 @@ class SheetIdNoMatchError(Exception):
 class NoDataRangeError(Exception):
     """No data found in target sheet."""
     pass
+
+
+class RowOrColumnEqualsZeroError(Exception):
+    """Row or Column index starts at 1, not 0"""

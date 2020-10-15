@@ -11,7 +11,7 @@
 
 # Important! Never update this version manually. The automatic semantic-releases library takes care of updating it #
 # Manually changing this number could result in unexpected behaviour #
-__version__ = "1.5.3"
+__version__ = "1.5.4"
 
 
 from sheetfu.client import SpreadsheetApp

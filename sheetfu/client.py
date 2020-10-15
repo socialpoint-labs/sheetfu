@@ -2,7 +2,7 @@
 
 """
     sheetfu.client
-    ~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~
 
     Implement the SpreadsheetApp client .
     :copyright: © 2018 by Social Point Labs.

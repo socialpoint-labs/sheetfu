@@ -98,7 +98,7 @@ def convert_letter_to_column(letters_string):
         power = len(letters_string) - (i + 1)
         number_of_columns = letter_index * math.pow(len(string.ascii_uppercase), power)
         column_number += number_of_columns
-    return column_number
+    return int(column_number)
 
 
 def rgb_to_hex(red=0, green=0, blue=0):

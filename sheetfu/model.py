@@ -11,7 +11,9 @@
 
 
 from sheetfu.helpers import convert_a1_to_coordinates, convert_coordinates_to_a1, append_sheet_name
-from sheetfu.exceptions import SheetNameNoMatchError, SheetIdNoMatchError, NoDataRangeError, SizeNotMatchingException
+from sheetfu.exceptions import (
+    SheetNameNoMatchError, SheetIdNoMatchError, NoDataRangeError, SizeNotMatchingException, RowOrColumnEqualsZeroError
+)
 from sheetfu.parsers import CellParsers
 
 
@@ -201,6 +203,10 @@ class Sheet:
         :param number_of_column: Number of columns in the target range.
         :return: Range object.
         """
+        if row == 0 or column == 0:
+            raise RowOrColumnEqualsZeroError(
+                "Row and column parameters can not be equal to 0. The cell A1 is row=1 and column=1"
+            )
         a1 = convert_coordinates_to_a1(row, column, number_of_row, number_of_column)
         return Range(
             client=self.client,

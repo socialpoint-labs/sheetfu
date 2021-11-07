@@ -315,3 +315,6 @@ class Item:
     def matches_value(self, header, value):
         item_value = self.get_field_value(header)
         return item_value == value
+
+    def to_dict(self):
+        return {k: self.get_field_value(k) for k in self.header}

@@ -78,6 +78,12 @@ class TestItem:
         assert self.item.get_field_font_color('name') == '#000fff'
         assert self.item.get_field_font_color('surname') == '#000000'
 
+    def test_convert_to_dict(self):
+        assert self.item.to_dict() == {
+            "name": "john",
+            "surname": "doe"
+        }
+
 
 class TestTableItemRanges:
 

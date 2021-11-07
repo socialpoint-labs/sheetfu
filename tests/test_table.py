@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from sheetfu import SpreadsheetApp, Table
@@ -291,3 +293,57 @@ class TestTableSelector:
     def test_value_error_exception(self, table):
         with pytest.raises(ValueError):
             table.select([[25, 35]])
+
+
+class TestTableDatetimeField:
+    http_mocks = mock_google_sheets_responses([
+        'table_get_sheets.json',
+        'table_values_datetime.json',
+        'table_values_datetime.json'
+    ])
+    sa = SpreadsheetApp(http=http_mocks)
+    sheet = sa.open_by_id('whatever').get_sheet_by_name('Sheet1')
+    data_range = sheet.get_range_from_a1("A1:B3")
+    table = Table(
+        full_range=data_range
+    )
+
+    def test_table_size(self):
+        assert len(self.table) == 2
+        assert len(self.table.header) == 2
+
+    def test_first_row(self):
+        row = self.table[0]
+        birthday = row.get_field_value("birthday")
+        assert row.get_field_value("name") == "foo"
+        assert isinstance(birthday, datetime.datetime)
+        assert birthday.year == 2021
+        assert birthday.month == 5
+        assert birthday.day == 1
+
+    def test_second_row(self):
+        row = self.table[1]
+        birthday = row.get_field_value("birthday")
+        assert row.get_field_value("name") == "bar"
+        assert isinstance(birthday, datetime.datetime)
+        assert birthday.year == 2021
+        assert birthday.month == 9
+        assert birthday.day == 30
+
+    def test_set_datetime_values(self):
+        for row in self.table:
+            birthday = row.get_field_value("birthday")
+            new_birthday = birthday + datetime.timedelta(days=1)
+            row.set_field_value("birthday", new_birthday)
+
+        # we then check the request put in the batch
+        first_request = self.table.batches[0]
+        first_value = first_request["updateCells"]["rows"][0]["values"][0]["userEnteredValue"]["numberValue"]
+        assert first_value == 44318.0
+
+        second_request = self.table.batches[1]
+        second_value = second_request["updateCells"]["rows"][0]["values"][0]["userEnteredValue"]["numberValue"]
+        assert second_value == 44470.0
+
+        for batch in self.table.batches:
+            assert batch["updateCells"]["rows"][0]["values"][0]["userEnteredFormat"]["numberFormat"]["type"] == "DATE_TIME"

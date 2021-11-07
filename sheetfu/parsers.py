@@ -1,4 +1,4 @@
-from sheetfu.helpers import rgb_to_hex, hex_to_rgb, datetime_to_serial_number
+from sheetfu.helpers import rgb_to_hex, hex_to_rgb, datetime_to_serial_number, serial_number_to_datetime
 from datetime import datetime
 
 
@@ -7,8 +7,16 @@ class CellParsers:
     @staticmethod
     def get_value(cell):
         value_body = cell["effectiveValue"]
+        format_type = (
+            cell
+            .get('effectiveFormat', {})
+            .get("numberFormat", {})
+            .get("type")
+        )
         for value_type in ['stringValue', 'numberValue', 'boolValue', 'formulaValue']:
             if value_body.get(value_type) is not None:
+                if format_type in ["DATE", "DATE_TIME"]:
+                    return serial_number_to_datetime(value_body[value_type])
                 return value_body[value_type]
 
     @staticmethod
@@ -21,7 +29,16 @@ class CellParsers:
             elif isinstance(cell, int) or isinstance(cell, float):
                 return {"userEnteredValue": {"numberValue": cell}}
             elif isinstance(cell, datetime):
-                return {"userEnteredValue": {"numberValue": datetime_to_serial_number(cell)}}
+                return {
+                    "userEnteredValue": {
+                        "numberValue": datetime_to_serial_number(cell)
+                    },
+                    "userEnteredFormat": {
+                        "numberFormat": {
+                            "type": "DATE_TIME"
+                        }
+                    }
+                }
         return {"userEnteredValue": {"stringValue": ''}}
 
     @staticmethod

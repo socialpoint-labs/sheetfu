@@ -447,7 +447,7 @@ class Range:
 
     def get_values(self):
         data = self.make_get_request(
-            field_mask="sheets/data/rowData/values/effectiveValue",
+            field_mask="sheets/data/rowData/values/effectiveValue,sheets/data/rowData/values/effectiveFormat/numberFormat/type",
             cell_parser=CellParsers.get_value
         )
         return data

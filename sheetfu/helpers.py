@@ -12,7 +12,7 @@
 
 import string
 import math
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import namedtuple
 
 
@@ -118,3 +118,10 @@ def datetime_to_serial_number(date):
     time_delta = (date - google_sheets_epoch)
     date_serial_number = float(time_delta.days) + (float(time_delta.seconds) / 86400)
     return date_serial_number
+
+
+def serial_number_to_datetime(date_serial_number):
+    google_sheets_epoch = datetime(1899, 12, 30)
+    day_decimal = float(date_serial_number) - float(int(date_serial_number))
+    seconds_in_last_day = day_decimal * 24 * 3600
+    return google_sheets_epoch + timedelta(days=int(date_serial_number)) + timedelta(seconds=seconds_in_last_day)

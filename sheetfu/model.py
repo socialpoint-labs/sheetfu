@@ -57,6 +57,7 @@ class Spreadsheet:
         """
         request = self.client.sheet_service.spreadsheets().get(spreadsheetId=self.id, includeGridData=False)
         response = request.execute()
+        print(response)
         sheets = [
             self.get_sheet(name=sheet['properties']['title'],
                            sid=sheet['properties']['sheetId'],

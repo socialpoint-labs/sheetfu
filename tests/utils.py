@@ -24,17 +24,21 @@ def mock_google_sheets_responses(fixture_files=None):
     return http_mocks
 
 
-def mock_spreadsheet_instance(fixtures=list()):
+def mock_spreadsheet_instance(fixtures=None):
+    if fixtures is None:
+        fixtures = []
     return mock_google_sheets_responses(['get_sheets.json'] + fixtures)
 
 
-def mock_range_instance(fixtures=list()):
+def mock_range_instance(fixtures=None):
+    if fixtures is None:
+        fixtures = []
     return mock_google_sheets_responses(['get_sheets.json', 'people.json'] + fixtures)
 
 
 def open_fixture(fixture_filename):
     fixture_folder_path = os.path.join(os.path.dirname(__file__), "fixtures/")
-    return open(fixture_folder_path + fixture_filename).read()
+    return open(fixture_folder_path + fixture_filename, "r").read()
 
 
 def create_fixture(path_to_secret, spreadsheet_id, target_range, field_mask, fixture_name):

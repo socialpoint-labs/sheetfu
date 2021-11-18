@@ -1,0 +1,19 @@
+name: Tests suite
+on: [push]
+jobs:
+  build:
+    runs-on: macos-11
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.5', '3.6', '3.7', '3.8', '3.9', '3.10']
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python3 -m pip install --upgrade pip
+      - run: pip3 install -r requirements_dev.txt
+      - run: pip3 install -e .
+      - run: pytest -s
+      - run: echo 'All good man!'

@@ -504,7 +504,8 @@ class Range:
     def get_backgrounds(self):
         """
         Get the backgrounds of the Range.
-        :return: 2D array of the background colors, of size matching the range coordinates.
+        :return: 2D array of the background colors, of size matching the range
+            coordinates.
         :return: 2D matrix of the colors in hex format.
         """
         return self.make_get_request(
@@ -621,9 +622,10 @@ class Range:
 
     def persist_a1_data_range(self, a1):
         """
-        If a1 attribute is None (typically when we get_data_range, it calculates the a1 notation and range coordinates
-        based on the number of rows and columns found in the data.
-        :param data: raw response of a request for values to google sheets API.
+        If a1 attribute is None (typically when we get_data_range, it calculates
+            the a1 notation and range coordinates based on the number of rows
+            and columns found in the data.
+        :param a1: raw response of a request for values to google sheets API.
         """
         if a1 is not None:
             return a1
@@ -655,10 +657,12 @@ class Range:
             sheet_name=self.sheet.name
         )
 
-    def get_cell(self, row, column):        # todo: have a custom error when row and/or column is 0
+    def get_cell(self, row, column):
         row_number = self.coordinates.row + row - 1
         column_number = self.coordinates.column + column - 1
-        a1 = convert_coordinates_to_a1(row_number, column_number, sheet_name=self.coordinates.sheet_name)
+        a1 = convert_coordinates_to_a1(
+            row_number, column_number, sheet_name=self.coordinates.sheet_name
+        )
         return Range(
             client=self.client,
             sheet=self.sheet,
@@ -691,7 +695,8 @@ class Range:
 
     def get_grid_range(self):
         """
-        As explained here: https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets#GridRange
+        As explained here:
+        https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets#GridRange
         :return: the grid range for set requests.
         """
         return {
@@ -729,5 +734,3 @@ class Range:
         :return: int
         """
         return self.coordinates.column + self.coordinates.number_of_columns - 1
-
-

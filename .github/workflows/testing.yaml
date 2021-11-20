@@ -1,4 +1,4 @@
-name: Tests suite
+name: testing
 on: [push]
 jobs:
   build:

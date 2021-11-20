@@ -59,7 +59,6 @@ For authentication, please refer to the [authentication tutorial](authentication
 | [set_note()](#Range.set_note)                 |                     |
 | [set_background()](#Range.set_background)     |                     |
 | [set_font_color()](#Range.set_font_color)     |                     |
-| [commit()](#Range.commit)                     |                     |
 | [get_row()](#Range.get_row)                   |  Integer            |
 | [get_column()](#Range.get_column)             |  Integer            |
 | [get_max_row()](#Range.get_max_row)           |  Integer            |

@@ -1,4 +1,4 @@
-This is a sheetfu doc title test
-================================
+This is a Sheetfu documentation index
+=====================================
 
-.. include:: ../../README.rst
+

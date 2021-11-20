@@ -1,8 +1,8 @@
-# Sheetfu API usage
+#Sheetfu API usage
 
 
 
-List of methods for **SpreadsheetApp**.
+###List of methods for **SpreadsheetApp**.
 
 
 | **Methods for SpreadsheetApp object**                 | **return type**     |
@@ -13,101 +13,67 @@ List of methods for **SpreadsheetApp**.
 | [open_by_url()](#SpreadsheetApp.open_by_url)          |  Spreadsheet        |
 
 
-
 For authentication, please refer to the [authentication tutorial](authentication.rst).
 
 
 
-List of methods for **Spreadsheet** object
+###List of methods for **Spreadsheet** object
 
-+-------------------------------------------------------+---------------------+
+
 | **Methods for Spreadsheet object**                    | **return type**     |
-+-------------------------------------------------------+---------------------+
-| `get_sheets() <usage.rst#get_sheets>`__               |  List[Sheet]        |
-+-------------------------------------------------------+---------------------+
-| `get_sheet_by_name() <usage.rst#get_sheet_by_name>`__ |  Sheet              |
-+-------------------------------------------------------+---------------------+
-| `get_sheet_by_id() <usage.rst#get_sheet_by_id>`__     |  Sheet              |
-+-------------------------------------------------------+---------------------+
-| `create_sheets() <usage.rst#create_sheets>`__         |  List[Sheet]        |
-+-------------------------------------------------------+---------------------+
-| `duplicate_sheet() <usage.rst#duplicate_sheet>`__     |  Sheet              |
-+-------------------------------------------------------+---------------------+
-| `commit() <usage.rst#commit - Spreadsheet>`__         |                     |
-+-------------------------------------------------------+---------------------+
+|-------------------------------------------------------|---------------------|
+| [get_sheets()](#Spreadsheet.get_sheets)               |                     |
+| [get_sheet_by_name()](#Spreadsheet.get_sheet_by_name) |  Sheet              |
+| [get_sheet_by_id()](#Spreadsheet.get_sheet_by_id)     |  Sheet              |
+| [create_sheets()](#Spreadsheet.create_sheets)         |  List[Sheet]        |
+| [duplicate_sheet()](#Spreadsheet.duplicate_sheet)     |  Sheet              |
+| [commit()](#Spreadsheet.commit)                       |                     |
 
 
 
-List of methods for **Sheet** object
+###List of methods for **Sheet** object
 
-+-------------------------------------------------------+---------------------+
 | **Methods for Sheet object**                          | **return type**     |
-+-------------------------------------------------------+---------------------+
-| `get_range() <usage.rst#get_range>`__                 |  Range              |
-+-------------------------------------------------------+---------------------+
-| `get_range_from_a1() <usage.rst#get_range_from_a1>`__ |  Range              |
-+-------------------------------------------------------+---------------------+
-| `get_data_range() <usage.rst#get_data_range>`__       |  Range              |
-+-------------------------------------------------------+---------------------+
-| `get_max_rows() <usage.rst#get_max_rows>`__           |  Integer            |
-+-------------------------------------------------------+---------------------+
-| `get_max_columns() <usage.rst#get_max_columns>`__     |  Integer            |
-+-------------------------------------------------------+---------------------+
+|-------------------------------------------------------|---------------------|
+| [get_range()](#Sheet.get_range)                       |  Range              |
+| [get_range_from_a1()](#Sheet.get_range_from_a1)       |  Range              |
+| [get_data_range()](#Sheet.get_data_range)             |  Range              |
+| [get_max_rows()](#Sheet.get_max_rows)                 |  Integer            |
+| [get_max_columns()](#Sheet.get_max_columns)           |  Integer            |
 
 
 
-List of methods for **Range** object
+###List of methods for **Range** object
 
-+-------------------------------------------------------+---------------------+
-| **Methods for Range object**                          | **return type**     |
-+-------------------------------------------------------+---------------------+
-| `get_values() <usage.rst#get_values>`__               |  List[List]         |
-+-------------------------------------------------------+---------------------+
-| `get_notes() <usage.rst#get_notes>`__                 |  List[List]         |
-+-------------------------------------------------------+---------------------+
-| `get_backgrounds() <usage.rst#get_backgrounds>`__     |  List[List]         |
-+-------------------------------------------------------+---------------------+
-| `get_font_colors() <usage.rst#get_font_colors>`__     |  List[List]         |
-+-------------------------------------------------------+---------------------+
-| `set_values() <usage.rst#set_values>`__               |                     |
-+-------------------------------------------------------+---------------------+
-| `set_notes() <usage.rst#set_notes>`__                 |                     |
-+-------------------------------------------------------+---------------------+
-| `set_backgrounds() <usage.rst#set_backgrounds>`__     |                     |
-+-------------------------------------------------------+---------------------+
-| `set_font_colors() <usage.rst#set_font_colors>`__     |                     |
-+-------------------------------------------------------+---------------------+
-| `set_value() <usage.rst#set_value>`__                 |                     |
-+-------------------------------------------------------+---------------------+
-| `set_note() <usage.rst#set_note>`__                   |                     |
-+-------------------------------------------------------+---------------------+
-| `set_background() <usage.rst#set_background>`__       |                     |
-+-------------------------------------------------------+---------------------+
-| `set_font_color() <usage.rst#set_font_color>`__       |                     |
-+-------------------------------------------------------+---------------------+
-| `commit() <usage.rst#commit - Range>`__               |                     |
-+-------------------------------------------------------+---------------------+
-| `get_row() <usage.rst#get_row>`__                     |  Integer            |
-+-------------------------------------------------------+---------------------+
-| `get_column() <usage.rst#get_column>`__               |  Integer            |
-+-------------------------------------------------------+---------------------+
-| `get_max_row() <usage.rst#get_max_row - Range>`__     |  Integer            |
-+-------------------------------------------------------+---------------------+
-| `get_max_column() <usage.rst#get_max_column Range>`__ |  Integer            |
-+-------------------------------------------------------+---------------------+
-| `get_cell() <usage.rst#get_cell Range>`__             |  Range              |
-+-------------------------------------------------------+---------------------+
-| `add_dropdown() <usage.rst#add_dropdown Range>`__     |  Integer            |
-+-------------------------------------------------------+---------------------+
+| **Methods for Range object**                  | **return type**     |
+|-----------------------------------------------|---------------------|
+| [get_values()](#Range.get_values)             |  List[List]         |
+| [get_notes()](#Range.get_notes)               |  List[List]         |
+| [get_backgrounds()](#Range.get_backgrounds)   |  List[List]         |
+| [get_font_colors()](#Range.get_font_colors)   |  List[List]         |
+| [set_values()](#Range.set_values)             |                     |
+| [set_notes()](#Range.set_notes)               |                     |
+| [set_backgrounds()](#Range.set_backgrounds)   |                     |
+| [set_font_colors()](#Range.set_font_colors)   |                     |
+| [set_value()](#Range.set_value)               |                     |
+| [set_note()](#Range.set_note)                 |                     |
+| [set_background()](#Range.set_background)     |                     |
+| [set_font_color()](#Range.set_font_color)     |                     |
+| [commit()](#Range.commit)                     |                     |
+| [get_row()](#Range.get_row)                   |  Integer            |
+| [get_column()](#Range.get_column)             |  Integer            |
+| [get_max_row()](#Range.get_max_row)           |  Integer            |
+| [get_max_column()](#Range.get_max_column)     |  Integer            |
+| [get_cell()](#Range.get_cell)                 |  Range              |
+| [add_dropdown()](#Range.add_dropdown)         |  Integer            |
 
 
 
-SpreadsheetApp Methods
-======================
+##SpreadsheetApp Methods
 
 
-<a name="SpreadsheetApp.create" >create()</a>
-------------
+###<a name="SpreadsheetApp.create" >create()</a>
+
 
 ```python
 from sheetfu import SpreadsheetApp
@@ -122,8 +88,7 @@ user from your secret.json. As a result, you will be able to find the created
 spreadsheets in your Google Drive.
 
 
-**add_permission()**
---------------------
+###<a name="SpreadsheetApp.add_permission" >add_permission()</a>
 
 This method will give ownership to any user for any spreadsheets created by
 the service account. Useful, if you have not indicated an editor in the create()
@@ -138,8 +103,8 @@ sa.add_permission(file_id='<spreadsheet_id>', default_owner='youremail@gmail.com
 ```
 
 
-**open_by_id()**
-----------------
+###<a name="SpreadsheetApp.open_by_id" >open_by_id()</a>
+
 
 ```python
 
@@ -152,8 +117,7 @@ spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
 Returns a Spreadsheet object.
 
 
-**open_by_url()**
------------------
+###<a name="SpreadsheetApp.open_by_url" >open_by_url()</a>
 
 ```python
 
@@ -165,12 +129,12 @@ spreadsheet = sa.open_by_url(url='http://<spreadsheet url>')
 Returns a Spreadsheet object.
 
 
-Spreadsheet Methods
-===================
+##Spreadsheet Methods
 
 
-**get_sheets()**
-----------------
+
+###<a name="Spreadsheet.get_sheets" >get_sheets()</a>
+
 
 
 ```python
@@ -182,8 +146,9 @@ spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
 sheets = spreadsheet.get_sheets()
 ```
 
-**get_sheet_by_name()**
------------------------
+
+###<a name="Spreadsheet.get_sheet_by_name" >get_sheet_by_name()</a>
+
 
 
 ```python
@@ -196,8 +161,7 @@ sheet1 = spreadsheet.get_sheet_by_name('Sheet1')
 ```
 
 
-**get_sheet_by_id()**
----------------------
+###<a name="Spreadsheet.get_sheet_by_id" >get_sheet_by_id()</a>
 
 
 ```python
@@ -210,8 +174,8 @@ sheet1 = spreadsheet.get_sheet_by_id('<sheet_id>')
 ```
 
 
-**create_sheets()**
--------------------
+###<a name="Spreadsheet.create_sheets" >create_sheets()</a>
+
 
 
 ```python
@@ -227,8 +191,8 @@ new_sheets = spreadsheet.create_sheets(['my_first_sheet', 'my_second_sheet'])
 It returns a list of Sheet objects in the same order of the new sheet names
 list given as parameter.
 
-**duplicate_sheet()**
----------------------
+
+###<a name="Spreadsheet.duplicate_sheet" >duplicate_sheet()</a>
 
 
 ```python
@@ -247,12 +211,11 @@ cloned_sheet = spreadsheet.duplicate_sheet(
 sheet.
 
 
-Sheet Methods
-=============
+##Sheet Methods
 
 
-**get_range()**
----------------
+###<a name="Sheet.get_range" >get_range()</a>
+
 
 ```python
 
@@ -285,8 +248,8 @@ A1B2_range = sheet1.get_range(
 
 ```
 
-**get_range_from_a1()**
------------------------
+###<a name="Sheet.get_range_from_a1" >get_range_from_a1()</a>
+
 
 ```python
 
@@ -304,8 +267,8 @@ A3_B5_range = sheet1.get_range_from_a1(a1_notification='A3:B5')
 ```
 
 
-**get_data_range()**
---------------------
+###<a name="Sheet.get_data_range" >get_data_range()</a>
+
 
 ```python
 
@@ -322,8 +285,8 @@ have in your sheet. Under the hood, this method actually makes a request to the
 sheet and figure out the A1 notification of the range containing data.
 
 
-**get_max_row()**
---------------------
+###<a name="Sheet.get_max_row" >get_max_row()</a>
+
 
 Method to return the last row in sheet. this does not necessarily means a row
 with data. An empty new sheet, typically, has 1000 rows. The method in that
@@ -339,8 +302,8 @@ sheet = spreadsheet.get_sheet_by_name('Sheet1')
 max_row = sheet.get_max_row()
 ```
 
-**get_max_column()**
---------------------
+###<a name="Sheet.get_max_column" >get_max_column()</a>
+
 
 Method to return the last column in sheet. this does not necessarily means a
 column with data. An empty new sheet, typically, has 26 columns (letter Z). The
@@ -356,8 +319,8 @@ sheet = spreadsheet.get_sheet_by_name('Sheet1')
 max_row = sheet.get_max_column()
 ```
 
-Range Methods
-=============
+### Range Methods
+
 
 The Range object is where the magic happens. This is from this object that you
 will be able to get or set values, notes, colors, etc.
@@ -365,8 +328,7 @@ This object implies working with two-dimensional lists (list of list) where an
 inside list represents a row.
 
 
-**get_values()**
-----------------
+###<a name="Range.get_values" >get_values()</a>
 
 ```python
 
@@ -385,8 +347,7 @@ values = data_range.get_values()
 The values are returned in the form of a 2D arrays. Empty cells will return
 empty strings.
 
-**get_notes()**
----------------
+###<a name="Range.get_notes" >get_notes()</a>
 
 ```python
 
@@ -401,8 +362,8 @@ Similar to get_values(), this will return a 2D list of the notes. When a cell
 does not contain a note, it returns an empty string.
 
 
-**get_backgrounds()**
----------------------
+###<a name="Range.get_backgrounds" >get_backgrounds()</a>
+
 
 ```python
 
@@ -422,8 +383,7 @@ backgrounds = data_range.get_backgrounds()
 The backgrounds colors are returned in the hexadecimal forms. An empty cell
 returns a white background (#ffffff).
 
-**get_font_colors()**
----------------------
+###<a name="Range.get_font_colors" >get_font_colors()</a>
 
 ```python
 
@@ -443,8 +403,7 @@ font_colors = data_range.get_font_colors()
 The font colors are returned in the hexadecimal forms. An empty cell
 returns a black font (#000000).
 
-**set_values()**
-----------------
+###<a name="Range.set_values" >set_values()</a>
 
 ```python
 
@@ -466,8 +425,7 @@ submitted, matching the range size. If it does not match, an error will be
 raised.
 Committing must be done or none of the changes will be sent to the spreadsheets.
 
-**set_notes()**
----------------
+###<a name="Range.set_notes" >set_notes()</a>
 
 ```python
 
@@ -487,8 +445,7 @@ data_range.commit()
 This would set notes on the top 2 cells of the range. Empty strings means no
 notes to be submitted.
 
-**set_backgrounds()**
----------------------
+###<a name="Range.set_backgrounds" >set_backgrounds()</a>
 
 ```python
 
@@ -506,9 +463,8 @@ data_range.set_backgrounds(backgrounds)
 data_range.commit()
 ```
 
+###<a name="Range.set_font_colors" >set_font_colors()</a>
 
-**set_font_colors()**
----------------------
 
 ```python
 
@@ -526,9 +482,8 @@ data_range.set_font_colors(font_colors)
 data_range.commit()
 ```
 
+###<a name="Range.set_value" >set_value()</a>
 
-**set_value()**
----------------
 
 ```python
 
@@ -541,8 +496,8 @@ data_range.commit()
 ```
 This would set cells value to 'foo' in the whole range.
 
-**set_note()**
---------------
+###<a name="Range.set_note" >set_note()</a>
+
 
 ```python
 
@@ -555,8 +510,7 @@ data_range.commit()
 ```
 This would put the note 'this is a note' on every cells within the range.
 
-**set_background()**
---------------------
+###<a name="Range.set_background" >set_background()</a>
 
 ```python
 
@@ -569,8 +523,8 @@ data_range.commit()
 ```
 This would set the background of the whole range in blue.
 
-**set_font_color()**
---------------------
+###<a name="Range.set_font_color" >set_font_color()</a>
+
 
 ```python
 
@@ -583,40 +537,9 @@ data_range.commit()
 ```
 This would set the font colors of the whole range in blue.
 
-**commit()**
---------------------
 
-This method is a key part of the API. It permits us to send all the changes we set
-at the same time, using the batch API of the google sheets v4 API.
+###<a name="Range.get_row" >get_row()</a>
 
-```python
-
-from sheetfu import SpreadsheetApp
-
-ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadsheet id>')
-data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
-data_range.set_background('#000000')   # black background
-data_range.set_font_color('#0000FF')   # blue font
-
-values = [
-    ['name', 'surname'],
-    ['john', 'doe'],
-    ['jane', 'doe'],
-]
-data_range.set_values(values)
-
-# now pushing the changes
-data_range.commit()
-```
-When you set a change, nothing is actually sent to the spreadsheet. All the
-change setters instead are batched at the range level. The commit method sends
-every batched requests at once. This means being able to make as many change as
-you want while sending only one request to the google sheet api, giving a
-significant performance boost.
-
-
-**get_row()**
---------------------
 
 ```python
 
@@ -629,8 +552,8 @@ data_range.get_row() # 1
 
 
 
-**get_column()**
---------------------
+###<a name="Range.get_column" >get_column()</a>
+
 
 ```python
 
@@ -641,8 +564,8 @@ data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
 data_range.get_column() # 1
 ```
 
-**get_max_row() - Range**
--------------------------
+###<a name="Range.get_max_row" >get_max_row()</a>
+
 
 ```python
 
@@ -653,8 +576,7 @@ data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
 data_range.get_max_row() # 3
 ```
 
-**get_max_column() Range**
--------------------------
+###<a name="Range.get_max_column" >get_max_column()</a>
 
 ```python
 
@@ -664,8 +586,10 @@ ss = SpreadsheetApp('path/to/secret.json').open_by_id(spreadsheet_id='<spreadshe
 data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
 data_range.get_max_column() # 2
 ```
-**get_cell() Range**
--------------------------
+
+
+###<a name="Range.get_cell" >get_cell()</a>
+
 
 Get the range of a specific cell by giving its coordinates within the parent
 range. First row and first column starts at 1 (to keep it consistent with
@@ -681,8 +605,8 @@ cell_range = data_range.get_cell(row=1, column=1)
 ```
 
 
-**add_dropdown() Range**
--------------------------
+###<a name="Range.add_dropdown" >add_dropdown()</a>
+
 
 Adds a dropdown with the given options on every cells within the range.
 

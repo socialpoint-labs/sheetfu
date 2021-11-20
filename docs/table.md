@@ -90,7 +90,7 @@ on your sheet data by doing only two requests to the spreadsheet.
 
 
 
-###<a name="Table.commit" >commit()</a>
+### <a name="Table.commit" >commit()</a>
 
 This method will commit changes in your Table state and push it to the sheet.
 Typically, you should apply `commit` at the end of your process, and only if
@@ -112,7 +112,7 @@ for item in table:
 table.commit()
 ```
 
-###<a name="Table.get_table_from_sheet" >get_table_from_sheet()</a>
+### <a name="Table.get_table_from_sheet" >get_table_from_sheet()</a>
 
 Static method to create a Table object based on a spreadsheet and a given sheet
 name.
@@ -131,7 +131,7 @@ table = Table.get_table_from_sheet(
 ```
 
 
-###<a name="Table.select">select()</a>
+### <a name="Table.select">select()</a>
 
 
 Conjunctive Normal Form search within items of a table.
@@ -156,7 +156,7 @@ selected = table.select(criterias)
 It returns a list of items matching the CNF criterias.
 
 
-###<a name="Table.add_one">add_one()</a>
+### <a name="Table.add_one">add_one()</a>
 
 
 Create a new item object and append to the other items within the Table object.
@@ -176,7 +176,7 @@ table.add_one(new_person)
 table.commit()
 ```
 
-###<a name="Table.delete">delete()</a>
+### <a name="Table.delete">delete()</a>
 
 
 You can delete Item from your sheet when you know its position in the table.
@@ -207,7 +207,7 @@ for item in table:
 # 3
 ```
 
-###<a name="Table.delete_items">delete_items()</a>
+### <a name="Table.delete_items">delete_items()</a>
 
 
 You can also delete items by submitting a list of Item objects. Particularly
@@ -225,7 +225,7 @@ table.commit()
 ```
 
 
-###<a name="Table.delete_all">delete_all()</a>
+### <a name="Table.delete_all">delete_all()</a>
 
 
 ```python
@@ -237,7 +237,7 @@ table.delete_all()
 ```
 Removes every rows from the table (preserve the header).
 
-###<a name="Table.sort">sort()</a>
+### <a name="Table.sort">sort()</a>
 
 Sort the items of the table by the given field.
 
@@ -254,7 +254,7 @@ table.sort('age', reverse=True)
 ## Item methods
 
 
-###<a name="Item.get_index">get_index()</a>
+### <a name="Item.get_index">get_index()</a>
 
 
 Get you the index of the Item object within the parent table. Index is 0 for
@@ -270,7 +270,7 @@ index = first_item.get_index()
 # 0
 ```
 
-###<a name="Item.get_field_value">get_field_value()</a>
+### <a name="Item.get_field_value">get_field_value()</a>
 
 Returns the value found in the cell for the given field.
 
@@ -288,7 +288,7 @@ for item in table:
 # Jane
 ```
 
-###<a name="Item.get_field_note">get_field_note()</a>
+### <a name="Item.get_field_note">get_field_note()</a>
 
 Returns the note found in the cell for the given field.
 
@@ -302,7 +302,7 @@ for item in table:
 # if no note, it returns an empty string
 ```
 
-###<a name="Item.get_field_background">get_field_background()</a>
+### <a name="Item.get_field_background">get_field_background()</a>
 
 Returns the background color in hexadecimal format of the given field within
 the item.
@@ -321,7 +321,7 @@ for item in table:
 # #ffffff
 ```
 
-###<a name="Item.get_field_font_color">get_field_font_color()</a>
+### <a name="Item.get_field_font_color">get_field_font_color()</a>
 
 Returns the font color in hexadecimal format of the given field within the item.
 
@@ -340,7 +340,7 @@ for item in table:
 ```
 
 
-###<a name="Item.get_range">get_range()</a>
+### <a name="Item.get_range">get_range()</a>
 
 Returns the Range object of the table Item. Useful if you want to set some
 properties that are only available at Range object level.
@@ -369,7 +369,7 @@ first_row_range.set_background('#0000FF', batch_to=table)
 table.commit()
 ```
 
-###<a name="Item.get_field_range">get_field_range()</a>
+### <a name="Item.get_field_range">get_field_range()</a>
 
 Returns the Range object of a specific field in an Item. Useful if you want to
 set some properties that are only available at Range object level on specific
@@ -395,7 +395,7 @@ This would create drop downs on every rows within the field 'age', with choices
 between 0 and 99.
 
 
-###<a name="Item.set_field_value">set_field_value()</a>
+### <a name="Item.set_field_value">set_field_value()</a>
 
 
 Set a value for indicated field. Must commit table data to be reflected in
@@ -412,7 +412,7 @@ first_item.set_field_value('name', 'Felipe')
 table.commit()
 ```
 
-###<a name="Item.set_field_note">set_field_note()</a>
+### <a name="Item.set_field_note">set_field_note()</a>
 
 Set a note for indicated field. Must commit table data to be reflected in sheet.
 
@@ -427,7 +427,7 @@ first_item.set_field_note('name', 'This is a note for my cell')
 table.commit()
 ```
 
-###<a name="Item.set_field_background">set_field_background()</a>
+### <a name="Item.set_field_background">set_field_background()</a>
 
 Set a background color for indicated field. Must commit table data to be
 reflected in sheet.
@@ -445,7 +445,7 @@ first_item.set_field_background('name', '#0000FF')
 table.commit()
 ```
 
-###<a name="Item.set_field_font_color">set_field_font_color()</a>
+### <a name="Item.set_field_font_color">set_field_font_color()</a>
 
 Set a font color for indicated field. Must commit table data to be reflected in
 sheet.

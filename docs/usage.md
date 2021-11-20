@@ -1,8 +1,8 @@
-#Sheetfu API usage
+# Sheetfu API usage
 
 
 
-###List of methods for **SpreadsheetApp**.
+## List of methods for **SpreadsheetApp**.
 
 
 | **Methods for SpreadsheetApp object**                 | **return type**     |
@@ -17,7 +17,7 @@ For authentication, please refer to the [authentication tutorial](authentication
 
 
 
-###List of methods for **Spreadsheet** object
+## List of methods for **Spreadsheet** object
 
 
 | **Methods for Spreadsheet object**                    | **return type**     |
@@ -31,7 +31,7 @@ For authentication, please refer to the [authentication tutorial](authentication
 
 
 
-###List of methods for **Sheet** object
+## List of methods for **Sheet** object
 
 | **Methods for Sheet object**                          | **return type**     |
 |-------------------------------------------------------|---------------------|
@@ -43,7 +43,7 @@ For authentication, please refer to the [authentication tutorial](authentication
 
 
 
-###List of methods for **Range** object
+## List of methods for **Range** object
 
 | **Methods for Range object**                  | **return type**     |
 |-----------------------------------------------|---------------------|
@@ -69,10 +69,10 @@ For authentication, please refer to the [authentication tutorial](authentication
 
 
 
-##SpreadsheetApp Methods
+## SpreadsheetApp Methods
 
 
-###<a name="SpreadsheetApp.create" >create()</a>
+### <a name="SpreadsheetApp.create" >create()</a>
 
 
 ```python
@@ -88,7 +88,7 @@ user from your secret.json. As a result, you will be able to find the created
 spreadsheets in your Google Drive.
 
 
-###<a name="SpreadsheetApp.add_permission" >add_permission()</a>
+### <a name="SpreadsheetApp.add_permission" >add_permission()</a>
 
 This method will give ownership to any user for any spreadsheets created by
 the service account. Useful, if you have not indicated an editor in the create()
@@ -103,7 +103,7 @@ sa.add_permission(file_id='<spreadsheet_id>', default_owner='youremail@gmail.com
 ```
 
 
-###<a name="SpreadsheetApp.open_by_id" >open_by_id()</a>
+### <a name="SpreadsheetApp.open_by_id" >open_by_id()</a>
 
 
 ```python
@@ -117,7 +117,7 @@ spreadsheet = sa.open_by_id(spreadsheet_id='<spreadsheet id>')
 Returns a Spreadsheet object.
 
 
-###<a name="SpreadsheetApp.open_by_url" >open_by_url()</a>
+### <a name="SpreadsheetApp.open_by_url" >open_by_url()</a>
 
 ```python
 
@@ -129,11 +129,11 @@ spreadsheet = sa.open_by_url(url='http://<spreadsheet url>')
 Returns a Spreadsheet object.
 
 
-##Spreadsheet Methods
+## Spreadsheet Methods
 
 
 
-###<a name="Spreadsheet.get_sheets" >get_sheets()</a>
+### <a name="Spreadsheet.get_sheets" >get_sheets()</a>
 
 
 
@@ -147,7 +147,7 @@ sheets = spreadsheet.get_sheets()
 ```
 
 
-###<a name="Spreadsheet.get_sheet_by_name" >get_sheet_by_name()</a>
+### <a name="Spreadsheet.get_sheet_by_name" >get_sheet_by_name()</a>
 
 
 
@@ -161,7 +161,7 @@ sheet1 = spreadsheet.get_sheet_by_name('Sheet1')
 ```
 
 
-###<a name="Spreadsheet.get_sheet_by_id" >get_sheet_by_id()</a>
+### <a name="Spreadsheet.get_sheet_by_id" >get_sheet_by_id()</a>
 
 
 ```python
@@ -174,7 +174,7 @@ sheet1 = spreadsheet.get_sheet_by_id('<sheet_id>')
 ```
 
 
-###<a name="Spreadsheet.create_sheets" >create_sheets()</a>
+### <a name="Spreadsheet.create_sheets" >create_sheets()</a>
 
 
 
@@ -192,7 +192,7 @@ It returns a list of Sheet objects in the same order of the new sheet names
 list given as parameter.
 
 
-###<a name="Spreadsheet.duplicate_sheet" >duplicate_sheet()</a>
+### <a name="Spreadsheet.duplicate_sheet" >duplicate_sheet()</a>
 
 
 ```python
@@ -211,10 +211,10 @@ cloned_sheet = spreadsheet.duplicate_sheet(
 sheet.
 
 
-##Sheet Methods
+## Sheet Methods
 
 
-###<a name="Sheet.get_range" >get_range()</a>
+### <a name="Sheet.get_range" >get_range()</a>
 
 
 ```python
@@ -248,7 +248,7 @@ A1B2_range = sheet1.get_range(
 
 ```
 
-###<a name="Sheet.get_range_from_a1" >get_range_from_a1()</a>
+### <a name="Sheet.get_range_from_a1" >get_range_from_a1()</a>
 
 
 ```python
@@ -267,7 +267,7 @@ A3_B5_range = sheet1.get_range_from_a1(a1_notification='A3:B5')
 ```
 
 
-###<a name="Sheet.get_data_range" >get_data_range()</a>
+### <a name="Sheet.get_data_range" >get_data_range()</a>
 
 
 ```python
@@ -285,7 +285,7 @@ have in your sheet. Under the hood, this method actually makes a request to the
 sheet and figure out the A1 notification of the range containing data.
 
 
-###<a name="Sheet.get_max_row" >get_max_row()</a>
+### <a name="Sheet.get_max_row" >get_max_row()</a>
 
 
 Method to return the last row in sheet. this does not necessarily means a row
@@ -302,7 +302,7 @@ sheet = spreadsheet.get_sheet_by_name('Sheet1')
 max_row = sheet.get_max_row()
 ```
 
-###<a name="Sheet.get_max_column" >get_max_column()</a>
+### <a name="Sheet.get_max_column" >get_max_column()</a>
 
 
 Method to return the last column in sheet. this does not necessarily means a
@@ -328,7 +328,7 @@ This object implies working with two-dimensional lists (list of list) where an
 inside list represents a row.
 
 
-###<a name="Range.get_values" >get_values()</a>
+### <a name="Range.get_values" >get_values()</a>
 
 ```python
 
@@ -347,7 +347,7 @@ values = data_range.get_values()
 The values are returned in the form of a 2D arrays. Empty cells will return
 empty strings.
 
-###<a name="Range.get_notes" >get_notes()</a>
+### <a name="Range.get_notes" >get_notes()</a>
 
 ```python
 
@@ -362,7 +362,7 @@ Similar to get_values(), this will return a 2D list of the notes. When a cell
 does not contain a note, it returns an empty string.
 
 
-###<a name="Range.get_backgrounds" >get_backgrounds()</a>
+### <a name="Range.get_backgrounds" >get_backgrounds()</a>
 
 
 ```python
@@ -383,7 +383,7 @@ backgrounds = data_range.get_backgrounds()
 The backgrounds colors are returned in the hexadecimal forms. An empty cell
 returns a white background (#ffffff).
 
-###<a name="Range.get_font_colors" >get_font_colors()</a>
+### <a name="Range.get_font_colors" >get_font_colors()</a>
 
 ```python
 
@@ -403,7 +403,7 @@ font_colors = data_range.get_font_colors()
 The font colors are returned in the hexadecimal forms. An empty cell
 returns a black font (#000000).
 
-###<a name="Range.set_values" >set_values()</a>
+### <a name="Range.set_values" >set_values()</a>
 
 ```python
 
@@ -425,7 +425,7 @@ submitted, matching the range size. If it does not match, an error will be
 raised.
 Committing must be done or none of the changes will be sent to the spreadsheets.
 
-###<a name="Range.set_notes" >set_notes()</a>
+### <a name="Range.set_notes" >set_notes()</a>
 
 ```python
 
@@ -445,7 +445,7 @@ data_range.commit()
 This would set notes on the top 2 cells of the range. Empty strings means no
 notes to be submitted.
 
-###<a name="Range.set_backgrounds" >set_backgrounds()</a>
+### <a name="Range.set_backgrounds" >set_backgrounds()</a>
 
 ```python
 
@@ -463,7 +463,7 @@ data_range.set_backgrounds(backgrounds)
 data_range.commit()
 ```
 
-###<a name="Range.set_font_colors" >set_font_colors()</a>
+### <a name="Range.set_font_colors" >set_font_colors()</a>
 
 
 ```python
@@ -482,7 +482,7 @@ data_range.set_font_colors(font_colors)
 data_range.commit()
 ```
 
-###<a name="Range.set_value" >set_value()</a>
+### <a name="Range.set_value" >set_value()</a>
 
 
 ```python
@@ -496,7 +496,7 @@ data_range.commit()
 ```
 This would set cells value to 'foo' in the whole range.
 
-###<a name="Range.set_note" >set_note()</a>
+### <a name="Range.set_note" >set_note()</a>
 
 
 ```python
@@ -510,7 +510,7 @@ data_range.commit()
 ```
 This would put the note 'this is a note' on every cells within the range.
 
-###<a name="Range.set_background" >set_background()</a>
+### <a name="Range.set_background" >set_background()</a>
 
 ```python
 
@@ -523,7 +523,7 @@ data_range.commit()
 ```
 This would set the background of the whole range in blue.
 
-###<a name="Range.set_font_color" >set_font_color()</a>
+### <a name="Range.set_font_color" >set_font_color()</a>
 
 
 ```python
@@ -538,7 +538,7 @@ data_range.commit()
 This would set the font colors of the whole range in blue.
 
 
-###<a name="Range.get_row" >get_row()</a>
+### <a name="Range.get_row" >get_row()</a>
 
 
 ```python
@@ -552,7 +552,7 @@ data_range.get_row() # 1
 
 
 
-###<a name="Range.get_column" >get_column()</a>
+### <a name="Range.get_column" >get_column()</a>
 
 
 ```python
@@ -564,7 +564,7 @@ data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
 data_range.get_column() # 1
 ```
 
-###<a name="Range.get_max_row" >get_max_row()</a>
+### <a name="Range.get_max_row" >get_max_row()</a>
 
 
 ```python
@@ -576,7 +576,7 @@ data_range = ss.get_sheet_by_name('Sheet1').get_range_from_a1('A1:B3')
 data_range.get_max_row() # 3
 ```
 
-###<a name="Range.get_max_column" >get_max_column()</a>
+### <a name="Range.get_max_column" >get_max_column()</a>
 
 ```python
 
@@ -588,7 +588,7 @@ data_range.get_max_column() # 2
 ```
 
 
-###<a name="Range.get_cell" >get_cell()</a>
+### <a name="Range.get_cell" >get_cell()</a>
 
 
 Get the range of a specific cell by giving its coordinates within the parent
@@ -605,7 +605,7 @@ cell_range = data_range.get_cell(row=1, column=1)
 ```
 
 
-###<a name="Range.add_dropdown" >add_dropdown()</a>
+### <a name="Range.add_dropdown" >add_dropdown()</a>
 
 
 Adds a dropdown with the given options on every cells within the range.

@@ -2,6 +2,19 @@
 
 <!--next-version-placeholder-->
 
+## v1.6.0 (2021-11-26)
+### Feature
+* Add formulas integration ([`590df68`](https://github.com/socialpoint-labs/sheetfu/commit/590df68221c580c33a0c5e4c564dca71e569aceb))
+* **Range:** Add datetime python conversion ([`fe664b6`](https://github.com/socialpoint-labs/sheetfu/commit/fe664b614b6eb17bbe1b469fcc94efdc39be5ef9))
+* **Item:** Add to_dict method to convert Item object to simple dictionary ([`210d10e`](https://github.com/socialpoint-labs/sheetfu/commit/210d10edd5ae4fafd289ca1683a211c28c5bca5c))
+
+### Fix
+* PEP8 formatting ([`04a74f9`](https://github.com/socialpoint-labs/sheetfu/commit/04a74f9b657670be6aa1fe07ad802af78e071017))
+* **Sheet:** Fixes missing sheet name in a1 notation when using get_range method ([`4770fb1`](https://github.com/socialpoint-labs/sheetfu/commit/4770fb142e4d4a19e18d4eff8899f58c673befeb))
+
+### Documentation
+* Add datetime explanation in the README ([`cb21f86`](https://github.com/socialpoint-labs/sheetfu/commit/cb21f863ec29e05e03fa29393d5adf1ca43545d4))
+
 ## v1.5.6 (2021-11-18)
 ### Fix
 * Remove ugly print ([`105ec78`](https://github.com/socialpoint-labs/sheetfu/commit/105ec78cf5c8de0d8fe7969829edc8e50aa58937))

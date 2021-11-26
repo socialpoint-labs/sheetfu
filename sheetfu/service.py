@@ -4,7 +4,8 @@
     sheetfu.service
     ~~~~~~~~~~~~~~
 
-    Implement the Google Sheet and Google drive services to access, interact with, and give permission to spreadsheets.
+    Implement the Google Sheet and Google drive services to access, interact
+    with, and give permission to spreadsheets.
     :copyright: © 2018 by Social Point Labs.
     :license: MIT, see LICENSE for more details.
 """
@@ -37,10 +38,12 @@ class BaseService(object):
     def build(self, http=None):
         """
         Builds a sheet service, ready to query sheets.
-        :param http: Only needed for unit testing. Must be an object of HttpMockSequence. DO NOT USE IN PROD.
+        :param http: Only needed for unit testing. Must be an object of
+        HttpMockSequence. DO NOT USE IN PROD.
         :return: An authorized sheets service.
         """
-        if http is None:        # if not None must be instance of HttpMockSequence for unit testing
+        # if not None must be instance of HttpMockSequence for unit testing
+        if http is None:
             http = self.credentials.authorize(Http())
         service = build(self.SERVICE, self.VERSION, http=http, cache_discovery=False)
         return service
@@ -63,14 +66,18 @@ class BaseService(object):
 
 class SheetsService(BaseService):
 
-    """Class to create ready to use sheets service with service to service credentials"""
+    """
+    Class to create ready to use sheets service with service to service
+    credentials
+    """
     SERVICE = "sheets"
     VERSION = "v4"
 
     def __init__(self, path_to_secret=None, from_env=False):
         """
         :param path_to_secret: path to service to service json credentials file.
-        :param from_env: bool to specify if config should be retrieved from ENV variables
+        :param from_env: bool to specify if config should be retrieved from ENV
+        variables
         """
         self.scopes = [
             'https://www.googleapis.com/auth/drive',
@@ -81,14 +88,18 @@ class SheetsService(BaseService):
 
 class DriveService(BaseService):
 
-    """Class to create ready to use drive service with service to service credentials"""
+    """
+    Class to create ready to use drive service with service to service
+    credentials
+    """
     SERVICE = "drive"
     VERSION = "v3"
 
     def __init__(self, path_to_secret=None, from_env=False):
         """
         :param path_to_secret: path to service to service json credentials file.
-        :param from_env: bool to specify if config should be retrieved from ENV variables
+        :param from_env: bool to specify if config should be retrieved from ENV
+        variables
         """
         self.scopes = [
             'https://www.googleapis.com/auth/drive'

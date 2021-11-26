@@ -1,0 +1,22 @@
+{
+	"sheets": [{
+		"data": [{
+			"rowData": [{
+				"values": [{
+					"effectiveValue": {
+						"stringValue": "foo"
+					}
+				}, {
+					"effectiveValue": {
+						"numberValue": 44317
+					},
+					"effectiveFormat": {
+						"numberFormat": {
+							"type": "DATE"
+						}
+					}
+				}]
+			}]
+		}]
+	}]
+}

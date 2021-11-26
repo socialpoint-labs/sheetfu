@@ -6,7 +6,14 @@ from sheetfu.modules.table_selector import TableSelector
 
 class Table:
 
-    def __init__(self, full_range, notes=False, backgrounds=False, font_colors=False, header_row=1):
+    def __init__(
+            self,
+            full_range,
+            notes=False,
+            backgrounds=False,
+            font_colors=False,
+            header_row=1
+    ):
         self.full_range = full_range.offset(
             row_offset=(header_row - 1),
             column_offset=0,
@@ -48,7 +55,8 @@ class Table:
         :param notes: parameter to include the notes of a sheet.
         :param backgrounds: parameter to include the backgrounds of a sheet.
         :param font_colors: parameter to include the font colors of a sheet.
-        :param header_row: parameter to specify in which row is the header of the table.
+        :param header_row: parameter to specify in which row is the header of
+        the table.
 
         :return: List of Items containing only filtered items or and empty List.
 
@@ -57,11 +65,14 @@ class Table:
         return Table(data_range, notes, backgrounds, font_colors, header_row)
 
     def get_items_range(self):
-        # We need to check for the case where the table has no items, only the header row #
+        # We need to check for the case where the table has no items,
+        # only the header row #
         full_range_num_rows = self.full_range.coordinates.number_of_rows
         if full_range_num_rows == 1:
             return None
-        return self.full_range.offset(row_offset=1, column_offset=0, num_rows=(full_range_num_rows - 1))
+        return self.full_range.offset(
+            row_offset=1, column_offset=0, num_rows=(full_range_num_rows - 1)
+        )
 
     def parse_items(self, values):
         items = list()
@@ -118,7 +129,8 @@ class Table:
     def delete_items(self, items_to_delete):
         """
         Method to delete one or multiple items from a Table by Item instance.
-        :param items_to_delete: Item instance or list of Item instances to be deleted from the Table.
+        :param items_to_delete: Item instance or list of Item instances to be
+        deleted from the Table.
         """
         if type(items_to_delete) is not list:
             items_to_delete = [items_to_delete]
@@ -135,7 +147,8 @@ class Table:
     def delete(self, indexes_to_delete):
         """
         Method to delete one or multiple items from a Table by index.
-        :param indexes_to_delete: index of the item to delete or list of indexes of the items to delete.
+        :param indexes_to_delete: index of the item to delete or list of indexes
+         of the items to delete.
         """
         if type(indexes_to_delete) is not list:
             indexes_to_delete = [indexes_to_delete]
@@ -160,7 +173,8 @@ class Table:
 
     def delete_all(self):
         """
-        Method to delete all items of the Table. This will set items_range to None as if the table was built with
+        Method to delete all items of the Table. This will set items_range to
+        None as if the table was built with
         only the header.
         """
         if self.items_range is None:
@@ -176,12 +190,20 @@ class Table:
 
     def _recalculate_item_indexes(self):
         """
-        Method to recalculate the row_index of all items of the Table according to their current index in self.items
+        Method to recalculate the row_index of all items of the Table according
+         to their current index in self.items
         """
         for index, item in enumerate(self.items):
             item.row_index = index
 
-    def _generate_set_own_range_values_batches(self, range, values=None, notes=None, backgrounds=None, font_colors=None):
+    def _generate_set_own_range_values_batches(
+            self,
+            range,
+            values=None,
+            notes=None,
+            backgrounds=None,
+            font_colors=None
+    ):
         range.set_values(values, batch_to=self)
         if self.has_notes and notes is not None:
             range.set_notes(notes, batch_to=self)
@@ -209,8 +231,13 @@ class Table:
             table_backgrounds.append(item_backgrounds)
             table_font_colors.append(item_font_colors)
 
-        self._generate_set_own_range_values_batches(range=self.items_range, values=table_values, notes=table_notes,
-                                                    backgrounds=table_backgrounds, font_colors=table_font_colors)
+        self._generate_set_own_range_values_batches(
+            range=self.items_range,
+            values=table_values,
+            notes=table_notes,
+            backgrounds=table_backgrounds,
+            font_colors=table_font_colors
+        )
 
     def _generate_delete_intitial_items_range_batch(self):
         if self.items_range is None:
@@ -221,7 +248,8 @@ class Table:
 
     def commit(self):
         if len(self.batches) == 0:
-            # Sending a batch update with an empty list of requests would return an error
+            # Sending a batch update with an empty list of requests would return
+            # an error
             return
         body = {'requests': [self.batches]}
         response = self.full_range.client.sheet_service.spreadsheets().batchUpdate(
@@ -238,7 +266,8 @@ class Table:
 
 class Item:
 
-    def __init__(self, row_index, header, values, notes=None, backgrounds=None, font_colors=None, parent_table=None):
+    def __init__(self, row_index, header, values, notes=None, backgrounds=None,
+                 font_colors=None, parent_table=None):
         self.row_index = row_index
         self.header = header
         self.values = values
@@ -257,17 +286,20 @@ class Item:
 
     def get_field_note(self, target_field):
         if not self.table.has_notes:
-            raise AttributeError("The table was not built reading the notes of the sheet.")
+            raise AttributeError(
+                "The table was not built reading the notes of the sheet.")
         return self.notes[self.get_index(target_field)]
 
     def get_field_background(self, target_field):
         if not self.table.has_backgrounds:
-            raise AttributeError("The table was not built reading the backgrounds of the sheet.")
+            raise AttributeError(
+                "The table was not built reading the backgrounds of the sheet.")
         return self.backgrounds[self.get_index(target_field)]
 
     def get_field_font_color(self, target_field):
         if not self.table.has_font_colors:
-            raise AttributeError("The table was not built reading the font colors of the sheet.")
+            raise AttributeError(
+                "The table was not built reading the font colors of the sheet.")
         return self.font_colors[self.get_index(target_field)]
 
     def get_range(self):
@@ -305,13 +337,18 @@ class Item:
     def set_field_background(self, target_field, background_hex):
         if self.backgrounds:
             self.backgrounds[self.get_index(target_field)] = background_hex
-        self.get_field_range(target_field).set_background(background_hex, batch_to=self.table)
+        self.get_field_range(target_field).set_background(
+            background_hex, batch_to=self.table)
 
     def set_field_font_color(self, target_field, font_color_hex):
         if self.font_colors:
             self.font_colors[self.get_index(target_field)] = font_color_hex
-        self.get_field_range(target_field).set_font_color(font_color_hex, batch_to=self.table)
+        self.get_field_range(target_field).set_font_color(
+            font_color_hex, batch_to=self.table)
 
     def matches_value(self, header, value):
         item_value = self.get_field_value(header)
         return item_value == value
+
+    def to_dict(self):
+        return {k: self.get_field_value(k) for k in self.header}

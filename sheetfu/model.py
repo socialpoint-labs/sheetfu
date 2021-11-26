@@ -10,9 +10,11 @@
 """
 
 
-from sheetfu.helpers import convert_a1_to_coordinates, convert_coordinates_to_a1, append_sheet_name
+from sheetfu.helpers import (
+    convert_a1_to_coordinates, convert_coordinates_to_a1, append_sheet_name)
 from sheetfu.exceptions import (
-    SheetNameNoMatchError, SheetIdNoMatchError, NoDataRangeError, SizeNotMatchingException, RowOrColumnEqualsZeroError
+    SheetNameNoMatchError, SheetIdNoMatchError, NoDataRangeError,
+    SizeNotMatchingException, RowOrColumnEqualsZeroError
 )
 from sheetfu.parsers import CellParsers
 
@@ -21,7 +23,7 @@ class Spreadsheet:
     """Spreadsheet object from which we can access its sheets.
     """
 
-    def __init__(self, client, spreadsheet_id):     # only one of those is allowed to be None.
+    def __init__(self, client, spreadsheet_id):
         """
         :param client: A SpreadsheetApp instance.
         :param spreadsheet_id: The spreadsheet ID
@@ -39,7 +41,8 @@ class Spreadsheet:
         Create a sheet object from sheet ID and sheet name
         :param name: The name of the sheet.
         :param sid: the sheet ID of the sheet.
-        :param grid_properties: the grid properties (row and column count) of the sheet.
+        :param grid_properties: the grid properties (row and column count) of
+        the sheet.
         :return Sheet object
         """
         return Sheet(
@@ -55,12 +58,16 @@ class Spreadsheet:
         Requests every sheets associated to spreadsheets
         :return List of sheets object
         """
-        request = self.client.sheet_service.spreadsheets().get(spreadsheetId=self.id, includeGridData=False)
+        request = self.client.sheet_service.spreadsheets().get(
+            spreadsheetId=self.id, includeGridData=False
+        )
         response = request.execute()
         sheets = [
-            self.get_sheet(name=sheet['properties']['title'],
-                           sid=sheet['properties']['sheetId'],
-                           grid_properties=sheet['properties']['gridProperties'])
+            self.get_sheet(
+                name=sheet['properties']['title'],
+                sid=sheet['properties']['sheetId'],
+                grid_properties=sheet['properties']['gridProperties']
+            )
             for sheet in response['sheets']
         ]
         return sheets
@@ -98,18 +105,22 @@ class Spreadsheet:
                 continue
 
             reply_type_found = True
-            new_sheet = self.get_sheet(name=new_sheet_reply['properties']['title'],
-                                       sid=new_sheet_reply['properties']['sheetId'],
-                                       grid_properties=new_sheet_reply['properties']['gridProperties'])
+            new_sheet = self.get_sheet(
+                name=new_sheet_reply['properties']['title'],
+                sid=new_sheet_reply['properties']['sheetId'],
+                grid_properties=new_sheet_reply['properties']['gridProperties']
+            )
             self.sheets.append(new_sheet)
         if not reply_type_found:
-            raise ValueError("No reply of type '" + reply_type + "' was found in the replies of the batch request."
+            raise ValueError(
+                "No reply of type '" + reply_type + "' was found in the replies of the batch request."
                              " Response: '" + str(response) + "'.")
 
     def create_sheets(self, sheet_names):
         """
         Creates multiple sheets in the target spreadsheet
-        :param sheet_names: list of sheet names to create. Can also be a string to create a single sheet
+        :param sheet_names: list of sheet names to create. Can also be a string
+        to create a single sheet
         """
         if type(sheet_names) is not list:
             sheet_names = [sheet_names]
@@ -135,14 +146,17 @@ class Spreadsheet:
         """
         Creates a new sheet cloning an existing one, either by ID or by name
         :param new_sheet_name: name with which the clone will be created
-        :param sheet_id: (Optional) ID of the sheet to be cloned. This will have preference over sheet_name
-        :param sheet_name: (Optional) name of the sheet to be cloned, in case sheet_id is not set
+        :param sheet_id: (Optional) ID of the sheet to be cloned. This will have
+            preference over sheet_name
+        :param sheet_name: (Optional) name of the sheet to be cloned, in case
+            sheet_id is not set
         """
 
         body = {'requests': []}
         if sheet_id is None:
             if sheet_name is None:
-                raise AttributeError("You must either specify a sheet name or a sheet id to duplicate.")
+                raise AttributeError(
+                    "You must either specify a sheet name or a sheet id to duplicate.")
             sheet_id = self.get_sheet_by_name(sheet_name).sid
 
         duplicate_sheet_request = {"duplicateSheet": {
@@ -161,7 +175,8 @@ class Spreadsheet:
 
     def commit(self):
         if len(self.batches) == 0:
-            # Sending a batch update with an empty list of requests would return an error
+            # Sending a batch update with an empty list of requests
+            # would return an error
             return
         body = {'requests': [self.batches]}
         response = self.client.sheet_service.spreadsheets().batchUpdate(
@@ -205,9 +220,16 @@ class Sheet:
         """
         if row == 0 or column == 0:
             raise RowOrColumnEqualsZeroError(
-                "Row and column parameters can not be equal to 0. The cell A1 is row=1 and column=1"
+                """Row and column parameters can not be equal to 0. 
+                The cell A1 is row=1 and column=1"""
             )
-        a1 = convert_coordinates_to_a1(row, column, number_of_row, number_of_column)
+        a1 = convert_coordinates_to_a1(
+            row,
+            column,
+            number_of_row,
+            number_of_column,
+            self.name
+        )
         return Range(
             client=self.client,
             sheet=self,
@@ -229,7 +251,8 @@ class Sheet:
 
     def get_data_range(self):
         """
-        Get the Range object for all the data contained in the sheet. Very useful when unsure about the size of the data
+        Get the Range object for all the data contained in the sheet.
+        Very useful when unsure about the size of the data
         in queried sheet.
         :return: Range Object.
         """
@@ -257,8 +280,8 @@ class Sheet:
 
 def check_size(f):
     """
-    Decorator to check length of the 2D matrix to be set. Raise an error if lengths are not matching with Range
-    object coordinates.
+    Decorator to check length of the 2D matrix to be set. Raise an error if
+    lengths are not matching with Range object coordinates.
     """
     def wrapper(range_object, data, batch_to=None):
         if len(data) != range_object.coordinates.number_of_rows:
@@ -294,7 +317,8 @@ class Range:
         """
         self.client = client
         self.sheet = sheet
-        self.a1 = self.persist_a1_data_range(a1)     # this checks the data range coordinates
+        # this checks the data range coordinates
+        self.a1 = self.persist_a1_data_range(a1)
         self.coordinates = convert_a1_to_coordinates(self.a1)
 
         # placeholder for putting requests object if we
@@ -307,12 +331,14 @@ class Range:
 
     def offset(self, row_offset, column_offset, num_rows=None, num_columns=None):
         """
-        Returns a new range that is relative to the current range, whose upper left point is offset from the current
-        range by the given rows and columns, and with the given height and width in cells.
-        :param row_offset: The number of rows down from the range's top-left cell; negative values represent rows up
-         from the range's top-left cell.
-        :param column_offset: The number of columns right from the range's top-left cell; negative values represent
-         columns left from the range's top-left cell.
+        Returns a new range that is relative to the current range, whose upper
+        left point is offset from the current range by the given rows and
+        columns, and with the given height and width in cells.
+        :param row_offset: The number of rows down from the range's top-left
+            cell; negative values represent rows up from the range's top-left cell.
+        :param column_offset: The number of columns right from the range's
+            top-left cell; negative values represent columns left from the
+            range's top-left cell.
         :param num_rows: (Optional) The height in rows of the new range.
         :param num_columns: (Optional) The width in columns of the new range.
         :return: A range object that corresponds to the new offset range
@@ -416,7 +442,8 @@ class Range:
         :param field: the targeted field.
         :param data: the 2D arrays with size matching range coordinates.
         :param set_parser: the function to run as a cell parser.
-        :param batch_to: Object from which the request must be batched. Object must contain a 'batches' attribute.
+        :param batch_to: Object from which the request must be batched. Object
+            must contain a 'batches' attribute.
         :return: raw response from the API.
         """
         # Parsing the rows to be in API format
@@ -447,7 +474,7 @@ class Range:
 
     def get_values(self):
         data = self.make_get_request(
-            field_mask="sheets/data/rowData/values/effectiveValue",
+            field_mask="sheets/data/rowData/values/effectiveValue,sheets/data/rowData/values/effectiveFormat/numberFormat/type",
             cell_parser=CellParsers.get_value
         )
         return data
@@ -477,7 +504,8 @@ class Range:
     def get_backgrounds(self):
         """
         Get the backgrounds of the Range.
-        :return: 2D array of the background colors, of size matching the range coordinates.
+        :return: 2D array of the background colors, of size matching the range
+            coordinates.
         :return: 2D matrix of the colors in hex format.
         """
         return self.make_get_request(
@@ -542,7 +570,8 @@ class Range:
     def get_font_colors(self):
         """
         Get the font colors of the Range.
-        :return: 2D array of the font colors, of size matching the range coordinates.
+        :return: 2D array of the font colors, of size matching the range
+            coordinates.
         """
         return self.make_get_request(
             field_mask="sheets/data/rowData/values/effectiveFormat/textFormat/foregroundColor",
@@ -588,14 +617,18 @@ class Range:
         Set formulas for the Range.
         :param formulas: 2D array of formulas (size must match range coordinates).
         """
-        # todo: set formula.
-        return formulas
+        raise NotImplementedError(
+            "Setting formulas via Range.set_formulas is not implemented yet.\n"
+            "You can however set formulas string (starting with '=') with the "
+            "method Range.set_values and they will be interpreted as formulas"
+        )
 
     def persist_a1_data_range(self, a1):
         """
-        If a1 attribute is None (typically when we get_data_range, it calculates the a1 notation and range coordinates
-        based on the number of rows and columns found in the data.
-        :param data: raw response of a request for values to google sheets API.
+        If a1 attribute is None (typically when we get_data_range, it calculates
+            the a1 notation and range coordinates based on the number of rows
+            and columns found in the data.
+        :param a1: raw response of a request for values to google sheets API.
         """
         if a1 is not None:
             return a1
@@ -627,10 +660,12 @@ class Range:
             sheet_name=self.sheet.name
         )
 
-    def get_cell(self, row, column):        # todo: have a custom error when row and/or column is 0
+    def get_cell(self, row, column):
         row_number = self.coordinates.row + row - 1
         column_number = self.coordinates.column + column - 1
-        a1 = convert_coordinates_to_a1(row_number, column_number, sheet_name=self.coordinates.sheet_name)
+        a1 = convert_coordinates_to_a1(
+            row_number, column_number, sheet_name=self.coordinates.sheet_name
+        )
         return Range(
             client=self.client,
             sheet=self.sheet,
@@ -663,7 +698,8 @@ class Range:
 
     def get_grid_range(self):
         """
-        As explained here: https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets#GridRange
+        As explained here:
+        https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets#GridRange
         :return: the grid range for set requests.
         """
         return {
@@ -701,5 +737,3 @@ class Range:
         :return: int
         """
         return self.coordinates.column + self.coordinates.number_of_columns - 1
-
-

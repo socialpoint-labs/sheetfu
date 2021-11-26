@@ -1,0 +1,47 @@
+{
+	"sheets": [{
+		"data": [{
+			"rowData": [{
+				"values": [{
+					"effectiveValue": {
+						"stringValue": "name"
+					}
+				}, {
+					"effectiveValue": {
+						"stringValue": "birthday"
+					}
+				}]
+			}, {
+				"values": [{
+					"effectiveValue": {
+						"stringValue": "foo"
+					}
+				}, {
+					"effectiveValue": {
+						"numberValue": 44317
+					},
+					"effectiveFormat": {
+						"numberFormat": {
+							"type": "DATE"
+						}
+					}
+				}]
+			}, {
+				"values": [{
+					"effectiveValue": {
+						"stringValue": "bar"
+					}
+				}, {
+					"effectiveValue": {
+						"numberValue": 44469
+					},
+					"effectiveFormat": {
+						"numberFormat": {
+							"type": "DATE"
+						}
+					}
+				}]
+			}]
+		}]
+	}]
+}

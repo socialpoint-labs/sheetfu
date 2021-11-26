@@ -5,6 +5,7 @@ from tests.utils import mock_range_instance, mock_spreadsheet_instance, mock_goo
 from tests.utils import open_fixture
 import pytest
 import json
+import datetime
 
 
 class TestModelClients:
@@ -265,3 +266,31 @@ class TestWrongRowAndColumnValues:
         with pytest.raises(RowOrColumnEqualsZeroError):
             self.sheet.get_range(row=0, column=0)
 
+
+class TestDatetimeValues:
+
+    http_mocks = mock_spreadsheet_instance(fixtures=[
+        "get_values_datetime.json"
+    ])
+
+    client = SpreadsheetApp(http=http_mocks)
+    spreadsheet = client.open_by_id('some_id')
+    sheet = spreadsheet.get_sheet_by_name("people")
+    data_range = sheet.get_range_from_a1("A1:B1")
+    values = data_range.get_values()
+
+    def test_length_values(self):
+        assert len(self.values) == 1
+        assert len(self.values[0]) == 2
+
+    def test_first_value(self):
+        assert self.values[0][0] == "foo"
+
+    def test_is_datetime(self):
+        assert isinstance(self.values[0][1], datetime.datetime)
+
+    def test_datetime_value(self):
+        test_date = self.values[0][1]
+        assert test_date.year == 2021
+        assert test_date.month == 5
+        assert test_date.day == 1

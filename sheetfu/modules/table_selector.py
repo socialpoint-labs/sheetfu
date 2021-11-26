@@ -21,7 +21,6 @@ class TableSelector:
     def execute(self):
         """
         Method to filter items on a table based on field name and value.
-
         :return: List of Items containing only filtered items or and empty List.
 
         """
@@ -30,7 +29,6 @@ class TableSelector:
     def _matches(self, item, clauses):
         """
         Method that applies AND & OR filters to an item.
-
         :return: List of Items containing only filtered items or and empty List.
 
         """

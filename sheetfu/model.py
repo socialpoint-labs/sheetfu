@@ -617,8 +617,11 @@ class Range:
         Set formulas for the Range.
         :param formulas: 2D array of formulas (size must match range coordinates).
         """
-        # todo: set formula.
-        return formulas
+        raise NotImplementedError(
+            "Setting formulas via Range.set_formulas is not implemented yet.\n"
+            "You can however set formulas string (starting with '=') with the "
+            "method Range.set_values and they will be interpreted as formulas"
+        )
 
     def persist_a1_data_range(self, a1):
         """

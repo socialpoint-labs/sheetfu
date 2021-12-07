@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.6.1 (2021-12-07)
+### Fix
+* **Range:** Enforce userEnteredFormat as a field mask ([`1e77f6b`](https://github.com/socialpoint-labs/sheetfu/commit/1e77f6b449d18b9ee7c6bffdd0d680db7d402494))
+
 ## v1.6.0 (2021-11-26)
 ### Feature
 * Add formulas integration ([`590df68`](https://github.com/socialpoint-labs/sheetfu/commit/590df68221c580c33a0c5e4c564dca71e569aceb))

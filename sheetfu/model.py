@@ -486,7 +486,7 @@ class Range:
         :param values: 2D array of values (size must match range coordinates).
         """
         return self.make_set_request(
-            field='userEnteredValue',
+            field='userEnteredValue,userEnteredFormat',
             data=values,
             set_parser=CellParsers.set_value,
             batch_to=batch_to
